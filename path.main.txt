@@ -317,10 +317,10 @@ print <<EOF;
 <option>Times Microwave LMR-900</option>
 <option>Times Microwave LMR-1200</option>
 <option>Times Microwave LMR-1700</option>
-<option>Andrew Heliax LDF4-50A</option>
-<option>Andrew Heliax LDF5-50A</option>
-<option>Andrew Heliax LDF6-50A</option>
-<option>Andrew Heliax LDF7-50A</option>
+<option>Andrew HELIAX LDF4-50A</option>
+<option>Andrew HELIAX LDF5-50A</option>
+<option>Andrew HELIAX LDF6-50A</option>
+<option>Andrew HELIAX LDF7-50A</option>
 <option>Belden 9913 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>
 <option>Belden 9258 (RG-8X)</option>
