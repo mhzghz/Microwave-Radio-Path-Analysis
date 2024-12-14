@@ -3589,7 +3589,7 @@ elsif ($frq_ghz_div > 2.0) {
   $df_mhz = sprintf "%.2f", $df * 1000;
 
   # No Rain
-  $Ifd_itm = 50 * $df * (10 ** ($cmp_itm / 10)) / ($frq_ghz ** 2) * $dist_mi;
+  $Ifd_itm = 50 * $df * (10 ** ($cmp_itm / 10)) / (($frq_ghz ** 2) * $dist_mi);
 
   if ($Ifd_itm > 1.0) {
 
@@ -3645,7 +3645,7 @@ elsif ($frq_ghz_div > 2.0) {
   }
   
   # With Rain
-  $Ifd_itm_rain = 50 * $df * (10 ** ($cmp_itm_rain / 10)) / ($frq_ghz ** 2) * $dist_mi;
+  $Ifd_itm_rain = 50 * $df * (10 ** ($cmp_itm_rain / 10)) / (($frq_ghz ** 2) * $dist_mi);
 
   if ($Ifd_itm_rain > 1.0) {
 
