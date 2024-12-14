@@ -108,13 +108,13 @@ print <<EOF;
 </tr>
 
 <tr>
-<td align="right"><b>Diversity Frequency</b></td>
-<td><input type="text" name="frq_div" size="5" value="0">
+<td align="right" bgcolor="#BABBBE"><b>Diversity Frequency</b></td>
+<td bgcolor="#BABBBE"><input type="text" name="frq_div" size="5" value="0">
 <select name="frq_div_val">
 <option selected>MHz</option>
 <option>GHz</option>
 </select></td>
-<td>Leave "0" if unused</td>
+<td bgcolor="#BABBBE">Leave "0" if unused</td>
 </tr>
 
 <tr>

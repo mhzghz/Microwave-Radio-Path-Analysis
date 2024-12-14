@@ -3638,10 +3638,10 @@ elsif ($frq_ghz_div > 2.0) {
     $Ifd_itm = sprintf "%.1f", $Ifd_itm;
 	$Ifd_color = "red";
 	$df_mhz = sprintf "%.2f", $df * 1000;
-	$SES_frq_div_itm_per = "Not Applicable";
-	$SES_frq_div_yr_itm = "Not Applicable";
-	$worst_frq_div_mo_itm = "Not Applicable";
-	$worst_frq_div_mo_itm_val = "";
+	$SES_frq_div_itm_per = $SES_nodiv_itm_per;
+	$SES_frq_div_yr_itm = $SES_nodiv_itm_yr;
+	$worst_frq_div_mo_itm = $worst_nodiv_itm_yr;
+	$worst_frq_div_mo_itm_val = $worst_nodiv_itm_yr_val;
   }
   
   # With Rain
@@ -3693,10 +3693,10 @@ elsif ($frq_ghz_div > 2.0) {
     $Ifd_message_itm_rain = "(Will Not Improve Reliability)";
     $Ifd_itm_rain = sprintf "%.1f", $Ifd_itm_rain;
     $Ifd_color_rain = "red";
-    $SES_frq_div_itm_per_rain = "Not Applicable";
-    $SES_frq_div_yr_itm_rain = "Not Applicable";
-    $worst_frq_div_mo_itm_rain = "Not Applicable";
-    $worst_frq_div_mo_itm_val_rain = "";
+    $SES_frq_div_itm_per_rain = $SES_nodiv_itm_per_rain;
+    $SES_frq_div_yr_itm_rain = $SES_nodiv_itm_yr_rain;
+    $worst_frq_div_mo_itm_rain = $worst_nodiv_itm_yr_rain;
+    $worst_frq_div_mo_itm_val_rain = $worst_nodiv_itm_yr_val_rain;
   }
 }
 else {
