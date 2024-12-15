@@ -191,6 +191,7 @@ print <<EOF;
 <option selected>dBi</option>
 <option>dBd</option>
 </select>
+&nbsp;&nbsp;Radome Loss <input type="number" name="tx_ant_gain_radome" min="0.00" max="3.00" value="0.00" step="0.01"> dB
 <td>(Note 1)</td>
 </tr>
 
@@ -366,6 +367,7 @@ print <<EOF;
 <option selected>dBi</option>
 <option>dBd</option>
 </select>
+&nbsp;&nbsp;Radome Loss <input type="number" name="rx_ant_gain_radome" min="0.00" max="3.00" value="0.00" step="0.01"> dB
 <td>(Note 1)</td>
 </tr>
 
@@ -408,7 +410,7 @@ print <<EOF;
 <tr>
 <td align="right"><b>Receiver Threshold</b></td>
 <td><input type="number" name="BER" min="-140.0" max="10.0" value="-90.0" step="0.1"> dBm
-<select name="BER_crit">
+&nbsp;&nbsp;Criteria <select name="BER_crit">
 <option>10-3 BER</option>
 <option>10-6 BER</option>
 <option>RBER</option>
@@ -442,7 +444,8 @@ print <<EOF;
 <select name="rx_div_ant_val">
 <option selected>dBi</option>
 <option>dBd</option>
-</select></td>
+</select>
+&nbsp;&nbsp;Radome Loss <input type="number" name="rx_div_ant_gain_radome" min="0.00" max="3.00" value="0.00" step="0.01"> dB
 <td bgcolor="#CCBBBB"></td>
 </tr>
 
@@ -578,7 +581,7 @@ print <<EOF;
 <select name="rough_val">
 <option selected>feet</option>
 <option>meters</option>
-</select> Deviation of Elevations</td>
+</select> Std. Deviation of Elevations</td>
 <td bgcolor="#A3A3A3">(Note 10)</td>
 </tr>
 
@@ -826,7 +829,7 @@ print <<EOF;
 <blockquote>
 <p><a href="http://www.gbppr.net/splat/path.html">Microwave Radio Path Analysis Notes</a>&nbsp;&nbsp;Read this first.</p>
 
-<p>1.)&nbsp;&nbsp;Don't forget to <i>subtract</i> any radome loss.&nbsp;&nbsp;For sealed Yagi antennas, radome loss is usually taken into account in the antenna's specified gain.</p>
+<p>1.)&nbsp;&nbsp;Don't forget to take into account any radome loss.&nbsp;&nbsp;For sealed Yagi antennas, radome loss is usually included in the antenna's specified gain.&nbsp;&nbsp;"Wet" radome loss can be 2 dB or more.</p>
 
 <p>2.)&nbsp;&nbsp;Arvids Vigants' space diversity improvement equation is <i>only accurate</i> for paths with the following parameters: Distance: 14-40 miles, Frequency: 2-11 GHz, Spacing: 10-50 feet, Div. Gain: 0-6 dB of Primary, Fade Margin: 30-50 dB.&nbsp;&nbsp;The diversity antenna cable type is assumed the same as the main receiver's.&nbsp;&nbsp;Space diversity is usually required when crossing flat, wet surfaces or in very humid climates.</p>
 

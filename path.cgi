@@ -83,6 +83,7 @@ my $tx_cab = $FORM{'tx_cab'};
 my $tx_len = $FORM{'tx_len'};
 my $tx_len_val = $FORM{'tx_len_val'};
 my $tx_ant_gain = $FORM{'tx_ant_gain'};
+my $tx_ant_gain_radome = $FORM{'tx_ant_gain_radome'};
 my $tx_ant_val = $FORM{'tx_ant_val'};
 my $tx_ant_ht = $FORM{'tx_ant_ht'};
 my $tx_ant_ht_val = $FORM{'tx_ant_ht_val'};
@@ -116,6 +117,7 @@ my $rx_cab = $FORM{'rx_cab'};
 my $rx_len = $FORM{'rx_len'};
 my $rx_len_val = $FORM{'rx_len_val'};
 my $rx_ant_gain = $FORM{'rx_ant_gain'};
+my $rx_ant_gain_radome = $FORM{'rx_ant_gain_radome'};
 my $rx_ant_val = $FORM{'rx_ant_val'};
 my $rx_ant_ht = $FORM{'rx_ant_ht'};
 my $rx_ant_ht_val = $FORM{'rx_ant_ht_val'};
@@ -126,6 +128,7 @@ my $rx_cab_other = $FORM{'rx_cab_other'};
 my $rx_div_ant_ht = $FORM{'rx_div_ant_ht'};
 my $rx_div_ant_ht_val = $FORM{'rx_div_ant_ht_val'};
 my $rx_div_ant_gain = $FORM{'rx_div_ant_gain'};
+my $rx_div_ant_gain_radome = $FORM{'rx_div_ant_gain_radome'};
 my $rx_div_ant_val = $FORM{'rx_div_ant_val'};
 my $rx_div_len = $FORM{'rx_div_len'};
 my $rx_div_len_val = $FORM{'rx_div_len_val'};
@@ -443,17 +446,18 @@ else {
 #
 $OK_CHARS='-a-zA-Z0-9_.+=()\[\] ';# Allowed Characters
 
-$project          =~ s/[^$OK_CHARS]//go;
-$tx_ant_notes     =~ s/[^$OK_CHARS]//go;
-$tx_notes         =~ s/[^$OK_CHARS]//go;
-$tx_name          =~ tr/A-Za-z0-9//csd;
-$tx_len           =~ tr/0-9.//csd;
-$tx_ant_gain      =~ tr/0-9.//csd;
-$tx_ant_ht        =~ tr/0-9.//csd;
-$tx_misc_loss     =~ tr/0-9.//csd;
-$tx_misc_cab_loss =~ tr/0-9.//csd;
-$tx_cab_other     =~ tr/0-9.//csd;
-$tx_misc_gain     =~ tr/0-9.//csd;
+$project             =~ s/[^$OK_CHARS]//go;
+$tx_ant_notes        =~ s/[^$OK_CHARS]//go;
+$tx_notes            =~ s/[^$OK_CHARS]//go;
+$tx_name             =~ tr/A-Za-z0-9//csd;
+$tx_len              =~ tr/0-9.//csd;
+$tx_ant_gain         =~ tr/0-9.//csd;
+$rx_ant_gain_radome  =~ tr/0-9.//csd;
+$tx_ant_ht           =~ tr/0-9.//csd;
+$tx_misc_loss        =~ tr/0-9.//csd;
+$tx_misc_cab_loss    =~ tr/0-9.//csd;
+$tx_cab_other        =~ tr/0-9.//csd;
+$tx_misc_gain        =~ tr/0-9.//csd;
 
 # Limit characters for plotting
 $project      = sprintf "%.30s", $project;
@@ -486,19 +490,21 @@ elsif ($tx_ant_ht_val eq "meters") {
 
 ## Receiver Site Information
 #
-$rx_ant_notes         =~ s/[^$OK_CHARS]//go;
-$rx_notes             =~ s/[^$OK_CHARS]//go;
-$rx_name              =~ tr/A-Za-z0-9//csd;
-$rx_len               =~ tr/0-9.//csd;
-$rx_ant_gain          =~ tr/0-9.//csd;
-$rx_ant_ht            =~ tr/0-9.//csd;
-$rx_misc_cab_loss     =~ tr/0-9.//csd;
-$rx_cab_other         =~ tr/0-9.//csd;
-$rx_misc_gain         =~ tr/0-9.//csd;
-$rx_div_ant_ht        =~ tr/0-9.//csd;
-$rx_div_ant_gain      =~ tr/0-9.//csd;
-$rx_div_len           =~ tr/0-9.//csd;
-$rx_div_misc_cab_loss =~ tr/0-9.//csd;
+$rx_ant_notes           =~ s/[^$OK_CHARS]//go;
+$rx_notes               =~ s/[^$OK_CHARS]//go;
+$rx_name                =~ tr/A-Za-z0-9//csd;
+$rx_len                 =~ tr/0-9.//csd;
+$rx_ant_gain            =~ tr/0-9.//csd;
+$rx_ant_gain_radome     =~ tr/0-9.//csd;
+$rx_ant_ht              =~ tr/0-9.//csd;
+$rx_misc_cab_loss       =~ tr/0-9.//csd;
+$rx_cab_other           =~ tr/0-9.//csd;
+$rx_misc_gain           =~ tr/0-9.//csd;
+$rx_div_ant_ht          =~ tr/0-9.//csd;
+$rx_div_ant_gain        =~ tr/0-9.//csd;
+$rx_div_ant_gain_radome =~ tr/0-9.//csd;
+$rx_div_len             =~ tr/0-9.//csd;
+$rx_div_misc_cab_loss   =~ tr/0-9.//csd;
 
 # Limit characters for plotting
 $rx_name      = sprintf "%.15s", $rx_name;
@@ -528,24 +534,28 @@ elsif ($rx_ant_ht_val eq "meters") {
   $rx_ant_ht_m  = sprintf "%.2f", $rx_ant_ht;
 }
 
-## Get Antenna Gains
+## Get Antenna Gains (Minus Radome Loss)
 #
 if ($tx_ant_val eq "dBd") {
-  $tx_ant_gain_dbi = sprintf "%.2f", $tx_ant_gain + 2.15; # dBd to dBi
-  $tx_ant_gain_dbd = sprintf "%.2f", $tx_ant_gain;
+  $tx_ant_gain_dbi    = sprintf "%.2f", ($tx_ant_gain + 2.15) - $tx_ant_gain_radome; # dBd to dBi
+  $tx_ant_gain_dbd    = sprintf "%.2f", $tx_ant_gain - $tx_ant_gain_radome;
+  $tx_ant_gain_radome = sprintf "%.2f", $tx_ant_gain_radome;
 }
 elsif ($tx_ant_val eq "dBi") {
-  $tx_ant_gain_dbd = sprintf "%.2f", $tx_ant_gain - 2.15; # dBi to dBd
-  $tx_ant_gain_dbi = sprintf "%.2f", $tx_ant_gain;
+  $tx_ant_gain_dbd    = sprintf "%.2f", ($tx_ant_gain - 2.15) - $tx_ant_gain_radome; # dBi to dBd
+  $tx_ant_gain_dbi    = sprintf "%.2f", $tx_ant_gain - $tx_ant_gain_radome;
+  $tx_ant_gain_radome = sprintf "%.2f", $tx_ant_gain_radome;
 }
 
 if ($rx_ant_val eq "dBd") {
-  $rx_ant_gain_dbi = sprintf "%.2f", $rx_ant_gain + 2.15; # dBd to dBi
-  $rx_ant_gain_dbd = sprintf "%.2f", $rx_ant_gain;
+  $rx_ant_gain_dbi    = sprintf "%.2f", ($rx_ant_gain + 2.15) - $rx_ant_gain_radome; # dBd to dBi
+  $rx_ant_gain_dbd    = sprintf "%.2f", $rx_ant_gain - $rx_ant_gain_radome;
+  $rx_ant_gain_radome = sprintf "%.2f", $rx_ant_gain_radome;
 }
 elsif ($rx_ant_val eq "dBi") {
-  $rx_ant_gain_dbi = sprintf "%.2f", $rx_ant_gain;
-  $rx_ant_gain_dbd = sprintf "%.2f", $rx_ant_gain - 2.15; # dBi to dBd
+  $rx_ant_gain_dbd    = sprintf "%.2f", ($rx_ant_gain - 2.15) - $rx_ant_gain_radome; # dBi to dBd
+  $rx_ant_gain_dbi    = sprintf "%.2f", $rx_ant_gain - $rx_ant_gain_radome;
+  $rx_ant_gain_radome = sprintf "%.2f", $rx_ant_gain_radome;
 }
 
 ## Get Diversity Antenna Parameters
@@ -558,7 +568,7 @@ if ($rx_div_ant_ht <= 1) {
   $div_ant_dbd   = sprintf "%.2f", 0;
   $div_ant_ht_ft = "Not Applicable";
   $div_ant_ht_m  = "N/A";
-
+  $rx_div_ant_gain_radome = sprintf "%.2f", 0;
 }
 elsif ($rx_div_ant_ht > 1) {
   $do_div = "yes";
@@ -573,12 +583,12 @@ elsif ($rx_div_ant_ht > 1) {
   }
 
   if ($rx_div_ant_val eq "dBd") {
-    $div_ant_dbi = sprintf "%.2f", $rx_div_ant_gain + 2.15;
-    $div_ant_dbd = sprintf "%.2f", $rx_div_ant_gain;
+    $div_ant_dbi = sprintf "%.2f", ($rx_div_ant_gain + 2.15) - $rx_div_ant_gain_radome;
+    $div_ant_dbd = sprintf "%.2f", $rx_div_ant_gain - $rx_div_ant_gain_radome;
   }
   elsif ($rx_div_ant_val eq "dBi") {
-    $div_ant_dbd = sprintf "%.2f", $rx_div_ant_gain - 2.15;
-    $div_ant_dbi = sprintf "%.2f", $rx_div_ant_gain;
+    $div_ant_dbd = sprintf "%.2f", ($rx_div_ant_gain - 2.15) - $rx_div_ant_gain_radome;
+    $div_ant_dbi = sprintf "%.2f", $rx_div_ant_gain - $rx_div_ant_gain_radome;
   }
 
   $div_ant_ht_ft = sprintf "%.2f", ($div_ft + $rx_ant_ht_ft);
@@ -4092,7 +4102,7 @@ print "<tr><td align=\"right\"><b>Transmission Line Miscellaneous Loss</b></td><
 print "<tr><td align=\"right\"><b>Total Transmission Line Loss</b></td><td><font color=\"blue\">$tx_total_cable_loss</font> dB</td><td><font color=\"blue\">$rx_total_cable_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Miscellaneous Gain</b></td><td><font color=\"blue\">$tx_misc_gain</font> dB</td><td><font color=\"blue\">$rx_misc_gain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Model / Notes</b></td><td><font color=\"blue\">$tx_ant_notes</font></td><td><font color=\"blue\">$rx_ant_notes</font></td></tr>\n";
-print "<tr><td align=\"right\"><b>Antenna Peak Gain</b></td><td><font color=\"blue\">$tx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_gain_dbd</font> dBd)</td><td><font color=\"blue\">$rx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_gain_dbd</font> dBd)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Antenna Gain</b></td><td><font color=\"blue\">$tx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_gain_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$tx_ant_gain_radome</font> dB)</td><td><font color=\"blue\">$rx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_gain_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$rx_ant_gain_radome</font> dB)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna (Parabolic) 3 dB Beamwidth</b></td><td><font color=\"blue\">$tx_ant_bw</font>&deg;</td><td><font color=\"blue\">$rx_ant_bw</font>&deg;</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Coverage 3 dB Radius</b></td><td>Inner: <font color=\"blue\">$inner</font> miles&nbsp;&nbsp;&nbsp;&nbsp;Outer: <font color=\"blue\">$outer</font> miles</td><td></td></tr>\n";
 print "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td colspan=\"2\"><font color=\"blue\">$frq_ghz</font> GHz&nbsp;&nbsp;(<font color=\"blue\">$frq_mhz</font> MHz)</td></tr>\n";
@@ -4215,7 +4225,7 @@ print "<tr><td align=\"right\"><b>Adjusted Spacing for Diversity Antenna</b></td
 print "<tr><td align=\"right\"><b>Calculated Ideal Spacing for Diversity Antenna</b></td><td><font color=\"blue\">$div_space_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_space_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Diversity Antenna Height (AGL)</b></td><td><font color=\"blue\">$div_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_ant_ht_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Overall Diversity Receiver Antenna Height (AMSL)</b></td><td><font color=\"blue\">$div_rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_rx_ant_ht_ov_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Diversity Antenna Peak Gain</b></td><td><font color=\"blue\">$div_ant_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$div_ant_dbd</font> dBd)&nbsp;&nbsp;&nbsp;&nbsp;$div_gain_check</td></tr>\n";
+print "<tr><td align=\"right\"><b>Diversity Antenna Gain</b></td><td><font color=\"blue\">$div_ant_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$div_ant_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$rx_div_ant_gain_radome</font> dB)&nbsp;&nbsp;$div_gain_check</td></tr>\n";
 print "<tr><td align=\"right\"><b>Diversity Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_rtd</font>&deg; to TX</td></tr>\n";
 print "</table><br><br>\n";
 
