@@ -1480,7 +1480,8 @@ if ($do_div eq "yes") {
   close F;
 }
 elsif ($do_div eq "no") {
-  $div_itm = sprintf "%.2f", 0;
+  $div_itm      = sprintf "%.2f", 0;
+  $div_itm_rain = sprintf "%.2f", 0;
 }
 
 ## Generate Approximate ITM Path Loss Coverage at TX
@@ -2592,8 +2593,8 @@ elsif ($frq_ghz < 5.0) {
 
 # Total Atmospheric Attenuation
 #
-$atmos_norain = sprintf "%.3f", $oxy_att_total + $water_att_total;
-$atmos_rain   = sprintf "%.3f", $oxy_att_total + $water_att_total + $crane_rain_att_total;
+$atmos_norain = sprintf "%.2f", $oxy_att_total + $water_att_total;
+$atmos_rain   = sprintf "%.2f", $oxy_att_total + $water_att_total + $crane_rain_att_total;
 
 ## Effective Isotropic Radiated Power (EIRP)
 #
@@ -2697,7 +2698,9 @@ elsif ($path_min > 0) {
 
 ## Calculate Free-Space and ITM Losses
 #
-$fs = sprintf "%.2f", (20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782;
+$fs      = sprintf "%.2f", (20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782;
+$fs_rain = sprintf "%.2f", ((20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782) + $crane_rain_att_total;
+$itm_rain = sprintf "%.2f", $itm + $crane_rain_att_total;
 
 # Total Free-Space Path Loss = Free-Space + Atmospheric Losses + Misc.
 $fs_pl      = sprintf "%.2f", $fs + $atmos_norain + $tx_misc_loss;
@@ -4164,10 +4167,6 @@ print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><fon
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/True_north\">True North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP</font>&deg; to RX</td><td><font color=\"blue\">$AZLP</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/North_magnetic_pole\">Magnetic North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP_MN</font>&deg; to RX</td><td><font color=\"blue\">$AZLP_MN</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Magnetic_declination\">Magnetic Declination</a></b></td><td><font color=\"blue\">$magdec_tx</font>&deg; $magdir_tx</td><td><font color=\"blue\">$magdec_rx</font>&deg; $magdir_rx</td></tr>\n";
-print "<tr><td align=\"right\"><b>Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_tr</font>&deg;</td><td><font color=\"blue\">$tilt_rt</font>&deg;</td></tr>\n";
-print "<tr><td align=\"right\"><b>Average Grazing Angle</b></td><td><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td><td></td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab</font></td><td><font color=\"blue\">$rx_cab</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Length</b></td><td><font color=\"blue\">$tx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_length_m</font> meters)</td><td><font color=\"blue\">$rx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_length_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_100m</font> dB/100 meters)</td><td><font color=\"blue\">$rx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_100m</font> dB/100 meters)</td></tr>\n";
@@ -4179,12 +4178,16 @@ print "<tr><td align=\"right\"><b>Total Transmission Line Loss</b></td><td><font
 print "<tr><td align=\"right\"><b>Miscellaneous Gain</b></td><td><font color=\"blue\">$tx_misc_gain</font> dB</td><td><font color=\"blue\">$rx_misc_gain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Model / Notes</b></td><td><font color=\"blue\">$tx_ant_notes</font></td><td><font color=\"blue\">$rx_ant_notes</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Gain</b></td><td><font color=\"blue\">$tx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_gain_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$tx_ant_gain_radome</font> dB)</td><td><font color=\"blue\">$rx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_gain_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$rx_ant_gain_radome</font> dB)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_tr</font>&deg;</td><td><font color=\"blue\">$tilt_rt</font>&deg;</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna (Parabolic) 3 dB Beamwidth</b></td><td><font color=\"blue\">$tx_ant_bw</font>&deg;</td><td><font color=\"blue\">$rx_ant_bw</font>&deg;</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Coverage 3 dB Radius</b></td><td>Inner: <font color=\"blue\">$inner</font> miles&nbsp;&nbsp;&nbsp;&nbsp;Outer: <font color=\"blue\">$outer</font> miles</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td colspan=\"2\"><font color=\"blue\">$frq_ghz</font> GHz&nbsp;&nbsp;(<font color=\"blue\">$frq_mhz</font> MHz)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Wavelength</b></td><td colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Average Grazing Angle</b></td><td><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td><td></td></tr>\n";
+print "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$frq_ghz</font> GHz&nbsp;&nbsp;(<font color=\"blue\">$frq_mhz</font> MHz)</td></tr>\n";
+print "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td></tr>\n";
+print "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -4194,10 +4197,10 @@ print "<td bgcolor=\"#7EBDE5\"><b>General</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Occupational</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Maximum Permissible Exposure</b></td><td><font color=\"blue\">$std1</font> mW/cm<sup>2</sup></td><td><font color=\"blue\">$std2</font> mW/cm<sup>2</sup></td></tr>\n";
 print "<tr><td align=\"right\"><b>Distance to RF Safety Compliance</b></td><td><font color=\"blue\">$dx1_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx1_m</font> meters)</td><td><font color=\"blue\">$dx2_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx2_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
-print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
-print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$fcc_eirp_mw</font> mW)&nbsp;&nbsp;$fcc_check</td></tr>\n";
+print "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
+print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
+print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;$fcc_check</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -4236,33 +4239,35 @@ print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Distance to the Radio Horizon</b></td><td><font color=\"blue\">$tx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$tx_rad_hor_km</font> km)</td><td><font color=\"blue\">$rx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rx_rad_hor_km</font> km)</tr>\n";
-print "<tr><td align=\"right\"><b>Path Minimum Elevation</b></td><td colspan=\"2\"><font color=\"blue\">$min_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$min_elev_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Path Average Elevation</b></td><td colspan=\"2\"><font color=\"blue\">$avg_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$avg_ht_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Path Maximum Elevation</b></td><td colspan=\"2\"><font color=\"blue\">$max_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_elev_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission\">SRTMv3</a> Terrain Mode</b></td><td colspan=\"2\"><font color=\"blue\">$qual</font></td></tr>\n";
-print "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Total Path Distance</b></td><td colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Path Minimum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$min_elev_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Path Average Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$avg_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$avg_ht_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Path Maximum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_elev_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission\">SRTMv3</a> Terrain Mode</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$qual</font></td></tr>\n";
+print "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
 print "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"5\"><b>Free-Space, ITM, Atmospheric, Rain, Misc. Losses</b></font></td></tr>\n";
-print "<tr><td bgcolor=\"#7EBDE5\" colspan=\"3\"><b><i>Specifications</i></b></td></tr>\n";
-print "<tr><td align=\"right\"><b>Temperate Climate Foliage Loss</b></td><td colspan=\"2\"><font color=\"blue\">$foli_ft</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$foli_m</font> dB/meter)&nbsp;&nbsp;(Dense, Dry, In-Leaf)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Crane Rain Model Attenuation</b></td><td colspan=\"2\"><font color=\"blue\">$crane_rain_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_km</font> dB/km)&nbsp;&nbsp;&nbsp;&nbsp;(Rain Rate: <font color=\"blue\">$rate</font> mm/hr)</td></tr>\n";
-print "<tr><td align=\"right\"><b>NASA Simplified Rain Model Attenuation</b></td><td colspan=\"2\"><font color=\"blue\">$nasa_rain_att_total</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Effective Rain Path Distance</b></td><td colspan=\"2\"><font color=\"blue\">$rain_eff_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rain_eff_km</font> km)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)&nbsp;&nbsp;&nbsp;&nbsp;(Vapor Density: <font color=\"blue\">$wvd</font> gm/m<sup>3</sup>)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
+print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+print "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
+print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+print "<tr><td align=\"right\"><b>Temperate Climate Foliage Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$foli_ft</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$foli_m</font> dB/meter)&nbsp;&nbsp;(Dense, Dry, In-Leaf)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Crane Rain Model Attenuation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$crane_rain_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_km</font> dB/km)&nbsp;&nbsp;&nbsp;&nbsp;(Rain Rate: <font color=\"blue\">$rate</font> mm/hr)</td></tr>\n";
+print "<tr><td align=\"right\"><b>NASA Simplified Rain Model Attenuation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$nasa_rain_att_total</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Effective Rain Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rain_eff_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rain_eff_km</font> km)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)&nbsp;&nbsp;&nbsp;&nbsp;(Vapor Density: <font color=\"blue\">$wvd</font> gm/m<sup>3</sup>)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
-print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td colspan=\"2\"><font color=\"blue\">$fs</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td colspan=\"2\"><font color=\"blue\">$itm</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td colspan=\"2\"><font color=\"blue\">$div_itm</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Total Atmospheric Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
@@ -4277,9 +4282,9 @@ print "<tr><td align=\"right\"><b>Receiver Threshold</b></td><td></td><td><font 
 print "<tr><td align=\"right\"><b>Dispersive Fade Margin</b></td><td><td><font color=\"blue\">$dfm_fs</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>External Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$eifm_fs</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Adjacent Channel Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$aifm_fs</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Minimum Composite Fade Margin for This Climate</b></td><td colspan=\"2\"><font color=\"blue\">$min_fade</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Potential Upfade</b></td><td colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
+print "<tr><td align=\"right\"><b>Minimum Composite Fade Margin for This Climate</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_fade</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Upfade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Unfaded Values</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
