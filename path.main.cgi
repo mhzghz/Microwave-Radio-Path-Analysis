@@ -425,7 +425,7 @@ print <<EOF;
 <tr>
 <td bgcolor="#CCBBBB" align="right">Following <font color="maroon">TWO</font> questions are for Vertical Space Diversity systems <i>ONLY</i></td>
 <td bgcolor="#CCBBBB">&nbsp;&nbsp;&#8628;</td>
-<td bgcolor="#CCBBBB">(Note 2)</td>
+<td bgcolor="#CCBBBB">(Note 1 &amp; 2)</td>
 </tr>
 
 <tr>
@@ -891,11 +891,7 @@ print <<EOF;
 
 <p>Plotting done using <a href="http://www.gbppr.net/splat">SPLAT! v2.0</a> by <a href="http://www.qsl.net/kd2bd">John A. Magliacane</a> (KD2BD) and <a href="https://github.com/hoche/splat">hoche</a>.</p>
 
-<p>"True North" azimuths will need to be converted to magnetic declinations using a <a href="https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml">Magnetic Declination Calculator</a>.</p>
-
 <p>The Elevation Profile displays the elevation and depression angles resulting from the terrain between the receiver's location and the transmitter site from the perspective of the receiver's location.&nbsp;&nbsp;A second trace is plotted between the left-side of the graph (receiver's location) and the location of the transmitting antenna on the right.&nbsp;&nbsp;This trace illustrates the elevation angle required for a line-of-sight path to exist between the receiver and transmitter locations.&nbsp;&nbsp;If the trace intersects the elevation profile at any point on the graph, then this is an indication that a line-of-sight path <i>does not</i> exist under the conditions given, and the obstructions can be clearly identified on the graph at the point(s) of intersection.</p>
-
-<p>Neither vertical space diversity nor in-band frequency diversity will provide improvement against rain attenuation, although out-of-band frequency diversity (such as 6 GHz/12 GHz) will.&nbsp;&nbsp;The <i>higher</i> frequency in a hybrid (both space &amp; frequency) diversity system should be assigned to the <i>higher</i> antenna.</p>
 
 <p>AGL- Above Ground Level.&nbsp;&nbsp;Height above common ground to the midpoint of the radiating antenna.&nbsp;&nbsp;AMSL - Above Mean Sea Level.&nbsp;&nbsp;Height referenced above sea level, or zero elevation.</p>
 

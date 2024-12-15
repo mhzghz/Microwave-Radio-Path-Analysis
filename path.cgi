@@ -1563,14 +1563,14 @@ $rx_ant_bw = sprintf "%.2f", 164 * sqrt(1 / (10 ** ($rx_ant_gain_dbi / 10)));
 
 ## Calculate azimuths
 #
-$lat1_az = deg2rad $LAT1;
-$lon1_az = deg2rad ($LON1 * -1);
-$lat2_az = deg2rad $LAT2;
-$lon2_az = deg2rad ($LON2 * -1);
+$lat1_az = deg2rad($LAT1);
+$lon1_az = deg2rad($LON1 * -1);
+$lat2_az = deg2rad($LAT2);
+$lon2_az = deg2rad($LON2 * -1);
 
 $cosd = sin($lat2_az) * sin($lat1_az) + cos($lat1_az) * cos($lat2_az) * cos($lon1_az - $lon2_az);
-$daz = rad2deg (acos $cosd);
-$cosb = (sin($lat2_az) - sin($lat1_az) * cos (deg2rad($daz))) / (cos($lat1_az) * sin (deg2rad($daz)));
+$daz = rad2deg(acos $cosd);
+$cosb = (sin($lat2_az) - sin($lat1_az) * cos(deg2rad($daz))) / (cos($lat1_az) * sin(deg2rad($daz)));
 
 if ($cosb > 0.999999) {
   $AZ = 0;
@@ -1579,10 +1579,10 @@ elsif ($cosb < -0.999999) {
   $AZ = 180;
 }
 else {
-  $AZ = rad2deg (acos $cosb);
+  $AZ = rad2deg(acos $cosb);
 }
 
-if (sin ($lon2_az - $lon1_az) >= 0) {
+if (sin($lon2_az - $lon1_az) >= 0) {
   $AZSP = $AZ;
   $AZLP = 180 + $AZ;
 }
@@ -1600,7 +1600,7 @@ $AZLP = sprintf "%.2f", $AZLP; # RX to TX - TN
 #
 if ($do_mag eq "yes") {
   $day_of_year = localtime->yday + 1;
-  $dec_date = sprintf "%.2f", $year + ($day_of_year / 365);
+  $dec_date    = sprintf "%.2f", $year + ($day_of_year / 365);
 
   # TX Site
   open(F, ">", "magdec.py") or die "Can't open magdec.py: $!\n";
@@ -1628,7 +1628,6 @@ if ($do_mag eq "yes") {
     if ($AZSP_MN < 0) {
       $AZSP_MN = sprintf "%.2f", $AZSP_MN + 360;
     }
-
   }
 
   $magdec_tx = abs($magdec_tx);
@@ -1660,7 +1659,6 @@ if ($do_mag eq "yes") {
 	if ($AZLP_MN < 0) {
       $AZLP_MN = sprintf "%.2f", $AZLP_MN + 360;
     }
-
   }
 
   $magdec_rx = abs($magdec_rx);
@@ -1708,14 +1706,18 @@ if ($tilt < 0) {
   $tilt_tr = sprintf "+%.2f", abs($tilt);
   $tilt_rt = sprintf "-%.2f", abs($tilt);
   # Determine the inner radius of the coverage area, helping you understand the closer range of the signal.
-  $inner = ($tx_ant_ht_ov_ft / tan(deg2rad($tilt) + deg2rad($tx_ant_bw) / 2)) / 5280;
+  $inner = ($tx_ant_ht_ov_ft / tan(deg2rad(abs($tilt)) + deg2rad($tx_ant_bw) / 2)) / 5280;
   # Calculate the outer radius of the coverage area, providing insight into the maximum reach of your antenna’s signal.
-  $outer = ($tx_ant_ht_ov_ft / tan(deg2rad($tilt) - deg2rad($tx_ant_bw) / 2)) / 5280;
+  $outer = ($tx_ant_ht_ov_ft / tan(deg2rad(abs($tilt)) - deg2rad($tx_ant_bw) / 2)) / 5280;
   $inner = sprintf "%.2f", $inner;
   $outer = sprintf "%.2f", $outer;
 
-  if ($outer <= 0) {
+  if ($outer <= 0 || $outer > $dist_mi) {
     $outer = "Horizon";
+  }
+
+  if ($inner <= 0) {
+    $inner = "Error";
   }
 
 }
@@ -2617,6 +2619,80 @@ if ($tx_ant_gain_dbi == 0 || $tx_ant_gain_dbi <= 6) {
 if ($tx_ant_gain_dbi > 6) {
   $max_ant_pwr    = sprintf "%.2f", 30 - (($tx_ant_gain_dbi - 6) / 3);
   $max_ant_pwr_mw = sprintf "%.2f", 10 ** ($max_ant_pwr / 10);
+}
+
+# FCC Part 74.644/74.636 Max EIRP Check
+#
+# https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.636
+if ($frq_mhz >= 2025 && $frq_mhz <= 2110) {
+  $MAXEIRP = 45; # dBW
+}
+elsif ($frq_mhz >= 2450 && $frq_mhz <= 2484) {
+  $MAXEIRP = 45; # dBW
+}
+elsif ($frq_mhz >= 6875 && $frq_mhz <= 7125) {
+  $MAXEIRP = 55; # dBW
+}
+elsif ($frq_mhz >= 12700 && $frq_mhz <= 13250) {
+  $MAXEIRP = 55; # dBW
+}
+elsif ($frq_mhz >= 17700 && $frq_mhz < 18600) {
+  $MAXEIRP = 55; # dBW
+}
+elsif ($frq_mhz >= 18600 && $frq_mhz <= 18800) {
+  $MAXEIRP = 35; # dBW
+}
+elsif ($frq_mhz > 18800 && $frq_mhz <= 19700) {
+  $MAXEIRP = 55; # dBW
+}
+else {
+  $MAXEIRP = "N/A";
+}
+
+if ($frq_mhz >= 1990 && $frq_mhz <= 7125) {
+  $path_min = 17; # Minimum path length in kilometers
+}
+elsif ($frq_mhz >= 12200 && $frq_mhz <= 13250) {
+  $path_min = 5; # Minimum path length in kilometers
+}
+else {
+  $path_min = "N/A";
+}
+
+if ($path_min eq "N/A") {
+  if ($MAXEIRP eq "N/A") {
+    $fcc_eirp_dbm = "N/A";
+    $fcc_eirp_mw = "N/A";
+  }
+  else {
+    $fcc_eirp_dbm = sprintf "%.2f", $MAXEIRP + 30; # dBW to dBm
+	$fcc_eirp_mw  = sprintf "%.2f", 10 ** (($MAXEIRP + 30) / 10); # dBm to mW
+
+	if ($eirp <= $fcc_eirp_dbm) {
+	  $fcc_check = "(EIRP Pass)";
+	}
+	elsif ($eirp > $fcc_eirp_dbm) {
+      $fcc_check = "(EIRP Fail)";
+	}
+  }
+}
+elsif ($path_min > 0) {
+  if ($MAXEIRP eq "N/A") {
+    $fcc_eirp_dbm = "N/A";
+    $fcc_eirp_mw = "N/A";
+  }
+  else {
+    $fcc_eirp = 30 - 20 * log10($path_min / $dist_km);
+    $fcc_eirp_dbm = sprintf "%.2f", $fcc_eirp + 30;
+    $fcc_eirp_mw  = sprintf "%.2f",  10 ** ($fcc_eirp / 10);
+
+    if ($eirp <= $fcc_eirp_dbm) {
+      $fcc_check = "(EIRP Pass)";
+    }
+    elsif ($eirp > $fcc_eirp_dbm) {
+      $fcc_check = "(EIRP Fail)";
+    }
+  }
 }
 
 ## Calculate Free-Space and ITM Losses
@@ -4121,6 +4197,7 @@ print "<tr><td align=\"right\"><b>Distance to RF Safety Compliance</b></td><td><
 print "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
 print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
+print "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$fcc_eirp_mw</font> mW)&nbsp;&nbsp;$fcc_check</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -4246,7 +4323,7 @@ print "</table><br><br>\n";
 # AAA
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
 print "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"5\"><b>Calculated Outage Objectives &amp; Probabilities</b></font></td></tr>\n";
-print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Free-Space)</i></b></td>\n";
+print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/Free-Space)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
 print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
