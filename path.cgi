@@ -4218,7 +4218,7 @@ if ($do_lulc eq "yes") {
 	print F "set xrange [0.0 to $dist_mi]\n";
 	print F "set encoding utf8\n";
     print F "set term pngcairo enhanced size 2000,1600\n";
-    print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover (2021)}\" font \"Helvetica,30\"\n";
+    print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
     print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
     print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
