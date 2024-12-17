@@ -32,6 +32,7 @@ my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
 my $do_mag     = "yes"; # Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
 my $do_utm     = "yes"; # Requires the installation of Geo::Coordinates::UTM
+my $do_lulc    = "yes"; # Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
 my $DEBUG      = 0;  # 0=leave temp files 1=delete temp file
 
 ## Create a random directory for working files
@@ -4121,6 +4122,112 @@ $upfade = sprintf "%.2f", (10 * log10($dist_mi)) - (0.03 * $dist_mi);
 #
 $time_delay = sprintf "%.2f", 0.7 * ($dist_km / 50) ** 1.3; # nanoseconds
 
+## National Land Cover Map - Experimental
+#
+if ($do_lulc eq "yes") {
+
+  $LULC_LAT1 = abs($LAT1);
+  $LULC_LON1 = abs($LON1);
+
+  # LOL
+  mkdir "lib";
+  system "/bin/cp /usr/splat/tvstudy/lib/ptelev.conf lib/ptelev.conf";
+  system "/bin/cp /usr/splat/tvstudy/lib/ptelev lib/ptelev";
+  system "ln -s /usr/splat/tvstudy/dbase dbase";
+
+  open(F1, ">", "lulc.gp") or die "Can't open lulc.gp: $!\n";
+  open(F2, "<", "profile2.gp") or die "Can't open profile2.gp: $!\n";
+  while (<F2>) {
+	chomp;
+	($dist, $elev) = split;
+	$step_km = $dist * 1.609344;
+
+	if ($step_km == 0) {
+      $step_km = 0.03;
+    }
+
+    chomp($coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $step_km $AZSP`);
+    ($lat, $lon) = split ',', $coord;
+    chomp($land = `lib/ptelev 15 $lat $lon`);
+
+    if ($land eq "Open Water") {
+      $color = "0x486DA2";
+    }
+    elsif ($land eq "Perennial Ice/Snow") {
+      $color = "0xE7EFFC";
+    }
+    elsif ($land eq "Developed, Low Intensity") {
+      $color = "0xDC9881";
+    }
+    elsif ($land eq "Developed, Medium Intensity") {
+      $color = "0xF10100";
+    }
+    elsif ($land eq "Developed, High Intensity") {
+      $color = "0xAB0101";
+    }
+    elsif ($land eq "Developed, Open Space") {
+      $color = "0xE1CDCE";
+    }
+    elsif ($land eq "Barren Land (Rock/Sand/Clay)") {
+      $color = "0xB3AFA4";
+    }
+    elsif ($land eq "Deciduous Forest") {
+      $color = "0x6BA966";
+    }
+    elsif ($land eq "Evergreen Forest") {
+      $color = "0x1D6533";
+    }
+    elsif ($land eq "Mixed Forest") {
+      $color = "0xBDCC93";
+    }
+    elsif ($land eq "Grassland/Herbaceous") {
+      $color = "0xEDECCD";
+    }
+    elsif ($land eq "Shrub/Scrub") {
+      $color = "0xD1BB82";
+    }
+    elsif ($land eq "Pasture/Hay") {
+      $color = "0xDDD83E";
+    }
+    elsif ($land eq "Cultivated Crops") {
+      $color = "0xAE7229";
+    }
+    elsif ($land eq "Woody Wetlands") {
+      $color = "0xBBD7ED";
+    }
+    elsif ($land eq "Emergent Herbaceous Wetland") {
+      $color = "0x71A4C1";
+    }
+    else {
+      $color = "0xE1CDCE"; # developed open space
+    }
+	print F1 "$dist\t$elev\t$color\n";
+  }
+
+  open(F, ">", "splat3.gp") or die "Can't open splat3.gp: $!\n";
+    print F "set clip\n";
+	print F "set tics scale 2, 1\n";
+	print F "set mytics 10\n";
+	print F "set mxtics 20\n";
+	print F "set tics out\n";
+    print F "set border 3\n";
+	# print F "set key below enhanced font \"Helvetica,18\"\n";
+	print F "unset key\n";
+	print F "set grid back xtics ytics mxtics mytics\n";
+	print F "set yrange [($min_elev - 5) to ($ymax + 10)]\n";
+	print F "set xrange [0.0 to $dist_mi]\n";
+	print F "set encoding utf8\n";
+    print F "set term pngcairo enhanced size 2000,1600\n";
+    print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover (2021)}\" font \"Helvetica,30\"\n";
+    print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
+    print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
+    print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
+	print F "set style fill solid\n";
+    print F "set output \"LULCProfile.png\"\n";
+    print F "plot \"lulc.gp\" using 1:2 with lines lt 1 lw 1 linecolor rgb \"brown\", \"lulc.gp\" using 1:2:3  with boxes lc rgb variable\n";
+  close F;
+  &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
+}
 
 ############################################################################################
 ## Print Output HTML
@@ -4140,11 +4247,16 @@ print "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bg
 print "<center>\n";
 print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro2.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro2.png\" height=\"480\" width=\"640\"></a></p>\n";
 
+if ($do_lulc eq "yes") {
+  print "<p><a href=\"tmp/$mon-$mday/$RAN/LULCProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"https://www.mrlc.gov/sites/default/files/NLCDclasses.pdf\"><img src=\"../pics/NLCD_Colour_Classification_Update.jpg\" height=\"480\" width=\"640\"></a></p>\n";
+}
+
 print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro1.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro1.png\" height=\"480\" width=\"640\"></a></p>\n";
 
 if ($do_div eq "yes") {
   print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro1-div.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
+
 print "</center>\n";
 
 

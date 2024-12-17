@@ -864,7 +864,7 @@ print <<EOF;
 
 <p>9.)&nbsp;&nbsp;The Climate Factor, or C-Factor, is a parameter in the Vigants-Barnett model used to predict outage probability.&nbsp;&nbsp;The Vigants-Barnett reliability method allows users to automatically calculate the C-Factor and terrain roughness.</p>
 
-<p>10.)&nbsp;&nbsp;Example standard deviation of the terrain elevations: 20 feet - for smooth and over-water terrain, 50 feet - for average terrain with some roughness, 120 feet - for mountainous or very rough terrain.</p>
+<p>10.)&nbsp;&nbsp;Example standard deviation of the terrain elevations: 29 feet - for smooth and over-water terrain, 50 feet - for average terrain with some roughness, 120 feet - for mountainous or very rough terrain.</p>
 
 <p>11.)&nbsp;&nbsp;Choose a "worst case" scenario just to be safe.</p>
 
