@@ -3,6 +3,7 @@ See notes related to SPLAT!: http://www.gbppr.net/splat/
 See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat/path.html
 
 Requires the installation of pygeomag (Python) if you wish to calculate magnetic delcination: https://github.com/boxpet/pygeomag
+(Install: pip install pygeomag)
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 (Install: sudo cpan Geo::Coordinates::UTM)
