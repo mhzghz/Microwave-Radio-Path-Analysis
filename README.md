@@ -14,6 +14,6 @@ Requires the installation of Geo::Coder::OSM (Perl) if you wish to calculate the
 
 (Install: sudo cpan Geo::Coder::OSM)
 
-Requires USGS Land Use and Land Cover (LULC) data and the "ptelev" utility from the FCC's TVStudy program if you wish to calculate path land cover: https://www.fcc.gov/oet/tvstudy
+Requires National Land Cover Data (NLCD) and the "ptelev" utility from the FCC's TVStudy program if you wish to calculate path land cover: https://www.fcc.gov/oet/tvstudy
 
 Try it out! http://gbppr.ddns.net/path.main.cgi
