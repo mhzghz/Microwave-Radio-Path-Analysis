@@ -2,6 +2,8 @@ See notes related to SPLAT!: http://www.gbppr.net/splat/
 
 See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat/path.html
 
+Requires a slightly modified version of SPLAT! v2.0-alpha.
+
 Requires the installation of pygeomag (Python) if you wish to calculate magnetic delcination: https://github.com/boxpet/pygeomag
 
 (Install: pip install pygeomag)
