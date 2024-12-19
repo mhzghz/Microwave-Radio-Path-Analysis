@@ -85,7 +85,7 @@ print <<EOF;
 <input type="number" name="LAT1_M" min="0" max="59" value="31" step="1">&nbsp;'&nbsp;
 <input type="number" name="LAT1_S" min="0" max="59.99" value="37.00" step="0.01">&nbsp;"</td>
 <td><input type="radio" name="LAT1_val" value="North" checked>North&nbsp;&nbsp;
-<input type="radio" name="LAT1_val" value="South">&nbsp;South&nbsp;&nbsp;(WGS 84)</td>
+<input type="radio" name="LAT1_val" value="South">&nbsp;South&nbsp;&nbsp;(WGS84)</td>
 </tr>
 
 <tr>
@@ -94,7 +94,7 @@ print <<EOF;
 <input type="number" name="LON1_M" min="0" max="59" value="2" step="1">&nbsp;'&nbsp;
 <input type="number" name="LON1_S" min="0" max="59.99" value="35.00" step="0.01">&nbsp;"</td>
 <td><input type="radio" name="LON1_val" value="West" checked>West&nbsp;&nbsp;
-<input type="radio" name="LON1_val" value="East">&nbsp;East&nbsp;&nbsp;(WGS 84)</td>
+<input type="radio" name="LON1_val" value="East">&nbsp;East&nbsp;&nbsp;(WGS84)</td>
 </tr>
 
 <tr>
@@ -134,6 +134,8 @@ print <<EOF;
 <tr>
 <td align="right"><b>External Transmission Line Type</b></td>
 <td><select name="tx_cab">
+<option>Times Microwave LMR-200</option>
+<option>Times Microwave LMR-240</option>
 <option selected>Times Microwave LMR-400</option>
 <option>Times Microwave LMR-400 UltraFlex</option>
 <option>Times Microwave LMR-500</option>
@@ -141,10 +143,24 @@ print <<EOF;
 <option>Times Microwave LMR-900</option>
 <option>Times Microwave LMR-1200</option>
 <option>Times Microwave LMR-1700</option>
+<option>Andrew HELIAX LDF2-50</option>
 <option>Andrew HELIAX LDF4-50A</option>
+<option>Andrew HELIAX LDF4.5-50</option>
 <option>Andrew HELIAX LDF5-50A</option>
 <option>Andrew HELIAX LDF6-50A</option>
 <option>Andrew HELIAX LDF7-50A</option>
+<option>Andrew HELIAX FSJ1-50</option>
+<option>Andrew HELIAX FSJ4-50B</option>
+<option>Andrew HELIAX HT4-50</option>
+<option>Andrew HELIAX HT5-50</option>
+<option>Andrew HELIAX HJ4-50</option>
+<option>Andrew HELIAX HJ5-50</option>
+<option>Andrew HELIAX HJ7-50A</option>
+<option>Andrew HELIAX HJ12-50</option>
+<option>Andrew HELIAX HJ8-50B</option>
+<option>Andrew HELIAX HJ11-50</option>
+<option>Andrew HELIAX HJ9-50</option>
+<option>Andrew EW17</option>
 <option>Belden 9913 (RG-8)</option>
 <option>Belden 8237 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>
@@ -296,7 +312,7 @@ print <<EOF;
 <input type="number" name="LAT2_M" min="0" max="59" value="30" step="1">&nbsp;'&nbsp;
 <input type="number" name="LAT2_S" min="0" max="59.99" value="4.0" step="0.01">&nbsp;"</td>
 <td><input type="radio" name="LAT2_val" value="North" checked>North&nbsp;&nbsp;
-<input type="radio" name="LAT2_val" value="South">&nbsp;South&nbsp;&nbsp;(WGS 84)</td>
+<input type="radio" name="LAT2_val" value="South">&nbsp;South&nbsp;&nbsp;(WGS84)</td>
 </tr>
 
 <tr>

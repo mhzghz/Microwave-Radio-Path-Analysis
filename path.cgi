@@ -461,10 +461,10 @@ $tx_cab_other        =~ tr/0-9.//csd;
 $tx_misc_gain        =~ tr/0-9.//csd;
 
 # Limit characters for plotting
-$project      = sprintf "%.30s", $project;
+$project      = sprintf "%.26s", $project;
 $tx_name      = sprintf "%.15s", $tx_name;
-$tx_ant_notes = sprintf "%.30s", $tx_ant_notes;
-$tx_notes     = sprintf "%.30s", $tx_notes;
+$tx_ant_notes = sprintf "%.20s", $tx_ant_notes;
+$tx_notes     = sprintf "%.20s", $tx_notes;
 
 if (!$tx_name) {
   $tx_name = "TX";
@@ -509,8 +509,8 @@ $rx_div_misc_cab_loss   =~ tr/0-9.//csd;
 
 # Limit characters for plotting
 $rx_name      = sprintf "%.15s", $rx_name;
-$rx_ant_notes = sprintf "%.30s", $rx_ant_notes; 
-$rx_notes     = sprintf "%.30s", $rx_ant_notes;
+$rx_ant_notes = sprintf "%.20s", $rx_ant_notes; 
+$rx_notes     = sprintf "%.20s", $rx_ant_notes;
 
 if (!$rx_name) {
   $rx_name = "RX";
@@ -1148,7 +1148,7 @@ close TX;
 if ($country eq "United States") {
   if ($quality eq "Low / Fast") {
 
-    $qual = "3 Arc-Second Resolution (Standard)";
+    $qual = "SRTMv3 3 Arc-Second Resolution (Standard)";
     $file1 = sprintf "%s/%.f_%.f_%.f_%.f.sdf", $splatdir, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
     $file2 = sprintf "%s/%.f_%.f_%.f_%.f.sdf", $splatdir, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
@@ -1210,7 +1210,7 @@ if ($country eq "United States") {
   }
   elsif ($quality eq "High / Slow") {
 
-    $qual = "1 Arc-Second Resolution (HD)";
+    $qual = "SRTMv3 1 Arc-Second Resolution (HD)";
     $file1 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
     $file2 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
@@ -1280,7 +1280,7 @@ if ($country eq "United States") {
 }
 else {
   # International
-  $qual = "3 Arc-Second Resolution (Standard)";
+  $qual = "SRTMv3 3 Arc-Second Resolution (Standard)";
   if ($do_div eq "yes") {
     system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -imperial -gpsav -kml -d $splatdir >/dev/null 2>&1");
     system("/bin/mv profile.gp profile1.gp");
@@ -1864,7 +1864,7 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set encoding utf8\n";
   print F "set samples 500\n";
   print F "set term pngcairo enhanced size 2000,1600\n";
-  print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name }\" font \"Helvetica,30\"\n";
+  print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\n$qual }\" font \"Helvetica,30\"\n";
   print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
   print F "set x2label \"Frequency: $frq_mhz MHz\t\tAzimuth: $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\"\n";
   print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
@@ -2052,51 +2052,144 @@ $rx_ant_ht_ov_m  = sprintf "%.2f", $rx_ant_ht_m + $rx_elv_m;
 ## Cable Loss per Meter
 #
 sub Cable {
-  undef $loss_per_foot; undef $loss_per_meter;
-  if ($val eq "Times Microwave LMR-400") {
+  undef $loss_per_foot; undef $loss_per_meter; undef $cab_desc;
+  if ($val eq "Times Microwave LMR-200") {
+    $loss_per_foot = (2.8654 + 0.006543 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "3/16\" Foam Dielectric 50-ohm";
+  }
+  elsif ($val eq "Times Microwave LMR-240") {
+    $loss_per_foot = (2.1554 + 0.005048 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1/4\" Foam Dielectric 50-ohm";
+  }
+  elsif ($val eq "Times Microwave LMR-400") {
     $loss_per_foot = ((0.12229 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "3/8\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-400 UltraFlex") {
     $loss_per_foot = ((0.12229 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_foot = $loss_per_foot + ($loss_per_foot * 0.15);
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "3/8\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-500") {
     $loss_per_foot = ((0.09659 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1/2\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-600") {
     $loss_per_foot = ((0.0755 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1/2\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-900") {
     $loss_per_foot = ((0.05177 * sqrt $frq_mhz) + (0.00016 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "5/8\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-1200") {
     $loss_per_foot = ((0.03737 * sqrt $frq_mhz) + (0.00016 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "7/8\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Times Microwave LMR-1700") {
     $loss_per_foot = ((0.02646 * sqrt $frq_mhz) + (0.00016 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1-1/4\" Foam Dielectric 50-ohm";
   }
+  elsif ($val eq "Andrew HELIAX LDF2-50") {
+	if ($frq_mhz <= 13000) {
+      $loss_per_foot = (1.5271 + 0.001232 * $frq_mhz) / 100;
+	  $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "3/8\" Foam Dielectric 50-ohm";
+	}
+    else {
+      $loss_per_foot =  100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+	}
+  } 
+  elsif ($val eq "Andrew HELIAX LDF4.5-50") {
+    $loss_per_foot = (0.5348 + 0.0008228 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "5/8\" Low-Density Foam 50-ohm";
+  } 
   elsif ($val eq "Andrew HELIAX LDF4-50A") {
     $loss_per_foot = ((0.06432 * sqrt $frq_mhz) + (0.00019 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1/2\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Andrew HELIAX LDF5-50A") {
     $loss_per_foot = ((0.03482 * sqrt $frq_mhz) + (0.00015 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "7/8\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Andrew HELIAX LDF6-50A") {
     $loss_per_foot = ((0.02397 * sqrt $frq_mhz) + (0.00014 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1-1/4\" Foam Dielectric 50-ohm";
   }
   elsif ($val eq "Andrew HELIAX LDF7-50A") {
     $loss_per_foot = ((0.01901 * sqrt $frq_mhz) + (0.00014 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc = "1-5/8\" Foam Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX FSJ1-50") {
+	$loss_per_foot = (3.0024 + 0.00236 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1/4\" Flexible Foam Dielectric 50-ohm";
+  } 
+  elsif ($val eq "Andrew HELIAX FSJ4-50B") {
+    $loss_per_foot = (1.3738 + 0.00146 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1/2\" Flexible Foam Dielectric 50-ohm";
+  }
+   elsif ($val eq "Andrew HELIAX HT4-50") {
+    $loss_per_foot = (1.1679 + 0.001518 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1/2\" High-Temp Foam Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HT5-50") {
+    $loss_per_foot = (0.369 + 0.001472 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "7/8\" High-Temp Foam Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ4-50") {
+    $loss_per_foot = (1.0129 + 0.001117 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1/2\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ5-50") {
+    $loss_per_foot = (0.3904 + 0.0006426 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "7/8\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ7-50A") {
+    $loss_per_foot = (0.1582 + 0.0004698 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "1-5/8\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ12-50") {
+    $loss_per_foot = (0.1222 + 0.0004186 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "2-1/4\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ8-50B") {
+    $loss_per_foot = (0.07909 + 0.0004801 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "3\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ11-50") {
+    $loss_per_foot = (0.05303 + 0.0004148 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "4\" Air Dielectric 50-ohm";
+  }
+  elsif ($val eq "Andrew HELIAX HJ9-50") {
+    $loss_per_foot = (0.03655 + 0.0002782 * $frq_mhz) / 100;
+    $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc = "5\" Air Dielectric 50-ohm";
   }
   elsif ($val eq "Belden 9913 (RG-8)") {
     $loss_per_foot = ((0.12050 * sqrt $frq_mhz) + (0.00066 * $frq_mhz)) / 100;
@@ -2142,6 +2235,7 @@ sub Cable {
 &Cable($val = $tx_cab, $val1 = $check1, $val2 = $tx_cab_other);
 
 if ($tx_len_val eq "meters") {
+  $tx_cab_desc       = $cab_desc;
   $tx_cab_loss       = sprintf "%.2f", $tx_len * $loss_per_meter;
   $tx_length_m       = sprintf "%.2f", $tx_len;
   $tx_length_ft      = sprintf "%.2f", $tx_len / 0.3048;
@@ -2151,6 +2245,7 @@ if ($tx_len_val eq "meters") {
   $tx_loss_per_100f  = sprintf "%.2f", $loss_per_foot * 100;
 }
 else {
+  $tx_cab_desc       = $cab_desc;
   $tx_cab_loss       = sprintf "%.2f", $tx_len * $loss_per_foot;
   $tx_length_m       = sprintf "%.2f", $tx_len * 0.3048; # ft to m
   $tx_length_ft      = sprintf "%.2f", $tx_len;
@@ -2190,6 +2285,7 @@ $tx_misc_gain        = sprintf "%.2f", $tx_misc_gain;
 &Cable($val = $rx_cab, $val1 = $check2, $val2 = $rx_cab_other);
 
 if ($rx_len_val eq "meters") {
+  $rx_cab_desc       = $cab_desc;
   $rx_cab_loss       = sprintf "%.2f", $rx_len * $loss_per_meter;
   $rx_length_m       = sprintf "%.2f", $rx_len;
   $rx_length_ft      = sprintf "%.2f", $rx_len / 0.3048; # m to ft
@@ -2199,6 +2295,7 @@ if ($rx_len_val eq "meters") {
   $rx_loss_per_100f  = sprintf "%.2f", $loss_per_foot * 100;
 }
 else {
+  $rx_cab_desc       = $cab_desc;
   $rx_cab_loss       = sprintf "%.2f", $rx_len * $loss_per_foot;
   $rx_length_m       = sprintf "%.2f", $rx_len * 0.3048; # ft to m
   $rx_length_ft      = sprintf "%.2f", $rx_len;
@@ -3940,7 +4037,7 @@ $std2   = sprintf "%.2f", ((($std2 * 100) + 0.5) / 100);
 
 ## Grazing Angle
 #
-$ae   = 6378 * $k; # Earth radius with k-factor, km
+$ae   = 6378.137 * $k; # Earth radius with k-factor, km
 $gr_m = ($dist_km ** 2) / (4 * $ae * (($tx_ant_ht_ov_m / 1000) + ($rx_ant_ht_ov_m / 1000)));
 $gr_c = abs($tx_ant_ht_ov_m - $rx_ant_ht_ov_m) / ($tx_ant_ht_ov_m + $rx_ant_ht_ov_m);        
 
@@ -3952,6 +4049,40 @@ $graze    = (($tx_ant_ht_ov_m + $rx_ant_ht_ov_m) / $dist_km) * ((1 - $gr_m) * (1
 $graze_mr = sprintf "%.2f", $graze; # millirad
 $graze_dg = sprintf "%.2f", $graze * 0.0572958; # millirad to degree
 
+## Path Reflection Point
+#
+if ($k_str eq "Infinity") {
+  if ($tx_ant_ht_ft >= $rx_ant_ht_ft) {
+    $grazing_dis    = ($rx_ant_ht_ft / ($rx_ant_ht_ft + $tx_ant_ht_ft)) * $dist_mi;
+	$grazing_k      = "Not Applicable";
+    $grazing_dis_mi = sprintf "%.2f", $grazing_dis;
+    $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
+  }
+  elsif ($rx_ant_ht_ft > $tx_ant_ht_ft) {
+    $grazing_dis    = ($tx_ant_ht_ft / ($tx_ant_ht_ft + $rx_ant_ht_ft)) * $dist_mi;
+	$grazing_k      = "Not Applicable";
+    $grazing_dis_mi = sprintf "%.2f", $grazing_dis;
+    $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
+  }
+}
+else {
+  if ($tx_ant_ht_ft >= $rx_ant_ht_ft) {
+    $X = $rx_ant_ht_ft / ($dist_mi ** 2);
+    $Y = $rx_ant_ht_ft / ($dist_mi ** 2);
+    $grazing_k      = sprintf "%.2f", 1 / (1.5 * ($X + $Y + 2 * sqrt($X * $Y)));
+    $grazing_dis    = (1 / (1 + sqrt($Y / $X))) * $dist_mi;
+    $grazing_dis_mi = sprintf "%.2f", $grazing_dis;
+    $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
+  }
+  elsif ($rx_ant_ht_ft > $tx_ant_ht_ft) {
+    $X = $tx_ant_ht_ft / ($dist_mi ** 2);
+    $Y = $rx_ant_ht_ft / ($dist_mi ** 2);
+    $grazing_k      = sprintf "%.2f", 1 / (1.5 * ($X + $Y + 2 * sqrt($X * $Y)));
+    $grazing_dis    = (1 / (1 + sqrt($Y / $X))) * $dist_mi;
+    $grazing_dis_mi = sprintf "%.2f", $grazing_dis;
+    $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
+  }
+}
 ## Ideal Fade Margin
 #
 $min_fade = log10(((0.9995 - 1) / (-2.5 * 2 * $cli_vig * $frq_ghz * ($dist_mi ** 3) * (10 ** -6)))) * -10;
@@ -4199,7 +4330,7 @@ if ($do_lulc eq "yes") {
       $color = "0x71A4C1";
     }
     else {
-      $color = "0xE1CDCE"; # developed open space
+      $color = "0xE1CDCE"; # Developed, Open Space
     }
 	print F1 "$dist\t$elev\t$color\n";
   }
@@ -4211,8 +4342,7 @@ if ($do_lulc eq "yes") {
 	print F "set mxtics 20\n";
 	print F "set tics out\n";
     print F "set border 3\n";
-	# print F "set key below enhanced font \"Helvetica,18\"\n";
-	print F "unset key\n";
+	print F "set key below enhanced font \"Helvetica,18\"\n";
 	print F "set grid back xtics ytics mxtics mytics\n";
 	print F "set yrange [($min_elev - 5) to ($ymax + 10)]\n";
 	print F "set xrange [0.0 to $dist_mi]\n";
@@ -4220,11 +4350,35 @@ if ($do_lulc eq "yes") {
     print F "set term pngcairo enhanced size 2000,1600\n";
     print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
+	print F "set x2label \"Frequency: $frq_mhz MHz\t\tAzimuth: $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\"\n";
     print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
     print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
 	print F "set style fill solid\n";
+    print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
+    print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
+
+    $G = sprintf "%.1f", $grazing_dis_mi;
+    $G =~ s/\./\\./;
+    $G = $G . "[0-9]";
+    chomp($GV = `/usr/bin/grep '$G' profile2.gp | head -n 1`);
+    ($gd, $ge) = split ' ', $GV;
+   
+	print F "set arrow from 0,$tx_ant_ht_ov_ft to $grazing_dis_mi,$ge nohead lw 1 lt 0 dashtype 3\n";
+	print F "set arrow from $grazing_dis_mi,$ge to $dist_mi,$rx_ant_ht_ov_ft nohead lw 1 lt 0 dashtype 3\n";
+    print F "set arrow from $grazing_dis_mi,$min_elev to $grazing_dis_mi,$ge front lw 6\n";
+	print F "set label \"     Reflection Point\" front at $grazing_dis_mi,$ge left rotate by 90\n";
+    print F "set label \"     $tx_ant_ht_ov_ft\" left front at 0,$tx_ant_ht_ov_ft\n";
+    print F "set label \"Pri. $rx_ant_ht_ov_ft     \" right front at $dist_mi,$rx_ant_ht_ov_ft\n";
+    print F "set label 'Lat: $LAT1_D\\U+00B0 $LAT1_M\\U+0027 $LAT1_S\" $LAT1_gnu' left at 0,graph 1.07\n";
+    print F "set label 'Lon: $LON1_D\\U+00B0 $LON1_M\\U+0027 $LON1_S\" $LON1_gnu' left at 0,graph 1.05\n";
+    print F "set label 'Gnd Elv: $tx_elv_ft ft' left at 0,graph 1.03\n";
+    print F "set label 'Ant Hgt: $tx_ant_ht_ft ft' left at 0,graph 1.01\n";
+    print F "set label 'Lat: $LAT2_D\\U+00B0 $LAT2_M\\U+0027 $LAT2_S\" $LAT2_gnu' right at $dist_mi,graph 1.07\n";
+    print F "set label 'Lon: $LON2_D\\U+00B0 $LON2_M\\U+0027 $LON2_S\" $LON2_gnu' right at $dist_mi,graph 1.05\n";
+    print F "set label 'Gnd Elv: $rx_elv_ft ft' right at $dist_mi,graph 1.03\n";
+    print F "set label 'Ant Hgt: $rx_ant_ht_ft ft' right at $dist_mi,graph 1.01\n";
     print F "set output \"LULCProfile.png\"\n";
-    print F "plot \"lulc.gp\" using 1:2 with lines lt 1 lw 1 linecolor rgb \"brown\", \"lulc.gp\" using 1:2:3  with boxes lc rgb variable\n";
+	print F "plot \"lulc.gp\" using 1:2:3 title \"Land Usage Terrain Profile\\nwith $k_str K-Factor\" with boxes lc rgb variable, \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\"\n";
   close F;
   &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
 }
@@ -4242,8 +4396,6 @@ print "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
 print "<font face=\"Helvetica\">\n";
 print "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bgcolor=\"#7EBDE5\"><font size=\"6\"><b>Microwave Radio Path Analysis Results</b></font></td></tr></table></center>\n";
 
-
-
 print "<center>\n";
 print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro2.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro2.png\" height=\"480\" width=\"640\"></a></p>\n";
 
@@ -4259,8 +4411,6 @@ if ($do_div eq "yes") {
 
 print "</center>\n";
 
-
-
 print "<br><br><center>\n";
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
 print "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"5\"><b>Path Profile Report: $project</b></font></td></tr>\n";
@@ -4268,8 +4418,8 @@ print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Site Equipment Notes</b></td><td><font color=\"blue\">$tx_notes</font></td><td><font color=\"blue\">$rx_notes</font></td></tr>\n";
-print "<tr><td align=\"right\"><b>Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
+print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
+print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font></td><td><font color=\"blue\">$easting_rx</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font></td><td><font color=\"blue\">$northing_rx</font></td></tr>\n";
@@ -4279,7 +4429,7 @@ print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><fon
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/True_north\">True North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP</font>&deg; to RX</td><td><font color=\"blue\">$AZLP</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/North_magnetic_pole\">Magnetic North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP_MN</font>&deg; to RX</td><td><font color=\"blue\">$AZLP_MN</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Magnetic_declination\">Magnetic Declination</a></b></td><td><font color=\"blue\">$magdec_tx</font>&deg; $magdir_tx</td><td><font color=\"blue\">$magdec_rx</font>&deg; $magdir_rx</td></tr>\n";
-print "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab</font></td><td><font color=\"blue\">$rx_cab</font></td></tr>\n";
+print "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab<br>$tx_cab_desc</font></td><td><font color=\"blue\">$rx_cab<br>$rx_cab_desc</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Length</b></td><td><font color=\"blue\">$tx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_length_m</font> meters)</td><td><font color=\"blue\">$rx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_length_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_100m</font> dB/100 meters)</td><td><font color=\"blue\">$rx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_100m</font> dB/100 meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_foot</font> dB/foot&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_meter</font> dB/meter)</td><td><font color=\"blue\">$rx_loss_per_foot</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_meter</font> dB/meter)</td></tr>\n";
@@ -4293,7 +4443,6 @@ print "<tr><td align=\"right\"><b>Antenna Gain</b></td><td><font color=\"blue\">
 print "<tr><td align=\"right\"><b>Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_tr</font>&deg;</td><td><font color=\"blue\">$tilt_rt</font>&deg;</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna (Parabolic) 3 dB Beamwidth</b></td><td><font color=\"blue\">$tx_ant_bw</font>&deg;</td><td><font color=\"blue\">$rx_ant_bw</font>&deg;</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Coverage 3 dB Radius</b></td><td>Inner: <font color=\"blue\">$inner</font> miles&nbsp;&nbsp;&nbsp;&nbsp;Outer: <font color=\"blue\">$outer</font> miles</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>Average Grazing Angle</b></td><td><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td><td></td></tr>\n";
 print "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$frq_ghz</font> GHz&nbsp;&nbsp;(<font color=\"blue\">$frq_mhz</font> MHz)</td></tr>\n";
 print "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td></tr>\n";
 print "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td></tr>\n";
@@ -4324,9 +4473,11 @@ if ($check3 eq "no") {
 }
 
 if ($check3 eq "yes") {
-  print "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;($k_val)&nbsp;&nbsp;&nbsp;&nbsp;(Local Elevation: <font color=\"blue\">$k_ht_ft</font> feett / <font color=\"blue\">$k_ht_m</font> m)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;($k_val)&nbsp;&nbsp;&nbsp;&nbsp;(Local Elevation: <font color=\"blue\">$k_ht_ft</font> feet / <font color=\"blue\">$k_ht_m</font> m)</td></tr>\n";
 }
 
+print "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
@@ -4357,7 +4508,6 @@ print "<tr><td align=\"right\"><b>Path Maximum Elevation</b></td><td align=\"cen
 print "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission\">SRTMv3</a> Terrain Mode</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$qual</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
@@ -4391,9 +4541,9 @@ print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Receiver Threshold</b></td><td></td><td><font color=\"blue\">$BER_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$BER_uvolt</font> &micro;V)&nbsp;&nbsp;&nbsp;&nbsp;($BER_crit)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Dispersive Fade Margin</b></td><td><td><font color=\"blue\">$dfm_fs</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>External Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$eifm_fs</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Adjacent Channel Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$aifm_fs</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Dispersive Fade Margin</b></td><td>&nbsp;<td><font color=\"blue\">$dfm_fs</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>External Interference Fade Margin</b></td><td>&nbsp;</td><td><font color=\"blue\">$eifm_fs</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Adjacent Channel Interference Fade Margin</b></td><td>&nbsp;</td><td><font color=\"blue\">$aifm_fs</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Minimum Composite Fade Margin for This Climate</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_fade</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Potential Upfade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
@@ -4480,7 +4630,7 @@ print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b><
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Hybrid Diversity (Vigants/ITWOMv3)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-print "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td></td></tr>\n";
+print "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td>&nbsp;</td></tr>\n";
 print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td></td></tr>\n";
 print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td></td></tr>\n";
 print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td></td></tr>\n";
@@ -4637,13 +4787,366 @@ print "</center></font></body></html>\n";
 
 ## Print File HTML
 #
-open(F, ">", "index.html") or die "Can't open index.html: $!\n" ;
+open(F, ">", "index1.html") or die "Can't open index1.html: $!\n" ;
+print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+print F "<html><head>\n";
+print F "<title>Microwave Radio Path Analysis Results</title>\n";
+print F "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+print F "<font face=\"Helvetica\">\n";
+print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bgcolor=\"#7EBDE5\"><font size=\"6\"><b>Microwave Radio Path Analysis Results</b></font></td></tr></table></center>\n";
+print F "<center>\n";
+print F "<p><img src=\"TerrainProfile.png\" height=\"480\" width=\"640\"></p>\n";
+print F "<p><img src=\"ElevPro2.png\" height=\"480\" width=\"640\"></p>\n";
+
+if ($do_lulc eq "yes") {
+  print F "<p><img src=\"LULCProfile.png\" height=\"480\" width=\"640\">\n";
+  print F "<p><img src=\"../../../../pics/NLCD_Colour_Classification_Update.jpg\" height=\"300\"></p>\n";
+}
+
+print F "<p><img src=\"PathProfile1.png\" height=\"480\" width=\"640\">\n";
+print F "<p><img src=\"ElevPro1.png\" height=\"480\" width=\"640\"></p>\n";
+
+if ($do_div eq "yes") {
+  print F "<p><img src=\"PathProfile1-div.png\" height=\"480\" width=\"640\">\n";
+  print F "<p><img src=\"ElevPro1-div.png\" height=\"480\" width=\"640\"></p>\n";
+}
+
+print F "</center></font></body></html>\n";
+
+open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
+  print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+  print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Path Profile Report: $project</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Site Equipment Notes</b></td><td><font color=\"blue\">$tx_notes</font></td><td><font color=\"blue\">$rx_notes</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font></td><td><font color=\"blue\">$easting_rx</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font></td><td><font color=\"blue\">$northing_rx</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/True_north\">True North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP</font>&deg; to RX</td><td><font color=\"blue\">$AZLP</font>&deg; to TX</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/North_magnetic_pole\">Magnetic North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP_MN</font>&deg; to RX</td><td><font color=\"blue\">$AZLP_MN</font>&deg; to TX</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Magnetic_declination\">Magnetic Declination</a></b></td><td><font color=\"blue\">$magdec_tx</font>&deg; $magdir_tx</td><td><font color=\"blue\">$magdec_rx</font>&deg; $magdir_rx</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab<br>$tx_cab_desc</font></td><td><font color=\"blue\">$rx_cab<br>$rx_cab_desc</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Length</b></td><td><font color=\"blue\">$tx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_length_m</font> meters)</td><td><font color=\"blue\">$rx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_length_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_100m</font> dB/100 meters)</td><td><font color=\"blue\">$rx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_100m</font> dB/100 meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_foot</font> dB/foot&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_meter</font> dB/meter)</td><td><font color=\"blue\">$rx_loss_per_foot</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_meter</font> dB/meter)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Calculated Transmission Line Loss</b></td><td><font color=\"blue\">$tx_cab_loss</font> dB</td><td><font color=\"blue\">$rx_cab_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Efficiency</b></td><td><font color=\"$tx_eff_color\">$tx_eff</font>%&nbsp;&nbsp;($tx_eff_message)</td><td><font color=\"$rx_eff_color\">$rx_eff</font>%&nbsp;&nbsp;($rx_eff_message)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Miscellaneous Loss</b></td><td><font color=\"blue\">$tx_misc_cab_loss</font> dB</td><td><font color=\"blue\">$rx_misc_cab_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total Transmission Line Loss</b></td><td><font color=\"blue\">$tx_total_cable_loss</font> dB</td><td><font color=\"blue\">$rx_total_cable_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Miscellaneous Gain</b></td><td><font color=\"blue\">$tx_misc_gain</font> dB</td><td><font color=\"blue\">$rx_misc_gain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Model / Notes</b></td><td><font color=\"blue\">$tx_ant_notes</font></td><td><font color=\"blue\">$rx_ant_notes</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Gain</b></td><td><font color=\"blue\">$tx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$tx_ant_gain_radome</font> dB)</td><td><font color=\"blue\">$rx_ant_gain_dbi</font> dBi&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$rx_ant_gain_radome</font> dB)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_tr</font>&deg;</td><td><font color=\"blue\">$tilt_rt</font>&deg;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna (Parabolic) 3 dB Beamwidth</b></td><td><font color=\"blue\">$tx_ant_bw</font>&deg;</td><td><font color=\"blue\">$rx_ant_bw</font>&deg;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Coverage 3 dB Radius</b></td><td>Inner: <font color=\"blue\">$inner</font> miles&nbsp;&nbsp;&nbsp;&nbsp;Outer: <font color=\"blue\">$outer</font> miles</td><td></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$frq_ghz</font> GHz&nbsp;&nbsp;(<font color=\"blue\">$frq_mhz</font> MHz)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
+  print F "</table><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Transmitter Site RF Safety</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>General</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Occupational</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Maximum Permissible Exposure</b></td><td><font color=\"blue\">$std1</font> mW/cm<sup>2</sup></td><td><font color=\"blue\">$std2</font> mW/cm<sup>2</sup></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Distance to RF Safety Compliance</b></td><td><font color=\"blue\">$dx1_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx1_m</font> meters)</td><td><font color=\"blue\">$dx2_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx2_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;$fcc_check</td></tr>\n";
+  print F "</table><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Terrain &amp; Atmospheric Conditions</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\" colspan=\"3\"><b><i>Specifications</i></b></td><tr>\n";
+  if ($check3 eq "no") {
+    print F "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;(<font color=\"blue\">$k_dec</font> - $k_val)</td></tr>\n";
+  }
+  if ($check3 eq "yes") {
+    print F "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;($k_val)&nbsp;&nbsp;&nbsp;&nbsp;(Local Elevation: <font color=\"blue\">$k_ht_ft</font> feet / <font color=\"blue\">$k_ht_m</font> m)</td></tr>\n";
+  }
+  print F "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Atmospheric Pressure (Sea Level Corrected)</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Saturation Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$es</font> millibars</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Partial Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$vapor_p</font> millibars</td></tr>\n";
+  printf F "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">%.f</font></td></tr>\n", $diecon;
+  printf F "<tr><td align=\"right\"><b>Ground Conductivity</b></td><td colspan=\"2\"><font color=\"blue\">%.3f</font> Siemens/meter</td></tr>\n", $earcon;
+  print F "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\"><font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($cli_val)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Longley-Rice Climate Type</b></td><td colspan=\"2\"><font color=\"blue\">$climate</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Crane Rain Region</b></td><td colspan=\"2\"><font color=\"blue\">$region</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Local Area Humidity Type</b></td><td colspan=\"2\"><font color=\"blue\">$rough_hum</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Index of Surface Refraction</b></td><td colspan=\"2\"><font color=\"blue\">$nunits</font> N-units (parts per million)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Antenna Polarization</b></td><td colspan=\"2\"><font color=\"blue\">$polar</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Longley-Rice Situation Variability</b></td><td colspan=\"2\"><font color=\"blue\">$sit</font>% Confidence</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Longley-Rice Time Variability</b></td><td colspan=\"2\"><font color=\"blue\">$time</font>% Reliability</td></tr>\n";
+  print F "</table><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Terrain Plotting Parameters</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Distance to the Radio Horizon</b></td><td><font color=\"blue\">$tx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$tx_rad_hor_km</font> km)</td><td><font color=\"blue\">$rx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rx_rad_hor_km</font> km)</tr>\n";
+  print F "<tr><td align=\"right\"><b>Path Minimum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$min_elev_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Path Average Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$avg_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$avg_ht_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Path Maximum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_elev_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
+  print F "</table><br><br><br><br><br><br><br><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Free-Space, ITM, Atmospheric, Rain, Misc. Losses</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Temperate Climate Foliage Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$foli_ft</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$foli_m</font> dB/meter)&nbsp;&nbsp;(Dense, Dry, In-Leaf)</td></tr>\n";
+  print F "<tr><td align=\"right\">(Rain Rate: <font color=\"blue\">$rate</font> mm/hr)&nbsp;&nbsp;<b>Crane Rain Model Attenuation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$crane_rain_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$crane_rain_att_km</font> dB/km)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>NASA Simplified Rain Model Attenuation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$nasa_rain_att_total</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Effective Rain Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rain_eff_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rain_eff_km</font> km)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
+  print F "</table><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Calculated Fade Margins</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Receiver Threshold</b></td><td></td><td><font color=\"blue\">$BER_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$BER_uvolt</font> &micro;V)&nbsp;&nbsp;&nbsp;&nbsp;($BER_crit)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Dispersive Fade Margin</b></td><td><td><font color=\"blue\">$dfm_fs</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>External Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$eifm_fs</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Adjacent Channel Interference Fade Margin</b></td><td></td><td><font color=\"blue\">$aifm_fs</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Minimum Composite Fade Margin for This Climate</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_fade</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Upfade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Unfaded Values</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$tfm_itm_color\">$tfm_itm</font> dB</td><td><font color=\"$tfm_itm_color_rain\">$tfm_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Received Signal Level</b></td><td><font color=\"blue\">$rx_div_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_div_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$div_tfm_color\">$div_tfm_itm</font> dB</td><td><font color=\"$div_tfm_color_rain\">$div_tfm_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Free-Space Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_color\">$cmp_fs</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_rain_color\">$cmp_fs_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
+  print F "</table><br><br><br><br><br><br><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"4\"><b>Vertical Space Diversity Antenna Parameters</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX-DIV)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>User Supplied Spacing for Diversity Antenna</b></td><td><font color=\"blue\">$div_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_m</font> meters)&nbsp;&nbsp;&nbsp;&nbsp;$div_ft_check</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Adjusted Spacing for Diversity Antenna</b></td><td><font color=\"blue\">$div_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_calc_m</font> meters)&nbsp;&nbsp;&nbsp;&nbsp;(Odd Multiple 1/2 wav.)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Calculated Ideal Spacing for Diversity Antenna</b></td><td><font color=\"blue\">$div_space_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_space_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Diversity Antenna Height (AGL)</b></td><td><font color=\"blue\">$div_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_ant_ht_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Overall Diversity Receiver Antenna Height (AMSL)</b></td><td><font color=\"blue\">$div_rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$div_rx_ant_ht_ov_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Diversity Antenna Gain</b></td><td><font color=\"blue\">$div_ant_dbi</font> dBi&nbsp;&nbsp;(<font color=\"blue\">$div_ant_dbd</font> dBd)&nbsp;&nbsp;(Radome Loss: <font color=\"blue\">$rx_div_ant_gain_radome</font> dB)&nbsp;&nbsp;$div_gain_check</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Diversity Antenna Mechanical Tilt</b></td><td><font color=\"blue\">$tilt_rtd</font>&deg; to TX</td></tr>\n";
+  print F "</table><br><br>\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"4\"><b>Target Outage Objectives &amp; Probabilities</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Outage Objective</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Reliability</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Required Composite Fade Margin</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Bell System Short-Haul</b></td><td><font color=\"blue\">$obj_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj_nodiv_fs_cfm</font> dB</td></tr>\n";   
+  print F "<tr><td align=\"right\"><b>One-Way Bell System Long-Haul</b></td><td><font color=\"blue\">$obj1_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj1_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj1_nodiv_fs_cfm</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way ITU-R High-Grade</b></td><td><font color=\"blue\">$obj2_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj2_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj2_nodiv_fs_cfm</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Short-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Long-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way ITU-R High-Grade</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "</table><br><br></font></body></html>\n";
+close F;
+
+open(F, ">", "index3.html") or die "Can't open index3.html: $!\n" ;
+  print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+  print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"5\"><b>Calculated Outage Objectives &amp; Probabilities</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/Free-Space)</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_fs_per</font>%</td><td><font color=\"blue\">$SES_nodiv_fs_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_fs_yr</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val</td><td><font color=\"blue\">$worst_nodiv_fs_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade_fs</font> $worst_amp_fade_fs_val</td><td><font color=\"blue\">$worst_amp_fade_fs_rain</font> $worst_amp_fade_fs_val</td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_itm_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_itm_per</font>%</td><td><font color=\"blue\">$SES_nodiv_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_itm_yr</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val</td><td><font color=\"blue\">$worst_nodiv_itm_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade</font> $worst_amp_fade_val</td><td><font color=\"blue\">$worst_amp_fade_rain</font> $worst_amp_fade_rain_val</td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity Improvement Factor</b></td><td><font color=\"$Isd_color\">$Isd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db</font> dB)&nbsp;&nbsp;&nbsp;&nbsp;$Isd_message_itm</td><td><font color=\"$Isd_color_rain\">$Isd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db_rain</font> dB)&nbsp;&nbsp;&nbsp;&nbsp;$Isd_message_itm_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_div_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_div_itm_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_div_itm_per</font>%</td><td><font color=\"blue\">$SES_div_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_div_itm_yr</font>&nbsp;&nbsp;$worst_div_itm_yr_val</td><td><font color=\"blue\">$worst_div_itm_yr_rain</font>&nbsp;&nbsp;$worst_div_itm_yr_val_rain</td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Frequency Diversity (Vigants/ITWOMv3)</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<tr><td align=\"right\"><b>Diversity Frequency</b></td><td colspan=\"2\"><font color=\"blue\">$frq_ghz_div</font> GHz&nbsp;&nbsp;&nbsp;&nbsp;(&Delta;F: <font color=\"blue\">$df_mhz</font> MHz)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Frequency Diversity Improvement Factor</b></td><td><font color=\"$Ifd_color\">$Ifd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm</td><td><font color=\"$Ifd_color_rain\">$Ifd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_frq_div_yr_itm</font> SES/year</td><td><font color=\"blue\">$SES_frq_div_yr_itm_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_frq_div_itm_per</font>%</td><td><font color=\"blue\">$SES_frq_div_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_frq_div_mo_itm</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val</td><td><font color=\"blue\">$worst_frq_div_mo_itm_rain</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val_rain</td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Hybrid Diversity (Vigants/ITWOMv3)</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td>&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td>&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td>&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td>&nbsp;</td></tr>\n";
+  print F "</table><br><br></font></body></html>\n";
+close F;
+
+open(F, ">", "index4.html") or die "Can't open index4.html: $!\n" ;
+  print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+  print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Terrain Analysis Reports</b></font></td></tr></table></center><br>\n";
+  print F "<pre><font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+
+  open(F1, "<", "$tx_name-site_report.txt") or die "Can't open file $tx_name-site_report.txt: $!\n";
+    while (<F1>) {
+      chomp;
+      print F "$_\n";
+    }
+  close F1;
+
+  print F "\n<font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+
+  open(F1, "<", "$rx_name-site_report.txt") or die "Can't open file $rx_name-site_report.txt: $!\n";
+    while (<F1>) {
+      chomp;
+      print F "$_\n";
+   }
+  close F1;
+
+  if ($do_div eq "yes") {
+    print F "<font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+
+    open(F1, "<", "$rx_div_name-site_report.txt") or die "Can't open file $rx_div_name-site_report.txt: $!\n";
+      while (<F1>) {
+        chomp;
+        print F "$_\n";
+      }
+    close F1;
+  }
+
+  print F "\n<font color=\"maroon\"><b>SPLAT! Path Profile Calculations</b></font>\n\n";
+
+  $found = 0;
+  open(F1, "<", "$rx_name-to-$tx_name.txt") or die "Can't open file $rx_name-to-$tx_name.txt: $!\n";
+    while ($line = <F1>) {
+      chomp $line;
+      if ($line =~ /Site Name/) {
+        $found = 1;
+      }
+      if ($found) {
+        print F "$line\n";
+      }
+    }
+  close F1;
+
+  if ($do_div eq "yes") {
+    print F "\n<font color=\"maroon\"><b>SPLAT! Path Profile Calculations</b></font>\n\n";
+
+    $found = 0;
+    open(F1, "<", "$rx_div_name-to-$tx_name.txt") or die "Can't open file $rx_div_name-to-$tx_name.txt: $!\n";
+      while ($line = <F1>) {
+        chomp $line;
+        if ($line =~ /Site Name/) {
+          $found = 1;
+        }
+        if ($found) {
+          print F "$line\n";
+        }
+      }
+    close F1;
+  }
+
+  print F "\n<font color=\"maroon\"><b>SPLAT! Path Profile Calculations</b></font>\n\n";
+
+  $found = 0;
+  open(F1, "<", "$tx_name-to-$rx_name.txt") or die "Can't open file $tx_name-to-$rx_name.txt: $!\n";
+    while ($line = <F1>) {
+      chomp $line;
+      if ($line =~ /Site Name/) {
+        $found = 1;
+      }
+      if ($found) {
+        print F "$line\n";
+      }
+    }
+  close F1;
+
+  print F "</pre></body></html>\n"; 
+close F;
+
+open(F, ">", "index5.html") or die "Can't open index5.html: $!\n" ;
+  print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+  print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<center>\n";
+  print F "<p><img src=\"TopoMap.png\" height=\"480\" width=\"640\"><br><b>General Coverage Topographical Map<br>$country ($city, $state)</b></p>\n";
+  if ($do_div eq "no") {
+    print F "<p><img src=\"LOSMap.png\" height=\"480\" width=\"640\"><br><b>Approximate Line-of Sight Radio Coverage with a $tx_ant_ht_ft ft Receive Antenna Height<br><font color=\"#00FF00\">$tx_name</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#00FFFF\">$rx_name </font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#FFFF00\">$tx_name+$rx_name</font></b></p>\n";
+  }
+  elsif ($do_div eq "yes") {
+  print F "<p><img src=\"LOSMap.png\" height=\"480\" width=\"640\"><br><b>Approximate Line-of Sight Radio Coverage with a $tx_ant_ht_ft ft Receive Antenna Height<br><font color=\"#00FF00\">$tx_name</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#00FFFF\">$rx_name </font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#FFFF00\">$tx_name+$rx_name</font></b></p>\n";
+  print F "<p><img src=\"LOSMap-div.png\" height=\"480\" width=\"640\"><br><b>Approximate Line-of Sight Radio Coverage with a $tx_ant_ht_ft ft Receive Antenna Height<br><font color=\"#00FF00\">$tx_name</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#00FFFF\">$rx_div_name </font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#FFFF00\">$tx_name+$rx_div_name</font></b></p>\n";
+  }
+  print F "<p><img src=\"LossMap1.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $tx_name</b></p>\n";
+  if ($do_div eq "no") {
+    print F "<p><img src=\"LossMap2.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_name</b></p>\n";
+  }
+  elsif ($do_div eq "yes") {
+    print F "<p><img src=\"LossMap2.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_name</b></p>\n";
+    print F "<p><img src=\"LossMap-div.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_div_name</b></p>\n";
+  }
+  print F "<br><br><font size=\"-1\"><a href=\"http://www.gbppr.net\">GBPPR RadLab</a> $ver</font><br><font color=\"red\"><b>EXPERIMENTAL</b></font>\n";
+  print F "<br><br><font size=\"-1\">These calculations are only estimates based on the provided data.<br>There is no guarantee that a microwave link is possible, even if it \"looks\" O.K.<br>This is mostly just for fun and I have no idea if it's accurate.</font>\n";
+  print F "</center></font></body></html>\n";
 close F;
 
 ## Make PDF output
 #
 $ENV{HTMLDOC_NOCGI}=1;
-&System($args = "$htmldoc --links --header ... --linkcolor blue --linkstyle plain --left 0.25in --footer ..1 --quiet --webpage -f $outpdf index.html");
+&System($args = "$htmldoc --links --header ... --linkcolor blue --linkstyle plain --left 0.25in --footer ..1 --quiet --webpage -f $outpdf index1.html index2.html index3.html index4.html index5.html");
 
 ## Done
 #
