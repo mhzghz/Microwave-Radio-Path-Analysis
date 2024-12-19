@@ -54,6 +54,14 @@ mkdir "tmp/$mon-$mday";
 mkdir "tmp/$mon-$mday/$RAN";
 chdir "tmp/$mon-$mday/$RAN";
 
+if ($do_lulc eq "yes") {
+  # LOL
+  mkdir "lib";
+  system "/bin/cp /usr/splat/tvstudy/lib/ptelev.conf lib/ptelev.conf";
+  system "/bin/cp /usr/splat/tvstudy/lib/ptelev lib/ptelev";
+  system "ln -s /usr/splat/tvstudy/dbase dbase";
+}
+
 ## Print MIME
 #
 print "content-type:text/html\n\n";
@@ -2106,7 +2114,7 @@ sub Cable {
       $cab_desc = "3/8\" Foam Dielectric 50-ohm";
 	}
     else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
 	}
@@ -2118,7 +2126,7 @@ sub Cable {
       $cab_desc = "5/8\" Low-Density Foam 50-ohm";
     }
 	else {
-	  $loss_per_foot =  10;
+	  $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2130,7 +2138,7 @@ sub Cable {
 	  $cab_desc = "1/2\" Foam Dielectric 50-ohm";
 	}
 	else {
-	  $loss_per_foot =  10;
+	  $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2142,9 +2150,9 @@ sub Cable {
   	  $cab_desc = "7/8\" Foam Dielectric 50-ohm";
     }
     else {
-      $loss_per_foot =  10;
+	  $loss_per_foot = ((0.03482 * sqrt $frq_mhz) + (0.00015 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc = "<font color=\"red\">Exceeds Frequency Limit</font>";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF6-50A") {
@@ -2154,7 +2162,7 @@ sub Cable {
 	  $cab_desc = "1-1/4\" Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2166,7 +2174,7 @@ sub Cable {
 	  $cab_desc = "1-5/8\" Foam Dielectric 50-ohm";
     }
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2178,7 +2186,7 @@ sub Cable {
       $cab_desc = "1/4\" Flexible Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2190,7 +2198,7 @@ sub Cable {
       $cab_desc = "1/2\" Flexible Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2202,7 +2210,7 @@ sub Cable {
        $cab_desc = "1/2\" High-Temp Foam Dielectric 50-ohm";
 	 }
 	 else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2214,7 +2222,7 @@ sub Cable {
       $cab_desc = "7/8\" High-Temp Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2226,7 +2234,7 @@ sub Cable {
       $cab_desc = "1/2\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2238,7 +2246,7 @@ sub Cable {
       $cab_desc = "7/8\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2250,7 +2258,7 @@ sub Cable {
       $cab_desc = "1-5/8\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2262,7 +2270,7 @@ sub Cable {
       $cab_desc = "2-1/4\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2274,7 +2282,7 @@ sub Cable {
       $cab_desc = "3\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2286,7 +2294,7 @@ sub Cable {
       $cab_desc = "4\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2298,7 +2306,7 @@ sub Cable {
       $cab_desc = "5\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  10;
+      $loss_per_foot =  3;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
@@ -2908,9 +2916,10 @@ elsif ($path_min > 0) {
 
 ## Calculate Free-Space and ITM Losses
 #
-$fs      = sprintf "%.2f", (20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782;
-$fs_rain = sprintf "%.2f", ((20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782) + $crane_rain_att_total;
-$itm_rain = sprintf "%.2f", $itm + $crane_rain_att_total;
+$fs           = sprintf "%.2f", (20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782;
+$fs_rain      = sprintf "%.2f", ((20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782) + $crane_rain_att_total;
+$itm_rain     = sprintf "%.2f", $itm + $crane_rain_att_total;
+$div_itm_rain = sprintf "%.2f", $div_itm + $crane_rain_att_total;
 
 # Total Free-Space Path Loss = Free-Space + Atmospheric Losses + Misc.
 $fs_pl      = sprintf "%.2f", $fs + $atmos_norain + $tx_misc_loss;
@@ -4372,12 +4381,6 @@ if ($do_lulc eq "yes") {
   $LULC_LAT1 = abs($LAT1);
   $LULC_LON1 = abs($LON1);
 
-  # LOL
-  mkdir "lib";
-  system "/bin/cp /usr/splat/tvstudy/lib/ptelev.conf lib/ptelev.conf";
-  system "/bin/cp /usr/splat/tvstudy/lib/ptelev lib/ptelev";
-  system "ln -s /usr/splat/tvstudy/dbase dbase";
-
   open(F1, ">", "lulc.gp") or die "Can't open lulc.gp: $!\n";
   open(F2, "<", "profile2.gp") or die "Can't open profile2.gp: $!\n";
   while (<F2>) {
@@ -4469,16 +4472,22 @@ if ($do_lulc eq "yes") {
     print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
     print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
 
-    $G = sprintf "%.1f", $grazing_dis_mi;
-    $G =~ s/\./\\./;
-    $G = $G . "[0-9]";
-    chomp($GV = `/usr/bin/grep '$G' profile2.gp | head -n 1`);
-    ($gd, $ge) = split ' ', $GV;
-   
-	print F "set arrow from 0,$tx_ant_ht_ov_ft to $grazing_dis_mi,$ge nohead lw 1 lt 0 dashtype 3\n";
-	print F "set arrow from $grazing_dis_mi,$ge to $dist_mi,$rx_ant_ht_ov_ft nohead lw 1 lt 0 dashtype 3\n";
-    print F "set arrow from $grazing_dis_mi,$min_elev to $grazing_dis_mi,$ge front lw 6\n";
-	print F "set label \"     Reflection Point\" front at $grazing_dis_mi,$ge left rotate by 90\n";
+    if ($do_lulc eq "yes") {
+      chomp($graze_coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $grazing_dis_km $AZSP`);
+      ($lat, $lon) = split ',', $graze_coord;
+      chomp($graze_elev = `lib/ptelev -t 1 1 $lat $lon`);
+      $graze_elev_ft = sprintf "%.2f", $graze_elev * 3.2808399;
+	  chomp($graze_land = `lib/ptelev 15 $lat $lon`);
+      print F "set arrow from 0,$tx_ant_ht_ov_ft to $grazing_dis_mi,$graze_elev_ft nohead lw 1 lt 0 dashtype 3\n";
+      print F "set arrow from $grazing_dis_mi,$graze_elev_ft to $dist_mi,$rx_ant_ht_ov_ft nohead lw 1 lt 0 dashtype 3\n";
+      print F "set arrow from $grazing_dis_mi,$min_elev to $grazing_dis_mi,$graze_elev_ft front lw 6\n";
+      print F "set label \"     Reflection Point\" front at $grazing_dis_mi,$graze_elev_ft left rotate by 90\n";
+	}
+    elsif ($do_lulc eq "yes") {
+	  $graze_elev_ft = "N/A";
+	  $graze_land  = "N/A";
+	}
+
     print F "set label \"     $tx_ant_ht_ov_ft\" left front at 0,$tx_ant_ht_ov_ft\n";
     print F "set label \"Pri. $rx_ant_ht_ov_ft     \" right front at $dist_mi,$rx_ant_ht_ov_ft\n";
     print F "set label 'Lat: $LAT1_D\\U+00B0 $LAT1_M\\U+0027 $LAT1_S\" $LAT1_gnu' left at 0,graph 1.07\n";
@@ -4589,7 +4598,7 @@ if ($check3 eq "yes") {
 }
 
 print "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)&nbsp;&nbsp;(Land Cover: <font color=\"blue\">$graze_land</font>)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
@@ -5024,7 +5033,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
-  print F "</table><br><br><br><br><br><br><br><br><br>\n";
+  print F "</table><br><br><br><br><br><br><br><br><br><br>\n";
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Free-Space, ITM, Atmospheric, Rain, Misc. Losses</b></font></td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
@@ -5143,7 +5152,7 @@ open(F, ">", "index3.html") or die "Can't open index3.html: $!\n" ;
   print F "</table><br><br></font></body></html>\n";
 close F;
 
-open(F, ">", "index4.html") or die "Can't open index4.html: $!\n" ;
+open(F, ">", "haat.html") or die "Can't open haat.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
   print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
@@ -5178,7 +5187,16 @@ open(F, ">", "index4.html") or die "Can't open index4.html: $!\n" ;
     close F1;
   }
 
-  print F "\n<font color=\"maroon\"><b>SPLAT! Path Profile Calculations</b></font>\n\n";
+  print F "</pre></body></html>\n";
+close F;
+
+open(F, ">", "splat.html") or die "Can't open splat.html: $!\n" ;
+  print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
+  print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Terrain Analysis Reports</b></font></td></tr></table></center><br>\n";
+  print F "\n<pre><font color=\"maroon\"><b>SPLAT! Path Profile Calculations</b></font>\n\n";
 
   $found = 0;
   open(F1, "<", "$rx_name-to-$tx_name.txt") or die "Can't open file $rx_name-to-$tx_name.txt: $!\n";
@@ -5251,14 +5269,16 @@ open(F, ">", "index5.html") or die "Can't open index5.html: $!\n" ;
     print F "<p><img src=\"LossMap-div.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_div_name</b></p>\n";
   }
   print F "<br><br><font size=\"-1\"><a href=\"http://www.gbppr.net\">GBPPR RadLab</a> $ver</font><br><font color=\"red\"><b>EXPERIMENTAL</b></font>\n";
-  print F "<br><br><font size=\"-1\">These calculations are only estimates based on the provided data.<br>There is no guarantee that a microwave link is possible, even if it \"looks\" O.K.<br>This is mostly just for fun and I have no idea if it's accurate.</font>\n";
+  print F "<br><br><font size=\"-1\">\n";
+  print F "<table border=\1\" cellpadding=\"3\"><tr><td bgcolor=\"#BABBBE\">\n";
+  print F "These calculations are only estimates based on the provided data.<br>There is no guarantee that a microwave link is possible, even if it \"looks\" O.K.<br>This is mostly just for fun and I have no idea if it's accurate.</font>\n";
   print F "</center></font></body></html>\n";
 close F;
 
 ## Make PDF output
 #
 $ENV{HTMLDOC_NOCGI}=1;
-&System($args = "$htmldoc --links --header ... --linkcolor blue --linkstyle plain --left 0.25in --footer ..1 --quiet --webpage -f $outpdf index1.html index2.html index3.html index4.html index5.html");
+&System($args = "$htmldoc --links --header ... --linkcolor blue --linkstyle plain --left 0.25in --footer ..1 --quiet --webpage -f $outpdf index1.html index2.html index3.html haat.html splat.html index5.html");
 
 ## Done
 #
