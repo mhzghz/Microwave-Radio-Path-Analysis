@@ -160,7 +160,49 @@ print <<EOF;
 <option>Andrew HELIAX HJ8-50B</option>
 <option>Andrew HELIAX HJ11-50</option>
 <option>Andrew HELIAX HJ9-50</option>
-<option>Andrew EW17</option>
+<option>Andrew HELIAX EW17</option>
+<option>Andrew HELIAX EWP17</option>
+<option>Andrew HELIAX EW20</option>
+<option>Andrew HELIAX EW28</option>
+<option>Andrew HELIAX EW34</option>
+<option>Andrew HELIAX EWP34</option>
+<option>Andrew HELIAX EW37</option>
+<option>Andrew HELIAX EWP37</option>
+<option>Andrew HELIAX EWP37S</option>
+<option>Andrew HELIAX EW44</option>
+<option>Andrew HELIAX EWP44</option>
+<option>Andrew HELIAX EWS44</option>
+<option>Andrew HELIAX EW52</option>
+<option>Andrew HELIAX EWP52</option>
+<option>Andrew HELIAX EWP52S</option>
+<option>Andrew HELIAX EW63</option>
+<option>Andrew HELIAX EWP63</option>
+<option>Andrew HELIAX EWP63S</option>
+<option>Andrew HELIAX EW64</option>
+<option>Andrew HELIAX EWP64</option>
+<option>Andrew HELIAX EW77</option>
+<option>Andrew HELIAX EWP77</option>
+<option>Andrew HELIAX EW85</option>
+<option>Andrew HELIAX EW90</option>
+<option>Andrew HELIAX EWP90</option>
+<option>Andrew HELIAX EWP90S</option>
+<option>Andrew HELIAX EW127A</option>
+<option>Andrew HELIAX EWP127A</option>
+<option>Andrew HELIAX EW132</option>
+<option>Andrew HELIAX EWP132</option>
+<option>Andrew HELIAX EW180</option>
+<option>Andrew HELIAX EWP180</option>
+<option>Andrew HELIAX EW220</option>
+<option>Andrew WR284</option>
+<option>Andrew WR229</option>
+<option>Andrew WR187</option>
+<option>Andrew WR159</option>
+<option>Andrew WR137</option>
+<option>Andrew WR112</option>
+<option>Andrew WR90</option>
+<option>Andrew WR75</option>
+<option>Andrew WR62</option>
+<option>Andrew WR42</option>
 <option>Belden 9913 (RG-8)</option>
 <option>Belden 8237 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>
