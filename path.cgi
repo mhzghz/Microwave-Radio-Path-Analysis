@@ -2107,141 +2107,197 @@ sub Cable {
     $loss_per_meter = $loss_per_foot * 3.2808399;
 	$cab_desc = "1-1/4\" Foam Dielectric 50-ohm";
   }
+  elsif ($val eq "Andrew HELIAX LDF1-50") {
+    if ($frq_mhz <= 15800) {
+      $loss_per_foot = ((0.119736 * sqrt $frq_mhz) + (0.000373 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "1/4\" Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot =  5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
   elsif ($val eq "Andrew HELIAX LDF2-50") {
 	if ($frq_mhz <= 13000) {
-      $loss_per_foot = (1.5271 + 0.001232 * $frq_mhz) / 100;
+   	  #$loss_per_foot = (1.5271 + 0.001232 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.101001 * sqrt $frq_mhz) + (0.000327 * $frq_mhz)) / 100;
 	  $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "3/8\" Foam Dielectric 50-ohm";
 	}
     else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
 	}
   } 
   elsif ($val eq "Andrew HELIAX LDF4.5-50") {
     if ($frq_mhz <= 6100) {
-      $loss_per_foot = (0.5348 + 0.0008228 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.5348 + 0.0008228 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.045231 * sqrt $frq_mhz) + (0.000209 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "5/8\" Low-Density Foam 50-ohm";
     }
 	else {
-	  $loss_per_foot =  3;
+	  $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   } 
   elsif ($val eq "Andrew HELIAX LDF4-50A") {
 	if ($frq_mhz <= 8800) {
-      $loss_per_foot = ((0.06432 * sqrt $frq_mhz) + (0.00019 * $frq_mhz)) / 100;
+      $loss_per_foot = ((0.064133 * sqrt $frq_mhz) + (0.000191 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
 	  $cab_desc = "1/2\" Foam Dielectric 50-ohm";
 	}
 	else {
-	  $loss_per_foot =  3;
+	  $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF5-50A") {
     if ($frq_mhz <= 5000) {
-      $loss_per_foot = ((0.03482 * sqrt $frq_mhz) + (0.00015 * $frq_mhz)) / 100;
+      $loss_per_foot = ((0.034766 * sqrt $frq_mhz) + (0.000153 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
   	  $cab_desc = "7/8\" Foam Dielectric 50-ohm";
     }
     else {
-	  $loss_per_foot = ((0.03482 * sqrt $frq_mhz) + (0.00015 * $frq_mhz)) / 100;
+	  $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "<font color=\"red\">Exceeds Frequency Limit</font>";
     }
   }
-  elsif ($val eq "Andrew HELIAX LDF6-50A") {
+  elsif ($val eq "Andrew HELIAX LDF6-50") {
     if ($frq_mhz <= 3300) {
-      $loss_per_foot = ((0.02397 * sqrt $frq_mhz) + (0.00014 * $frq_mhz)) / 100;
+      $loss_per_foot = ((0.023874 * sqrt $frq_mhz) + (0.000141 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
 	  $cab_desc = "1-1/4\" Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF7-50A") {
     if ($frq_mhz <= 2700) {
-      $loss_per_foot = ((0.01901 * sqrt $frq_mhz) + (0.00014 * $frq_mhz)) / 100;
+      $loss_per_foot = ((0.019152 * sqrt $frq_mhz) + (0.000137 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
 	  $cab_desc = "1-5/8\" Foam Dielectric 50-ohm";
     }
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew HELIAX FSJ1-50") {
+  elsif ($val eq "Andrew HELIAX LDF12-50") {
+    if ($frq_mhz <= 2200) {
+      $loss_per_foot = ((0.015831 * sqrt $frq_mhz) + (0.000143 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "2-1/4\" Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot =  5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX FSJ1-50A") {
 	if ($frq_mhz <= 18000) {
-	  $loss_per_foot = (3.0024 + 0.00236 * $frq_mhz) / 100;
+	  #$loss_per_foot = (3.0024 + 0.00236 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.175364 * sqrt $frq_mhz) + (0.000416 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1/4\" Flexible Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   } 
+  elsif ($val eq "Andrew HELIAX FSJ2-50") {
+    if ($frq_mhz <= 13400) {
+      $loss_per_foot = ((0.116375 * sqrt $frq_mhz) + (0.000386 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "3/8\" Flexible Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot =  5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
   elsif ($val eq "Andrew HELIAX FSJ4-50B") {
     if ($frq_mhz <= 10200) {
-      $loss_per_foot = (1.3738 + 0.00146 * $frq_mhz) / 100;
+  	  #$loss_per_foot = (1.3738 + 0.00146 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.099126 * sqrt $frq_mhz) + (0.000469 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1/2\" Flexible Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
    elsif ($val eq "Andrew HELIAX HT4-50") {
      if ($frq_mhz <= 10900) {
-       $loss_per_foot = (1.1679 + 0.001518 * $frq_mhz) / 100;
+       #$loss_per_foot = (1.1679 + 0.001518 * $frq_mhz) / 100;
+	   $loss_per_foot = ((0.081505 * sqrt $frq_mhz) + (0.000735 * $frq_mhz)) / 100;
        $loss_per_meter = $loss_per_foot * 3.2808399;
        $cab_desc = "1/2\" High-Temp Foam Dielectric 50-ohm";
 	 }
 	 else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HT5-50") {
-	if ($frq_mhz <= 5000) {
-      $loss_per_foot = (0.369 + 0.001472 * $frq_mhz) / 100;
+	if ($frq_mhz <= 5200) {
+      #$loss_per_foot = (0.369 + 0.001472 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.035311 * sqrt $frq_mhz) + (0.000663 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "7/8\" High-Temp Foam Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ4-50") {
     if ($frq_mhz <= 10900) {
-      $loss_per_foot = (1.0129 + 0.001117 * $frq_mhz) / 100;
+	  #$loss_per_foot = (1.0129 + 0.001117 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.078969 * sqrt $frq_mhz) + (0.000320 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1/2\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX HJ4.5-50") {
+    if ($frq_mhz <= 6600) {
+      $loss_per_foot = ((0.047997 * sqrt $frq_mhz) + (0.000122 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "5/8\" Air Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ5-50") {
 	if ($frq_mhz <= 5200) {
-      $loss_per_foot = (0.3904 + 0.0006426 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.3904 + 0.0006426 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.035238 * sqrt $frq_mhz) + (0.000166 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "7/8\" Air Dielectric 50-ohm";
 	}
@@ -2253,60 +2309,113 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ7-50A") {
     if ($frq_mhz <= 2700) {
-      $loss_per_foot = (0.1582 + 0.0004698 * $frq_mhz) / 100;
+      #$loss_per_foot = (0.1582 + 0.0004698 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.019456 * sqrt $frq_mhz) + (0.000086 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1-5/8\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot =  3;
+      $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ12-50") {
 	if ($frq_mhz <= 2300) {
-      $loss_per_foot = (0.1222 + 0.0004186 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.1222 + 0.0004186 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.016065 * sqrt $frq_mhz) + (0.000081 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "2-1/4\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot = 3;
+      $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ8-50B") {
     if ($frq_mhz <= 1640) {
-      $loss_per_foot = (0.07909 + 0.0004801 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.07909 + 0.0004801 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.012467 * sqrt $frq_mhz) + (0.000169 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "3\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot = 3;
+      $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ11-50") {
     if ($frq_mhz <= 1000) {
-      $loss_per_foot = (0.05303 + 0.0004148 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.05303 + 0.0004148 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.010391 * sqrt $frq_mhz) + (0.000105 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "4\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot = 3;
+      $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HJ9-50") {
     if ($frq_mhz <= 960) {
-      $loss_per_foot = (0.03655 + 0.0002782 * $frq_mhz) / 100;
+	  #$loss_per_foot = (0.03655 + 0.0002782 * $frq_mhz) / 100;
+	  $loss_per_foot = ((0.007316 * sqrt $frq_mhz) + (0.000053 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "5\" Air Dielectric 50-ohm";
 	}
 	else {
-      $loss_per_foot = 3;
+      $loss_per_foot = 5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX VXL5-50") {
+    if ($frq_mhz <= 4900) {
+      $loss_per_foot = ((0.038251 * sqrt $frq_mhz) + (0.000150 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "7/8\" Flexible Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot = 5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX VXL6-50") {
+    if ($frq_mhz <= 3300) {
+      $loss_per_foot = ((0.025771 * sqrt $frq_mhz) + (0.000161 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "1-1/4\" Flexible Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot = 5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX VXL7-50") {
+    if ($frq_mhz <= 2500) {
+      $loss_per_foot = ((0.019161 * sqrt $frq_mhz) + (0.000135 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "1-5/8\" Flexible Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot = 5;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "Andrew HELIAX EFX2-50") {
+    if ($frq_mhz <= 13500) {
+      $loss_per_foot = ((0.104631 * sqrt $frq_mhz) + (0.000364 * $frq_mhz)) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc = "3/8\" Flexible Foam Dielectric 50-ohm";
+    }
+    else {
+      $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "Exceeds Frequency Limit";
     }
