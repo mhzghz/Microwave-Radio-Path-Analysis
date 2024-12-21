@@ -157,6 +157,7 @@ print <<EOF;
 <option>Andrew HELIAX FSJ4-50B</option>
 <option>Andrew HELIAX HT4-50</option>
 <option>Andrew HELIAX HT5-50</option>
+<option>Andrew HELIAX HST1-50</option>
 <option>Andrew HELIAX HJ4-50</option>
 <option>Andrew HELIAX HJ4.5-50</option>
 <option>Andrew HELIAX HJ5-50</option>
@@ -216,6 +217,8 @@ print <<EOF;
 <option>Belden 8267 (RG-213)</option>
 <option>Belden 9258 (RG-8X)</option>
 <option>Belden 8240 (RG-58)</option>
+<option>M&P AIRBORNE 10</option>
+<option>M&P BROAD PRO 50</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>
