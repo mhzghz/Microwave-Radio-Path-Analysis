@@ -5111,7 +5111,26 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     else {
       $color = "0xE1CDCE"; # Developed, Open Space
     }
+
 	print F1 "$dist\t$elev\t$color\n";
+    $color =~ s/0x/#/g;
+    $data = $land . ":" . $color;
+    push(@DATA, $data);
+
+  }
+
+  # Generate Land Usage Key Boxes
+  %unique = ();
+  foreach my $item (@DATA) {
+    $unique{$item} ++;
+  }
+
+  @DATA_UNIQUE = keys %unique;
+
+  foreach my $x (@DATA_UNIQUE) {
+    ($land_new, $color_new) = split ':', $x;
+    $var = ", keyentry with boxes lc rgb " . "'" . $color_new . "'" . " title " . "'" . $land_new . "'";
+    push(@KEY, $var);
   }
 
   open(F, ">", "splat3.gp") or die "Can't open splat3.gp: $!\n";
@@ -5122,6 +5141,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	print F "set tics out\n";
     print F "set border 3\n";
 	print F "set key below enhanced font \"Helvetica,18\"\n";
+	print F "set key noautotitle\n";
 	print F "set grid back xtics ytics mxtics mytics\n";
 	print F "set yrange [($min_elev - 5) to ($ymax + 10)]\n";
 	print F "set xrange [0.0 to $dist_mi]\n";
@@ -5163,7 +5183,18 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     print F "set label 'Gnd Elv: $rx_elv_ft ft' right at $dist_mi,graph 1.03\n";
     print F "set label 'Ant Hgt: $rx_ant_ht_ft ft' right at $dist_mi,graph 1.01\n";
     print F "set output \"LULCProfile.png\"\n";
-	print F "plot \"lulc.gp\" using 1:2:3 title \"Land Usage Terrain Profile\\nwith $k_str K-Factor\" with boxes lc rgb variable, \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\"\n";
+
+    $size = @KEY;
+    $i = 0;
+    $keyentry = "";
+
+    while($i < $size) {
+      $x = shift(@KEY);
+      $keyentry = $keyentry.$x;
+      $i++;
+    }
+
+	print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
   close F;
   &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
 }
@@ -5185,7 +5216,7 @@ print "<center>\n";
 print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro2.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro2.png\" height=\"480\" width=\"640\"></a></p>\n";
 
 if ($do_lulc eq "yes" && $country eq "United States") {
-  print "<p><a href=\"tmp/$mon-$mday/$RAN/LULCProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"https://www.mrlc.gov/sites/default/files/NLCDclasses.pdf\"><img src=\"../pics/NLCD_Colour_Classification_Update.jpg\" height=\"480\" width=\"640\"></a></p>\n";
+  print "<p><a href=\"tmp/$mon-$mday/$RAN/LULCProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
 
 print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro1.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro1.png\" height=\"480\" width=\"640\"></a></p>\n";
