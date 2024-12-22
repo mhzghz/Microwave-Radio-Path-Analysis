@@ -1912,7 +1912,7 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set label 'Gnd Elv: $rx_elv_ft ft' right at $dist_mi,graph 1.03\n";
   print F "set label 'Ant Hgt: $rx_ant_ht_ft ft' right at $dist_mi,graph 1.01\n";
   print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
-  print F "set output \"TerrainProfile.png\"\n";
+  print F "set output \"TerrainProfile1.png\"\n";
   print F "set style fill transparent solid 0.6 border -1\n";
 
   if ($clutter == 1) {
@@ -5182,7 +5182,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     print F "set label 'Lon: $LON2_D\\U+00B0 $LON2_M\\U+0027 $LON2_S\" $LON2_gnu' right at $dist_mi,graph 1.05\n";
     print F "set label 'Gnd Elv: $rx_elv_ft ft' right at $dist_mi,graph 1.03\n";
     print F "set label 'Ant Hgt: $rx_ant_ht_ft ft' right at $dist_mi,graph 1.01\n";
-    print F "set output \"LULCProfile.png\"\n";
+    print F "set output \"LULCProfile1.png\"\n";
 
     $size = @KEY;
     $i = 0;
@@ -5213,16 +5213,16 @@ print "<font face=\"Helvetica\">\n";
 print "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bgcolor=\"#7EBDE5\"><font size=\"6\"><b>Microwave Radio Path Analysis Results</b></font></td></tr></table></center>\n";
 
 print "<center>\n";
-print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro2.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro2.png\" height=\"480\" width=\"640\"></a></p>\n";
+print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile1.png\" height=\"480\" width=\"640\"></a>\n";
 
 if ($do_lulc eq "yes" && $country eq "United States") {
-  print "<p><a href=\"tmp/$mon-$mday/$RAN/LULCProfile.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile.png\" height=\"480\" width=\"640\"></a></p>\n";
+  print "&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
 
-print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro1.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro1.png\" height=\"480\" width=\"640\"></a></p>\n";
+print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a></p>\n";
 
 if ($do_div eq "yes") {
-  print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\" height=\"480\" width=\"640\"></a>&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/ElevPro1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/ElevPro1-div.png\" height=\"480\" width=\"640\"></a></p>\n";
+  print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
 
 print "</center>\n";
@@ -5612,20 +5612,16 @@ print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
 print F "<font face=\"Helvetica\">\n";
 print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bgcolor=\"#7EBDE5\"><font size=\"6\"><b>Microwave Radio Path Analysis Results</b></font></td></tr></table></center>\n";
 print F "<center>\n";
-print F "<p><img src=\"TerrainProfile.png\" height=\"480\" width=\"640\"></p>\n";
-print F "<p><img src=\"ElevPro2.png\" height=\"480\" width=\"640\"></p>\n";
+print F "<p><img src=\"TerrainProfile1.png\" height=\"480\" width=\"640\"></p>\n";
 
 if ($do_lulc eq "yes" && $country eq "United States") {
-  print F "<p><img src=\"LULCProfile.png\" height=\"480\" width=\"640\">\n";
-  print F "<p><img src=\"../../../../pics/NLCD_Colour_Classification_Update.jpg\" height=\"300\"></p>\n";
+  print F "<p><img src=\"LULCProfile1.png\" height=\"480\" width=\"640\">\n";
 }
 
 print F "<p><img src=\"PathProfile1.png\" height=\"480\" width=\"640\">\n";
-print F "<p><img src=\"ElevPro1.png\" height=\"480\" width=\"640\"></p>\n";
 
 if ($do_div eq "yes") {
   print F "<p><img src=\"PathProfile1-div.png\" height=\"480\" width=\"640\">\n";
-  print F "<p><img src=\"ElevPro1-div.png\" height=\"480\" width=\"640\"></p>\n";
 }
 
 print F "</center></font></body></html>\n";
