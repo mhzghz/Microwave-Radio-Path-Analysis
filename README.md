@@ -16,8 +16,10 @@ Requires the installation of Geo::Coder::OSM (Perl) if you wish to calculate the
 
 (Install: sudo cpan Geo::Coder::OSM)
 
-Requires U.S. National Land Cover Data (NLCD) - 2021: https://us-fcc.app.box.com/v/tvstudy-nlcd2021
+Requires U.S. National Land Cover Data (NLCD 2021): https://us-fcc.app.box.com/v/tvstudy-nlcd2021
 
 Requires the "ptelev" utility from the FCC's TVStudy program if you wish to calculate path land cover (U.S. only): https://www.fcc.gov/oet/tvstudy
+
+The ptelev source file (clutil.c) needs a slight tweak to work with 2021 NLCD data.
 
 Try it out! http://gbppr.ddns.net/path.main.cgi
