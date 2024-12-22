@@ -3583,7 +3583,13 @@ elsif ($path_min > 0) {
 $fs           = sprintf "%.2f", (20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782;
 $fs_rain      = sprintf "%.2f", ((20 * (log10 $frq_mhz)) + (20 * (log10 $dist_km)) + 32.447782) + $crane_rain_att_total;
 $itm_rain     = sprintf "%.2f", $itm + $crane_rain_att_total;
-$div_itm_rain = sprintf "%.2f", $div_itm + $crane_rain_att_total;
+
+if ($do_div eq "yes") {
+  $div_itm_rain = sprintf "%.2f", $div_itm + $crane_rain_att_total;
+}
+else {
+  $div_itm_rain = sprintf "%.2f", 0;
+}
 
 # Total Free-Space Path Loss = Free-Space + Atmospheric Losses + Misc.
 $fs_pl      = sprintf "%.2f", $fs + $atmos_norain + $tx_misc_loss;
@@ -5058,7 +5064,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 
     chomp($coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $step_km $AZSP`);
     ($lat, $lon) = split ',', $coord;
-    chomp($land = `lib/ptelev 15 $lat $lon`);
+    chomp($land = `lib/ptelev 15 $lat $lon 2021`);
 
     if ($land eq "Open Water") {
       $color = "0x486DA2";
@@ -5156,12 +5162,18 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
     print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head lw 3 size screen 0.008,45.0,30.0 filled\n";
 
+	if ($do_div eq "yes") {
+      my $a = $rx_ant_ht_ov_ft + $div_ft;
+      print F "set arrow from $dist_mi,$rx_ant_ht_ov_ft to $dist_mi,$a head lw 3 size screen 0.008,40.0,30.0 filled\n";
+      print F "set label \"Div. $a     \\n\\n\" right front at $dist_mi,$a\n";
+    }
+
     if ($do_lulc eq "yes" && $country eq "United States") {
       chomp($graze_coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $grazing_dis_km $AZSP`);
       ($lat, $lon) = split ',', $graze_coord;
-      chomp($graze_elev = `lib/ptelev -t 1 1 $lat $lon`);
+      chomp($graze_elev = `lib/ptelev -t 0 1 $lat $lon`);
       $graze_elev_ft = sprintf "%.2f", $graze_elev * 3.2808399;
-	  chomp($graze_land = `lib/ptelev 15 $lat $lon`);
+	  chomp($graze_land = `lib/ptelev 15 $lat $lon 2021`);
       print F "set arrow from 0,$tx_ant_ht_ov_ft to $grazing_dis_mi,$graze_elev_ft nohead lw 1 lt 0 dashtype 3\n";
       print F "set arrow from $grazing_dis_mi,$graze_elev_ft to $dist_mi,$rx_ant_ht_ov_ft nohead lw 1 lt 0 dashtype 3\n";
       print F "set arrow from $grazing_dis_mi,$min_elev to $grazing_dis_mi,$graze_elev_ft front lw 6\n";
@@ -5194,7 +5206,12 @@ if ($do_lulc eq "yes" && $country eq "United States") {
       $i++;
     }
 
-	print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	if ($do_div eq "no") {
+	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	}
+	elsif  ($do_div eq "yes") {
+      print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
+	}
   close F;
   &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
 }
@@ -5219,10 +5236,13 @@ if ($do_lulc eq "yes" && $country eq "United States") {
   print "&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
 
-print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a></p>\n";
+print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1.png\" height=\"480\" width=\"640\"></a>\n";
 
 if ($do_div eq "yes") {
-  print "<p><a href=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\" height=\"480\" width=\"640\"></a></p>\n";
+  print "&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\"><img src=\"tmp/$mon-$mday/$RAN/PathProfile1-div.png\" height=\"480\" width=\"640\"></a></p>\n";
+}
+else {
+  print "</p>\n";
 }
 
 print "</center>\n";
