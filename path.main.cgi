@@ -380,6 +380,8 @@ print <<EOF;
 <tr>
 <td align="right"><b>Receiver Transmission Line Type</b></td>
 <td><select name="rx_cab">
+<option>Times Microwave LMR-200</option>
+<option>Times Microwave LMR-240</option>
 <option selected>Times Microwave LMR-400</option>
 <option>Times Microwave LMR-400 UltraFlex</option>
 <option>Times Microwave LMR-500</option>
@@ -387,14 +389,82 @@ print <<EOF;
 <option>Times Microwave LMR-900</option>
 <option>Times Microwave LMR-1200</option>
 <option>Times Microwave LMR-1700</option>
+<option>Andrew HELIAX EFX2-50</option>
+<option>Andrew HELIAX LDF1-50</option>
+<option>Andrew HELIAX LDF2-50</option>
 <option>Andrew HELIAX LDF4-50A</option>
+<option>Andrew HELIAX LDF4.5-50</option>
 <option>Andrew HELIAX LDF5-50A</option>
-<option>Andrew HELIAX LDF6-50</option>
+<option>Andrew HELIAX LDF6-50A</option>
 <option>Andrew HELIAX LDF7-50A</option>
+<option>Andrew HELIAX LDF12-50</option>
+<option>Andrew HELIAX FSJ1-50A</option>
+<option>Andrew HELIAX FSJ2-50</option>
+<option>Andrew HELIAX FSJ4-50B</option>
+<option>Andrew HELIAX HT4-50</option>
+<option>Andrew HELIAX HT5-50</option>
+<option>Andrew HELIAX HST1-50</option>
+<option>Andrew HELIAX HJ4-50</option>
+<option>Andrew HELIAX HJ4.5-50</option>
+<option>Andrew HELIAX HJ5-50</option>
+<option>Andrew HELIAX HJ7-50A</option>
+<option>Andrew HELIAX HJ12-50</option>
+<option>Andrew HELIAX HJ8-50B</option>
+<option>Andrew HELIAX HJ11-50</option>
+<option>Andrew HELIAX HJ9-50</option>
+<option>Andrew HELIAX VXL5-50</option>
+<option>Andrew HELIAX VXL6-50</option>
+<option>Andrew HELIAX VXL7-50</option>
+<option>Andrew HELIAX EW17</option>
+<option>Andrew HELIAX EWP17</option>
+<option>Andrew HELIAX EW20</option>
+<option>Andrew HELIAX EW28</option>
+<option>Andrew HELIAX EW34</option>
+<option>Andrew HELIAX EWP34</option>
+<option>Andrew HELIAX EW37</option>
+<option>Andrew HELIAX EWP37</option>
+<option>Andrew HELIAX EWP37S</option>
+<option>Andrew HELIAX EW44</option>
+<option>Andrew HELIAX EWP44</option>
+<option>Andrew HELIAX EWS44</option>
+<option>Andrew HELIAX EW52</option>
+<option>Andrew HELIAX EWP52</option>
+<option>Andrew HELIAX EWP52S</option>
+<option>Andrew HELIAX EW63</option>
+<option>Andrew HELIAX EWP63</option>
+<option>Andrew HELIAX EWP63S</option>
+<option>Andrew HELIAX EW64</option>
+<option>Andrew HELIAX EWP64</option>
+<option>Andrew HELIAX EW77</option>
+<option>Andrew HELIAX EWP77</option>
+<option>Andrew HELIAX EW85</option>
+<option>Andrew HELIAX EW90</option>
+<option>Andrew HELIAX EWP90</option>
+<option>Andrew HELIAX EWP90S</option>
+<option>Andrew HELIAX EW127A</option>
+<option>Andrew HELIAX EWP127A</option>
+<option>Andrew HELIAX EW132</option>
+<option>Andrew HELIAX EWP132</option>
+<option>Andrew HELIAX EW180</option>
+<option>Andrew HELIAX EWP180</option>
+<option>Andrew HELIAX EW220</option>
+<option>Andrew WR284</option>
+<option>Andrew WR229</option>
+<option>Andrew WR187</option>
+<option>Andrew WR159</option>
+<option>Andrew WR137</option>
+<option>Andrew WR112</option>
+<option>Andrew WR90</option>
+<option>Andrew WR75</option>
+<option>Andrew WR62</option>
+<option>Andrew WR42</option>
 <option>Belden 9913 (RG-8)</option>
+<option>Belden 8237 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>
 <option>Belden 9258 (RG-8X)</option>
 <option>Belden 8240 (RG-58)</option>
+<option>M&P AIRBORNE 10</option>
+<option>M&P BROAD PRO 50</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>

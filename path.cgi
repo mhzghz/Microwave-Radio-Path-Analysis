@@ -335,8 +335,8 @@ $dist_mi = sqrt(($H ** 2) + ($V ** 2));
 $dist_km = sprintf "%.2f", $dist_mi * 1.609344;
 $dist_mi = sprintf "%.2f", $dist_mi;
 
-if ($dist_mi > 200 || $dist_mi < 0 || !$dist_mi) {
-  print "<font color=\"red\"><b>PATH LENGTH TOO LONG OR TOO SHORT (200 MILES MAX): $dist_mi</font>";
+if ($dist_mi > 100 || $dist_mi < 0 || !$dist_mi) {
+  print "<font color=\"red\"><b>PATH LENGTH TOO LONG OR TOO SHORT (100 MILES MAX): $dist_mi</font>";
   exit 1;
 }
 
@@ -5050,6 +5050,8 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 
   $LULC_LAT1 = abs($LAT1);
   $LULC_LON1 = abs($LON1);
+  $LULC_LAT2 = abs($LAT2);
+  $LULC_LON2 = abs($LON2);
 
   open(F1, ">", "lulc.gp") or die "Can't open lulc.gp: $!\n";
   open(F2, "<", "profile2.gp") or die "Can't open profile2.gp: $!\n";
@@ -5184,6 +5186,10 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	  $graze_land  = "N/A";
 	}
 
+	if ($country ne "United States") {
+      $graze_land  = "N/A";
+    }
+
     print F "set label \"     $tx_ant_ht_ov_ft\" left front at 0,$tx_ant_ht_ov_ft\n";
     print F "set label \"Pri. $rx_ant_ht_ov_ft     \" right front at $dist_mi,$rx_ant_ht_ov_ft\n";
     print F "set label 'Lat: $LAT1_D\\U+00B0 $LAT1_M\\U+0027 $LAT1_S\" $LAT1_gnu' left at 0,graph 1.07\n";
@@ -5214,6 +5220,247 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	}
   close F;
   &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
+
+  # Get TX & RX Site Land Cover
+  chomp($tx_land = `lib/ptelev 15 $LULC_LAT1 $LULC_LON1 2021`);
+  chomp($rx_land = `lib/ptelev 15 $LULC_LAT2 $LULC_LON2 2021`);
+
+  ## TIA TR8 (May 20, 1997) Loss Estimates
+  # These are mostly just gueses
+  if ($frq_mhz <= 50) {
+    if ($rx_land eq "Developed, Low Intensity") {
+	  $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+	  $rx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+	  $rx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+	  $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+	  $rx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+	  $rx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+	  $rx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+	  $rx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+	  $rx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 2; 	
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+	  $rx_land_loss = sprintf "%.2f", 3;
+    }
+    else {
+	  $rx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 50 && $frq_mhz <= 100) {
+    if ($rx_land eq "Developed, Low Intensity") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+      $rx_land_loss = sprintf "%.2f", 6;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+      $rx_land_loss = sprintf "%.2f", 6;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+      $rx_land_loss = sprintf "%.2f", 3;
+    }
+    else {
+      $rx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 100 && $frq_mhz <= 200) {
+    if ($rx_land eq "Developed, Low Intensity") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+      $rx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+      $rx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+      $rx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    else {
+      $rx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 200 && $frq_mhz <= 500) {
+    if ($rx_land eq "Developed, Low Intensity") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+      $rx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    else {
+      $rx_land_loss = sprintf "%.2f", 0;
+    }
+  } 
+  elsif ($frq_mhz > 500 && $frq_mhz <= 1000) {
+    if ($rx_land eq "Developed, Low Intensity") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+      $rx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+      $rx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+      $rx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+      $rx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+      $rx_land_loss = sprintf "%.2f", 10;
+    }
+    else {
+      $rx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 1000) {
+    if ($rx_land eq "Developed, Low Intensity") {
+      $rx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($rx_land eq "Developed, Medium Intensity") {
+      $rx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($rx_land eq "Developed, High Intensity") {
+      $rx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($rx_land eq "Developed, Open Space") {
+      $rx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($rx_land eq "Deciduous Forest") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Evergreen Forest") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Mixed Forest") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Grassland/Herbaceous") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Shrub/Scrub") {
+      $rx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($rx_land eq "Woody Wetlands") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($rx_land eq "Emergent Herbaceous Wetland") {
+      $rx_land_loss = sprintf "%.2f", 12;
+    }
+    else {
+      $rx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+}
+elsif ($country ne "United States") {
+  $graze_land  = "N/A";
+  $tx_land = "N/A";
+  $rx_land = "N/A";
+  $rx_land_loss = "N/A";
 }
 
 ############################################################################################
@@ -5256,9 +5503,10 @@ print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Site Equipment Notes</b></td><td><font color=\"blue\">$tx_notes</font></td><td><font color=\"blue\">$rx_notes</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
 print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
+print "<tr><td align=\"right\"><a href=\"https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description\"><b>Land Cover</b></a></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font></td><td><font color=\"blue\">$easting_rx</font></td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font></td><td><font color=\"blue\">$northing_rx</font></td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> meters</td><td><font color=\"blue\">$easting_rx</font> meters</td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> meters</td><td><font color=\"blue\">$northing_rx</font> meters</td></tr>\n";
 print "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
@@ -5313,7 +5561,7 @@ if ($check3 eq "yes") {
 }
 
 print "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)&nbsp;&nbsp;&nbsp;&nbsp;(Land Cover: <font color=\"blue\">$graze_land</font>)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
@@ -5361,6 +5609,7 @@ print "<tr><td align=\"right\"><b>Effective Rain Path Distance</b></td><td align
 print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)&nbsp;&nbsp;&nbsp;&nbsp;(Vapor Density: <font color=\"blue\">$wvd</font> gm/m<sup>3</sup>)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td>&nbsp;</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
@@ -5659,6 +5908,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Site Equipment Notes</b></td><td><font color=\"blue\">$tx_notes</font></td><td><font color=\"blue\">$rx_notes</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Land Cover</b></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font></td><td><font color=\"blue\">$easting_rx</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font></td><td><font color=\"blue\">$northing_rx</font></td></tr>\n";
@@ -5688,19 +5938,8 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
-  print F "</table><br>\n";
-  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
-  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Transmitter Site RF Safety</b></font></td></tr>\n";
-  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>General</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>Occupational</b></td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Maximum Permissible Exposure</b></td><td><font color=\"blue\">$std1</font> mW/cm<sup>2</sup></td><td><font color=\"blue\">$std2</font> mW/cm<sup>2</sup></td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Distance to RF Safety Compliance</b></td><td><font color=\"blue\">$dx1_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx1_m</font> meters)</td><td><font color=\"blue\">$dx2_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx2_m</font> meters)</td></tr>\n";
-  print F "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
-  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
-  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;$fcc_check</td></tr>\n";
-  print F "</table><br><br>\n";
+  print F "</table><br><br><br><br><br><br><br><br><br><br><br>\n";
+
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Terrain &amp; Atmospheric Conditions</b></font></td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\" colspan=\"3\"><b><i>Specifications</i></b></td><tr>\n";
@@ -5711,7 +5950,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
     print F "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;($k_val)&nbsp;&nbsp;&nbsp;&nbsp;(Local Elevation: <font color=\"blue\">$k_ht_ft</font> feet / <font color=\"blue\">$k_ht_m</font> m)</td></tr>\n";
   }
   print F "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)&nbsp;&nbsp;&nbsp;&nbsp;(Land Cover: <font color=\"blue\">$graze_land</font>)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
@@ -5744,7 +5983,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
-  print F "</table><br><br><br><br><br><br><br><br><br><br>\n";
+  print F "</table><br><br><br><br><br><br><br><br><br><br><br>\n";
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Free-Space, ITM, Atmospheric, Rain, Misc. Losses</b></font></td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
@@ -5757,6 +5996,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td>&nbsp;</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
@@ -5789,8 +6029,22 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
   print F "</table><br><br><br><br><br><br><br><br>\n";
+
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
-  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"4\"><b>Vertical Space Diversity Antenna Parameters</b></font></td></tr>\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Transmitter Site RF Safety</b></font></td></tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>General</b></td>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>Occupational</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Maximum Permissible Exposure</b></td><td><font color=\"blue\">$std1</font> mW/cm<sup>2</sup></td><td><font color=\"blue\">$std2</font> mW/cm<sup>2</sup></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Distance to RF Safety Compliance</b></td><td><font color=\"blue\">$dx1_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx1_m</font> meters)</td><td><font color=\"blue\">$dx2_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$dx2_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://transition.fcc.gov/Bureaus/Engineering_Technology/Documents/bulletins/oet65/oet65.pdf\">FCC OET Bulletin 65</a>)&nbsp;&nbsp;<b>Estimated RF Power Density</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$rf_safe_pwrdens</font> mW/cm<sup>2</sup>&nbsp;&nbsp;&nbsp;&nbsp;(Directly Below the Radiating Antenna)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total RF Input Power to the Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_ant_input</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_input_mw</font> mW)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-15/subpart-C/subject-group-ECFR2f2e5828339709e/section-15.247\">FCC Part 15.247</a>)&nbsp;&nbsp;<b>Allowed RF Input Power to Antenna</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_ant_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$max_ant_pwr_mw</font> mW)</td></tr>\n";
+  print F "<tr><td align=\"right\">(<a href=\"https://www.ecfr.gov/current/title-47/chapter-I/subchapter-C/part-74/subpart-F/section-74.644\">FCC Part 74.644</a>)&nbsp;&nbsp;<b>Maximum Allowable EIRP</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fcc_eirp_dbm</font> dBm&nbsp;&nbsp;$fcc_check</td></tr>\n";
+  print F "</table><br>\n";
+
+  print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+  print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"2\"><font size=\"4\"><b>Vertical Space Diversity Antenna Parameters</b></font></td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX-DIV)</b></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
