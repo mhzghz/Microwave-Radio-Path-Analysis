@@ -870,8 +870,21 @@ print <<EOF;
 <tr><td></td></tr>
 <tr>
 <td align="right"><b><a href="http://ham-radio.com/k6sti/hfgc.htm">Ground Dielectric Constant</a></b></td>
-<td><input type="number" name="diecon" min="1" max="99" value="15"> Soil Permittivity</td>
-<td>(Note 15)</td>
+<td><select name="diecon">
+<option>81 : Salt Water</option>
+<option>80 : Fresh Water</option>
+<option>30 : Wet Ground</option>
+<option>25 : Good Ground</option>
+<option>20 : Pastoral, Low Hills, Rich Soil</option>
+<option selected>15 : Average Ground, Farmland, Forest</option>
+<option>13 : Pastoral, Medium Hills, Forestation</option>
+<option>12 : Marshy Land, Flat Country, Densely Wooded</option>
+<option>11 : Rocky Soil, Steep Hills, Mountainous</option>
+<option>10 : Sandy, Dry, Flat, Coastal</option>
+<option>5 : Industrial Areas, Residential Areas</option>
+<option>4 : Poor Ground</option>
+<option>3 : Heavy Industrial Areas, Very Dry Ground</option>
+</select></td>
 </tr>
 
 <tr>

@@ -835,9 +835,62 @@ elsif ($check3 eq "no") {
 
 ## Get Earth Dielectric Constant
 #
-$diecon =~ tr/0-9//csd;
+$diecon =~ tr/0-9A-Za-z,: //csd;
 
-if ($diecon > 99  || $diecon < 0 || !$diecon) {
+if ($diecon eq "81 : Salt Water") {
+  $diecon = 81;
+  $diecon_desc = "Salt Water";
+}
+elsif ($diecon eq "80 : Fresh Water") {
+  $diecon = 80;
+  $diecon_desc = "Fresh Water";
+}
+elsif ($diecon eq "30 : Wet Ground") {
+  $diecon = 30;
+  $diecon_desc = "Wet Ground";
+}
+elsif ($diecon eq "25 : Good Ground") {
+  $diecon = 25;
+  $diecon_desc = "Good Ground";
+}
+elsif ($diecon eq "20 : Pastoral, Low Hills, Rich Soil") {
+  $diecon = 20;
+  $diecon_desc = "Pastoral, Low Hills, Rich Soil";
+}
+elsif ($diecon eq "15 : Average Ground, Farmland, Forest") {
+  $diecon = 15;
+  $diecon_desc = "Average Ground, Farmland, Forest";
+}
+elsif ($diecon eq "13 : Pastoral, Medium Hills, Forestation") {
+  $diecon = 13;
+  $diecon_desc = "Pastoral, Medium Hills, Forestation";
+}
+elsif ($diecon eq "12 : Marshy Land, Flat Country, Densely Wooded") {
+  $diecon = 12;
+   $diecon_desc = "Marshy Land, Flat Country, Densely Wooded";
+}
+elsif ($diecon eq "11 : Rocky Soil, Steep Hills, Mountainous") {
+  $diecon = 11;
+  $diecon_desc = "Rocky Soil, Steep Hills, Mountainous";
+}
+elsif ($diecon eq "10 : Sandy, Dry, Flat, Coastal") {
+  $diecon = 10;
+  $diecon_desc = "Sandy, Dry, Flat, Coastal";
+}
+elsif ($diecon eq "5 : Industrial Areas, Residential Areas") {
+  $diecon = 5;
+  $diecon_desc = "Industrial Areas, Cities";
+}
+elsif ($diecon eq "4 : Poor Ground") {
+  $diecon = 4;
+  $diecon_desc = "Poor Ground";
+}
+elsif ($diecon eq "3 : Heavy Industrial Areas, Very Dry Ground") {
+  $diecon = 3;
+   $diecon_desc = "Heavy Industrial Areas";
+}
+
+if (!$diecon) {
   $diecon = 15;
 }
 
@@ -5579,7 +5632,7 @@ print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan
 print "<tr><td align=\"right\"><b>Atmospheric Pressure (Sea Level Corrected)</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars</td></tr>\n";
 print "<tr><td align=\"right\"><b>Saturation Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$es</font> millibars</td></tr>\n";
 print "<tr><td align=\"right\"><b>Partial Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$vapor_p</font> millibars</td></tr>\n";
-printf "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">%.f</font></td></tr>\n", $diecon;
+print "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">$diecon</font>&nbsp;&nbsp;($diecon_desc)</td></tr>\n";
 printf "<tr><td align=\"right\"><b>Ground Conductivity</b></td><td colspan=\"2\"><font color=\"blue\">%.3f</font> Siemens/meter</td></tr>\n", $earcon;
 print "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\"><font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($cli_val)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Longley-Rice Climate Type</b></td><td colspan=\"2\"><font color=\"blue\">$climate</font></td></tr>\n";
