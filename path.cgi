@@ -1801,43 +1801,6 @@ if ($do_div eq "yes") {
   close F2;
 }
 
-## Calculate Terrain Roughness Factor
-#
-# Open raw terrain elevation profile which doesn't have K-factor correction
-open(TER, "<", "profile-k.gp") or die "Can't open file profile-k.gp: $!\n";
-while (<TER>) {
-  chomp;
-  ($a, $b) = split;
-  push(@ELEV_ARRAY, $b);
-}
-close TER;
-
-# Remove end point data
-while ($i < 5) {
-  $tmp = shift(@ELEV_ARRAY);
-  $tmp = pop(@ELEV_ARRAY);
-  $i++;
-}
-
-$ter_count = scalar(@ELEV_ARRAY);
-$ter_size  = scalar(@ELEV_ARRAY);
-
-if (!$ter_size) {
-  $size = 10; # Divide-by-zero catch
-}
-
-while($ter_count > 0) {
-  $elev = shift(@ELEV_ARRAY);
-  $Eds  = $Eds + $elev;
-  $Esq  = $Esq + ($elev ** 2);
-  $ter_count--;
-}
-
-$ter_w = sqrt(abs(($Esq / $ter_size) - (($Eds / $ter_size) ** 2)));
-
-$rough_calc_ft   = sprintf "%.1f", $ter_w;
-$rough_calc_m    = sprintf "%.1f", $ter_w * 0.3048;
-
 ## Plot Terrain Profile
 #
 open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
@@ -1949,18 +1912,61 @@ close F;
 ## Climate & Terrain Factors
 #
 # check4 = Would You Like to Calculate the Vigants-Barnett Climate Factor?
+
+## Calculate Terrain Roughness Factor
+#
+# Open raw terrain elevation profile which doesn't have K-factor correction
+open(TER, "<", "profile-k.gp") or die "Can't open file profile-k.gp: $!\n";
+while (<TER>) {
+  chomp;
+  ($ter_dist, $ter_elev) = split;
+  push(@ELEV_ARRAY, $ter_elev);
+}
+close TER;
+
+# Remove end point data
+$i = 0;
+while ($i < 5) {
+  $tmp = shift(@ELEV_ARRAY);
+  $tmp = pop(@ELEV_ARRAY);
+  $i++;
+}
+
+$ter_size = scalar(@ELEV_ARRAY);
+
+if (!$ter_size) {
+  $ter_size = 10; # Divide-by-zero catch
+}
+
+$ter_count = $ter_size;
+
+while($ter_count > 0) {
+  $elev = shift(@ELEV_ARRAY);
+  $Eds  = $Eds + $elev;
+  $Esq  = $Esq + ($elev ** 2);
+  $ter_count--;
+}
+
+$ter_w = sqrt(abs(($Esq / $ter_size) - (($Eds / $ter_size) ** 2)));
+
+# Calculated terrain roughness factor
+$rough_calc_ft = sprintf "%.1f", $ter_w;
+$rough_calc_m  = sprintf "%.1f", $ter_w * 0.3048;
+
+# User supplie terrain roughness factor
 $rough =~ tr/0-9.//csd;
 
 if ($check4 eq "yes") {
   if ($rough_val eq "meters") {
     $rough_m = sprintf "%.1f", $rough;
-    $rough_ft = sprintf "%.1f", $rough / 0.3048;
+    $rough_ft = sprintf "%.1f", $rough * 3.2808399;
   }
-  else {
+  elsif ($rough_val eq "feet") {
     $rough_m = sprintf "%.1f", $rough * 0.3048;
     $rough_ft = sprintf "%.1f", $rough;
   }
 
+  # Vigants-Barnett only uses 20-140 ft
   if ($rough_ft < 20) {
     $rough_ft = sprintf "%.1f", 20;
     $rough_m = sprintf "%.1f", 20 * 0.3048;
