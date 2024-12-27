@@ -14,7 +14,6 @@ $| = 1;
 ## User Setup
 #
 my $pic     = "../pics/path.png";
-my $example = "../pics/example/index.html";
 my $form    = "./path.cgi";
 
 ## Print MIME
@@ -45,7 +44,7 @@ print <<EOF;
 </center>
 
 <center>
-<p><a href="$example"><img src="$pic" border="0" height="480" width="640"></a><br><b><font color="red">EXPERIMENTAL - WORK IN PROGRESS - MAY GIVE WEIRD RESULTS</font></b></p>
+<p><img src="$pic" border="0" height="480" width="640"></a><br><b><font color="red">EXPERIMENTAL - WORK IN PROGRESS - MAY GIVE WEIRD RESULTS</font></b></p>
 </center>
 
 <form action="$form" method="post">
@@ -178,9 +177,9 @@ print <<EOF;
 <option>Andrew HELIAX EW37</option>
 <option>Andrew HELIAX EWP37</option>
 <option>Andrew HELIAX EWP37S</option>
-<option>Andrew HELIAX EW44</option>
-<option>Andrew HELIAX EWP44</option>
-<option>Andrew HELIAX EWS44</option>
+<option>Andrew HELIAX EW43</option>
+<option>Andrew HELIAX EWP43</option>
+<option>Andrew HELIAX EWS43</option>
 <option>Andrew HELIAX EW52</option>
 <option>Andrew HELIAX EWP52</option>
 <option>Andrew HELIAX EWP52S</option>
@@ -202,16 +201,16 @@ print <<EOF;
 <option>Andrew HELIAX EW180</option>
 <option>Andrew HELIAX EWP180</option>
 <option>Andrew HELIAX EW220</option>
-<option>Andrew WR284</option>
-<option>Andrew WR229</option>
-<option>Andrew WR187</option>
-<option>Andrew WR159</option>
-<option>Andrew WR137</option>
-<option>Andrew WR112</option>
-<option>Andrew WR90</option>
-<option>Andrew WR75</option>
-<option>Andrew WR62</option>
-<option>Andrew WR42</option>
+<option>WR284</option>
+<option>WR229</option>
+<option>WR187</option>
+<option>WR159</option>
+<option>WR137</option>
+<option>WR112</option>
+<option>WR90</option>
+<option>WR75</option>
+<option>WR62</option>
+<option>WR42</option>
 <option>Belden 9913 (RG-8)</option>
 <option>Belden 8237 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>
@@ -448,16 +447,16 @@ print <<EOF;
 <option>Andrew HELIAX EW180</option>
 <option>Andrew HELIAX EWP180</option>
 <option>Andrew HELIAX EW220</option>
-<option>Andrew WR284</option>
-<option>Andrew WR229</option>
-<option>Andrew WR187</option>
-<option>Andrew WR159</option>
-<option>Andrew WR137</option>
-<option>Andrew WR112</option>
-<option>Andrew WR90</option>
-<option>Andrew WR75</option>
-<option>Andrew WR62</option>
-<option>Andrew WR42</option>
+<option>WR284</option>
+<option>WR229</option>
+<option>WR187</option>
+<option>WR159</option>
+<option>WR137</option>
+<option>WR112</option>
+<option>WR90</option>
+<option>WR75</option>
+<option>WR62</option>
+<option>WR42</option>
 <option>Belden 9913 (RG-8)</option>
 <option>Belden 8237 (RG-8)</option>
 <option>Belden 8267 (RG-213)</option>

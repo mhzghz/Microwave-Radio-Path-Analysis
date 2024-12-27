@@ -28,6 +28,7 @@ my $ver        = "v2.70"; # Dec2024
 my $splat      = "/usr/local/bin/splat";
 my $splatdir   = "/usr/splat/sdf";
 my $splatdirhd = "/media/gbppr/500GB/sdf-hd";
+my $pdfdir     = "../pdf"; # Location of coax/waveguide PDF datasheets
 my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
 my $do_mag     = "yes"; # Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
@@ -2048,10 +2049,14 @@ if ($check4 eq "yes") {
     $cli_vig = sprintf "%.2f", 0.5 * (($rough_ft / 50) ** -1.3);
     $cli_val = "Calculated"
   }
+
+  $cli_vig_calc = $cli_vig;
+  $vig_val = "N/A";
 }
 elsif ($check4 eq "no") {
   $rough_ft = sprintf "%.1f", 50;
   $rough_m = sprintf "%.1f", 50 * 0.3048;
+  $cli_vig_calc = sprintf "%.2f", 1.0 * (($rough_calc_ft / 50) ** -1.3);
   $rough_hum = "Average or Temperate Areas";
 
   if ($vigants eq "6.00 : Very smooth terrain, over water or flat desert, coastal") {
@@ -2175,162 +2180,182 @@ sub Cable {
     if ($frq_mhz <= 15800) {
       $loss_per_foot = ((0.119736 * sqrt $frq_mhz) + (0.000373 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "1/4\" Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/LDF1-50.pdf\">Andrew HELIAX LDF1-50</a><br>1/4\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF1-50<br>1/4\" Foam Dielectric / 50 ohm";
     }
     else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+ 	  $cab_desc1 = "<a href=\"$pdfdir/LDF1-50.pdf\">Andrew HELIAX LDF1-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF1-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF2-50") {
 	if ($frq_mhz <= 13000) {
-   	  #$loss_per_foot = (1.5271 + 0.001232 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.101001 * sqrt $frq_mhz) + (0.000327 * $frq_mhz)) / 100;
 	  $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "3/8\" Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/LDF2-50.pdf\">Andrew HELIAX LDF2-50</a><br>3/8\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF2-50<br>3/8\" Foam Dielectric / 50 ohm";
 	}
     else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF2-50.pdf\">Andrew HELIAX LDF2-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF2-50<br>Exceeds Frequency Limit";
 	}
   } 
   elsif ($val eq "Andrew HELIAX LDF4.5-50") {
     if ($frq_mhz <= 6100) {
-	  #$loss_per_foot = (0.5348 + 0.0008228 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.045231 * sqrt $frq_mhz) + (0.000209 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "5/8\" Low-Density Foam / 50 ohm";
+      $cab_desc1 = "Andrew HELIAX LDF4.5-50<br>5/8\" Low-Density Foam / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF4.5-50<br>5/8\" Low-Density Foam / 50 ohm";
     }
 	else {
 	  $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "Andrew HELIAX LDF4.5-50<br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF4.5-50<br>Exceeds Frequency Limit";
     }
   } 
   elsif ($val eq "Andrew HELIAX LDF4-50A") {
 	if ($frq_mhz <= 8800) {
       $loss_per_foot = ((0.064133 * sqrt $frq_mhz) + (0.000191 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-	  $cab_desc = "1/2\" Foam Dielectric / 50 ohm";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF4-50A.pdf\">Andrew HELIAX LDF4-50A</a><br>1/2\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF4-50A<br>1/2\" Foam Dielectric / 50 ohm";
 	}
 	else {
 	  $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF4-50A.pdf\">Andrew HELIAX LDF4-50A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF4-50A<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF5-50A") {
     if ($frq_mhz <= 5000) {
       $loss_per_foot = ((0.034766 * sqrt $frq_mhz) + (0.000153 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-  	  $cab_desc = "7/8\" Foam Dielectric / 50 ohm";
+  	  $cab_desc1 = "<a href=\"$pdfdir/LDF5-50A.pdf\">Andrew HELIAX LDF5-50A</a><br>7/8\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF5-50A<br>7/8\" Foam Dielectric / 50 ohm";
     }
     else {
 	  $loss_per_foot = 5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "<font color=\"red\">Exceeds Frequency Limit</font>";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF5-50A.pdf\">Andrew HELIAX LDF5-50A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF5-50A<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF6-50") {
     if ($frq_mhz <= 3300) {
       $loss_per_foot = ((0.023874 * sqrt $frq_mhz) + (0.000141 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-	  $cab_desc = "1-1/4\" Foam Dielectric / 50 ohm";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF6-50.pdf\">Andrew HELIAX LDF6-50</a><br>1-1/4\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF6-50<br>1-1/4\" Foam Dielectric / 50 ohm";
 	}
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF6-50.pdf\">Andrew HELIAX LDF6-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF6-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF7-50A") {
     if ($frq_mhz <= 2700) {
       $loss_per_foot = ((0.019152 * sqrt $frq_mhz) + (0.000137 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-	  $cab_desc = "1-5/8\" Foam Dielectric / 50 ohm";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF7-50A.pdf\">Andrew HELIAX LDF7-50A</a><br>1-5/8\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF7-50A<br>1-5/8\" Foam Dielectric / 50 ohm";
     }
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF7-50A.pdf\">Andrew HELIAX LDF7-50A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF7-50A<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX LDF12-50") {
     if ($frq_mhz <= 2200) {
       $loss_per_foot = ((0.015831 * sqrt $frq_mhz) + (0.000143 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "2-1/4\" Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/LDF12-50.pdf\">Andrew HELIAX LDF12-50</a><br>2-1/4\" Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX LDF12-50<br>2-1/4\" Foam Dielectric / 50 ohm";
     }
     else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/LDF12-50.pdf\">Andrew HELIAX LDF12-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX LDF12-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX FSJ1-50A") {
 	if ($frq_mhz <= 18000) {
-	  #$loss_per_foot = (3.0024 + 0.00236 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.175364 * sqrt $frq_mhz) + (0.000416 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "1/4\" Flexible Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/FSJ1-50A.pdf\">Andrew HELIAX FSJ1-50A</a><br>1/4\" Flexible Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX FSJ1-50A<br>1/4\" Flexible Foam Dielectric / 50 ohm";
 	}
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/FSJ1-50A.pdf\">Andrew HELIAX FSJ1-50A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX FSJ1-50A<br>Exceeds Frequency Limit";
     }
   } 
   elsif ($val eq "Andrew HELIAX FSJ2-50") {
     if ($frq_mhz <= 13400) {
       $loss_per_foot = ((0.116375 * sqrt $frq_mhz) + (0.000386 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "3/8\" Flexible Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/FSJ2-50.pdf\">Andrew HELIAX FSJ2-50</a><br>3/8\" Flexible Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX FSJ2-50<br>3/8\" Flexible Foam Dielectric / 50 ohm";
     }
     else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/FSJ2-50.pdf\">Andrew HELIAX FSJ2-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX FSJ2-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX FSJ4-50B") {
     if ($frq_mhz <= 10200) {
-  	  #$loss_per_foot = (1.3738 + 0.00146 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.099126 * sqrt $frq_mhz) + (0.000469 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "1/2\" Flexible Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/FSJ4-50B.pdf\">Andrew HELIAX FSJ4-50B</a><br>1/2\" Flexible Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX FSJ4-50B<br>1/2\" Flexible Foam Dielectric / 50 ohm";
 	}
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/FSJ4-50B.pdf\">Andrew HELIAX FSJ4-50B</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX FSJ4-50B<br>Exceeds Frequency Limit";
     }
   }
    elsif ($val eq "Andrew HELIAX HT4-50") {
      if ($frq_mhz <= 10900) {
-       #$loss_per_foot = (1.1679 + 0.001518 * $frq_mhz) / 100;
 	   $loss_per_foot = ((0.081505 * sqrt $frq_mhz) + (0.000735 * $frq_mhz)) / 100;
        $loss_per_meter = $loss_per_foot * 3.2808399;
-       $cab_desc = "1/2\" High-Temp Foam Dielectric / 50 ohm";
+       $cab_desc1 = "<a href=\"$pdfdir/HT4-50.pdf\">Andrew HELIAX HT4-50</a><br>1/2\" High-Temp Foam Dielectric / 50 ohm";
+	   $cab_desc2 = "Andrew HELIAX HT4-50<br>1/2\" High-Temp Foam Dielectric / 50 ohm";
 	 }
 	 else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/HT4-50.pdf\">Andrew HELIAX HT4-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX HT4-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HT5-50") {
 	if ($frq_mhz <= 5200) {
-      #$loss_per_foot = (0.369 + 0.001472 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.035311 * sqrt $frq_mhz) + (0.000663 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "7/8\" High-Temp Foam Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/HT5-50.pdf\">Andrew HELIAX HT5-50</a><br>7/8\" High-Temp Foam Dielectric / 50 ohm";
+	  $cab_desc2 = "Andrew HELIAX HT5-50<br>7/8\" High-Temp Foam Dielectric / 50 ohm";
 	}
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/HT5-50.pdf\">Andrew HELIAX HT5-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX HT5-50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX HST1-50") {
@@ -2347,7 +2372,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ4-50") {
     if ($frq_mhz <= 10900) {
-	  #$loss_per_foot = (1.0129 + 0.001117 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.078969 * sqrt $frq_mhz) + (0.000320 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1/2\" Air Dielectric / 50 ohm";
@@ -2372,7 +2396,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ5-50") {
 	if ($frq_mhz <= 5200) {
-	  #$loss_per_foot = (0.3904 + 0.0006426 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.035238 * sqrt $frq_mhz) + (0.000166 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "7/8\" Air Dielectric / 50 ohm";
@@ -2385,7 +2408,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ7-50A") {
     if ($frq_mhz <= 2700) {
-      #$loss_per_foot = (0.1582 + 0.0004698 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.019456 * sqrt $frq_mhz) + (0.000086 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "1-5/8\" Air Dielectric / 50 ohm";
@@ -2398,7 +2420,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ12-50") {
 	if ($frq_mhz <= 2300) {
-	  #$loss_per_foot = (0.1222 + 0.0004186 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.016065 * sqrt $frq_mhz) + (0.000081 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "2-1/4\" Air Dielectric / 50 ohm";
@@ -2411,7 +2432,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ8-50B") {
     if ($frq_mhz <= 1640) {
-	  #$loss_per_foot = (0.07909 + 0.0004801 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.012467 * sqrt $frq_mhz) + (0.000169 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "3\" Air Dielectric / 50 ohm";
@@ -2424,7 +2444,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ11-50") {
     if ($frq_mhz <= 1000) {
-	  #$loss_per_foot = (0.05303 + 0.0004148 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.010391 * sqrt $frq_mhz) + (0.000105 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "4\" Air Dielectric / 50 ohm";
@@ -2437,7 +2456,6 @@ sub Cable {
   }
   elsif ($val eq "Andrew HELIAX HJ9-50") {
     if ($frq_mhz <= 960) {
-	  #$loss_per_foot = (0.03655 + 0.0002782 * $frq_mhz) / 100;
 	  $loss_per_foot = ((0.007316 * sqrt $frq_mhz) + (0.000053 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc = "5\" Air Dielectric / 50 ohm";
@@ -2500,580 +2518,684 @@ sub Cable {
     if ($frq_mhz <= 2300 && $frq_mhz >= 1700) {
       $loss_per_foot = (0.7731 - 0.0002 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 1.7-2.3 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW17.pdf\">Andrew HELIAX EW17</a><br>Elliptical Waveguide, 1.7-2.3 GHz";
+	  $cab_desc1 = "Andrew HELIAX EW17<br>Elliptical Waveguide, 1.7-2.3 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW17.pdf\">Andrew HELIAX EW17</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW17<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP17") {
     if ($frq_mhz <= 2300 && $frq_mhz >= 1700) {
       $loss_per_foot = (0.7731 - 0.0002 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 1.7-2.3 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW17.pdf\">Andrew HELIAX EWP17</a><br>Elliptical Waveguide, 1.7-2.3 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP17<br>Elliptical Waveguide, 1.7-2.3 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW17.pdf\">Andrew HELIAX EWP17</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP17<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW20") {
     if ($frq_mhz <= 2700 && $frq_mhz >= 2100) {
       $loss_per_foot = (0.6576 - 0.00008667 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 2.1-2.7 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW20.pdf\">Andrew HELIAX EW20</a><br>Elliptical Waveguide, 2.1-2.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW20<br>Elliptical Waveguide, 2.1-2.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW20.pdf\">Andrew HELIAX EW20</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW20<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW28") {
     if ($frq_mhz <= 3400 && $frq_mhz >= 2900) {
       $loss_per_foot = (1.2952 - 0.0002164 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 2.9-3.4 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW28.pdf\">Andrew HELIAX EW28</a><br>Elliptical Waveguide, 2.9-3.4 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW28<br>Elliptical Waveguide, 2.9-3.4 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW28.pdf\">Andrew HELIAX EW28</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW28<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW34") {
     if ($frq_mhz <= 4200 && $frq_mhz >= 3100) {
       $loss_per_foot = (1.2509 - 0.0001507 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 3.1-4.2 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW34.pdf\">Andrew HELIAX EW34</a><br>Elliptical Waveguide, 3.1-4.2 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW34<br>Elliptical Waveguide, 3.1-4.2 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW34.pdf\">Andrew HELIAX EW34</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW34<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP34") {
     if ($frq_mhz <= 4200 && $frq_mhz >= 3100) {
       $loss_per_foot = (1.2509 - 0.0001507 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 3.1-4.2 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW34.pdf\">Andrew HELIAX EWP34</a><br>Elliptical Waveguide, 3.1-4.2 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP34<br>Elliptical Waveguide, 3.1-4.2 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW34.pdf\">Andrew HELIAX EWP34</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP34<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW37") {
     if ($frq_mhz <= 4200 && $frq_mhz >= 3600) {
       $loss_per_foot = (2.3258 - 0.000373 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 3.6-4.2 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EW37</a><br>Elliptical Waveguide, 3.6-4.2 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW37<br>Elliptical Waveguide, 3.6-4.2 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EW37</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW37<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP37") {
     if ($frq_mhz <= 3900 && $frq_mhz >= 3400) {
       $loss_per_foot = (2.3258 - 0.000373 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 3.4-3.9 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EWP37</a><br>Elliptical Waveguide, 3.4-3.9 GHz";
+      $cab_desc2 = "Andrew HELIAX EWP37<br>Elliptical Waveguide, 3.4-3.9 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EWP37</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP37<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP37S") {
     if ($frq_mhz <= 4200 && $frq_mhz >= 3700) {
       $loss_per_foot = (2.3258 - 0.000373 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 3.7-4.2 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EWP37S</a><br>Elliptical Waveguide, 3.7-4.2 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP37S<br>Elliptical Waveguide, 3.7-4.2 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW37.pdf\">Andrew HELIAX EWP37S</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP37S<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew HELIAX EW44") {
+  elsif ($val eq "Andrew HELIAX EW43") {
     if ($frq_mhz <= 5000 && $frq_mhz >= 4400) {
       $loss_per_foot = (3.2471 - 0.0004286 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 4.4-5.0 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EW43</a><br>Elliptical Waveguide, 4.4-5.0 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW43<br>Elliptical Waveguide, 4.4-5.0 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EW43</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW43<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew HELIAX EWP44") {
+  elsif ($val eq "Andrew HELIAX EWP43") {
     if ($frq_mhz <= 5000 && $frq_mhz >= 4400) {
       $loss_per_foot = (3.2471 - 0.0004286 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 4.4-5.0 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EWP43</a><br>Elliptical Waveguide, 4.4-5.0 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP43<br>Elliptical Waveguide, 4.4-5.0 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EWP43</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP43<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew HELIAX EWS44") {
+  elsif ($val eq "Andrew HELIAX EWS43") {
     if ($frq_mhz <= 5000 && $frq_mhz >= 4400) {
       $loss_per_foot = (3.2471 - 0.0004286 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 4.4-5.0 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EWS43</a><br>Elliptical Waveguide, 4.4-5.0 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWS43<br>Elliptical Waveguide, 4.4-5.0 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW43.pdf\">Andrew HELIAX EWS43</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWS43<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW52") {
     if ($frq_mhz <= 6400 && $frq_mhz >= 5600) {
       $loss_per_foot = (1.9105 - 0.0001177 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.6-6.4 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EW52</a><br>Elliptical Waveguide, 5.6-6.4 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW52<br>Elliptical Waveguide, 5.6-6.4 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EW52</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW52<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP52") {
     if ($frq_mhz <= 6400 && $frq_mhz >= 5900) {
       $loss_per_foot = (1.9105 - 0.0001177 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.9-6.4 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EWP52</a><br>Elliptical Waveguide, 5.9-6.4 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP52<br>Elliptical Waveguide, 5.9-6.4 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EWP52</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP52<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP52S") {
     if ($frq_mhz <= 6400 && $frq_mhz >= 5900) {
       $loss_per_foot = (1.9105 - 0.0001177 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.9-6.4 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EWP52S</a><br>Elliptical Waveguide, 5.9-6.4 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP52S<br>Elliptical Waveguide, 5.9-6.4 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW52.pdf\">Andrew HELIAX EWP52S</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP52S<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW63") {
     if ($frq_mhz <= 7100 && $frq_mhz >= 5900) {
       $loss_per_foot =  (2.2812 - 0.0001367 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.9-7.1 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EW63</a><br>Elliptical Waveguide, 5.9-7.1 GHz";
+	  $cab_desc1 = "Andrew HELIAX EW63<br>Elliptical Waveguide, 5.9-7.1 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EW63</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW63<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP63") {
     if ($frq_mhz <= 7100 && $frq_mhz >= 5800) {
       $loss_per_foot = (2.2812 - 0.0001367 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.8-7.1 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EWP63</a><br>Elliptical Waveguide, 5.8-7.1 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP63<br>Elliptical Waveguide, 5.8-7.1 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EWP63</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP63<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP63S") {
     if ($frq_mhz <= 7100 && $frq_mhz >= 5800) {
       $loss_per_foot = (2.2812 - 0.0001367 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 5.8-7.1 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EWP63S</a><br>Elliptical Waveguide, 5.8-7.1 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP63S<br>Elliptical Waveguide, 5.8-7.1 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EWP63S</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP63S<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW64") {
     if ($frq_mhz <= 7800 && $frq_mhz >= 6400) {
       $loss_per_foot = (2.2342 - 0.0001042 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 6.4-7.8 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW64.pdf\">Andrew HELIAX EW64</a><br>Elliptical Waveguide, 6.4-7.8 GHz";
+	  $cab_desc1 = "Andrew HELIAX EW64<br>Elliptical Waveguide, 6.4-7.8 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW64.pdf\">Andrew HELIAX EW64</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW64<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP64") {
     if ($frq_mhz <= 7800 && $frq_mhz >= 7100) {
       $loss_per_foot = (2.2342 - 0.0001042 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 7.1-7.8 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW64.pdf\">Andrew HELIAX EWP64</a><br>Elliptical Waveguide, 7.1-7.8 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP64<br>Elliptical Waveguide, 7.1-7.8 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW64.pdf\">Andrew HELIAX EWP64</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP64<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW77") {
     if ($frq_mhz <= 8500 && $frq_mhz >= 7100) {
       $loss_per_foot =  (2.9572 - 0.0001496 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 7.1-8.5 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW77.pdf\">Andrew HELIAX EW77</a><br>Elliptical Waveguide, 7.1-8.5 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW77<br>Elliptical Waveguide, 7.1-8.5 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW77.pdf\">Andrew HELIAX EW77</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW77<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP77") {
     if ($frq_mhz <= 7800 && $frq_mhz >= 7100) {
       $loss_per_foot =  (2.9572 - 0.0001496 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 7.1-7.8 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EWP77.pdf\">Andrew HELIAX EWP77</a><br>Elliptical Waveguide, 7.1-7.8 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP77<br>Elliptical Waveguide, 7.1-7.8 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW77.pdf\">Andrew HELIAX EWP77</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP77<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW85") {
     if ($frq_mhz <= 9800 && $frq_mhz >= 8500) {
       $loss_per_foot = (6.7362 - 0.0003921 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 8.5-9.8 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW85.pdf\">Andrew HELIAX EW85</a><br>Elliptical Waveguide, 8.5-9.8 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW85<br>Elliptical Waveguide, 8.5-9.8 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW85.pdf\">Andrew HELIAX EW85</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW85<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW90") {
     if ($frq_mhz <= 11700 && $frq_mhz >= 10200) {
       $loss_per_foot = (4.7473 - 0.00015 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 10.2-11.7 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW90.pdf\">Andrew HELIAX EW90</a><br>Elliptical Waveguide, 10.2-11.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW90<br>Elliptical Waveguide, 10.2-11.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW90.pdf\">Andrew HELIAX EW90</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW90<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP90") {
     if ($frq_mhz <= 11700 && $frq_mhz >= 10700) {
       $loss_per_foot = (4.7473 - 0.00015 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 10.7-11.7 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW90.pdf\">Andrew HELIAX EWP90</a><br>Elliptical Waveguide, 10.7-11.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP90<br>Elliptical Waveguide, 10.7-11.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/EW90.pdf\">Andrew HELIAX EWP90</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP90<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP90S") {
     if ($frq_mhz <= 11700 && $frq_mhz >= 10700) {
       $loss_per_foot = (4.7473 - 0.00015 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 10.7-11.7 GHz";
+      $cab_desc1 = "<a hre=\"$pdfdir/EW90.pdf\">Andrew HELIAX EWP90S</a><br>Elliptical Waveguide, 10.7-11.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP90S<br>Elliptical Waveguide, 10.7-11.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW90.pdf\">Andrew HELIAX EWP90S</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP90S<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW127A") {
     if ($frq_mhz <= 13300 && $frq_mhz >= 11700) {
       $loss_per_foot = (5.4481 - 0.0001501 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 11.7-13.3 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW127A.pdf\">Andrew HELIAX EW127A</a><br>Elliptical Waveguide, 11.7-13.3 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW127A<br>Elliptical Waveguide, 11.7-13.3 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW127A.pdf\">Andrew HELIAX EW127A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW127A<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP127A") {
     if ($frq_mhz <= 12200 && $frq_mhz >= 11700) {
       $loss_per_foot = (5.4481 - 0.0001501 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 11.7-12.2 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW127A.pdf\">Andrew HELIAX EWP127A</a><br>Elliptical Waveguide, 11.7-12.2 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP127A<br>Elliptical Waveguide, 11.7-12.2 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW127A.pdf\">Andrew HELIAX EWP127A</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP127A<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW132") {
     if ($frq_mhz <= 14800 && $frq_mhz >= 13750) {
       $loss_per_foot = (7.8522 - 0.000206 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 13.7-14.8 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW132.pdf\">Andrew HELIAX EW132</a><br>Elliptical Waveguide, 13.7-14.8 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW132<br>Elliptical Waveguide, 13.7-14.8 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW132.pdf\">Andrew HELIAX EW132</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW132<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP132") {
     if ($frq_mhz <= 15350 && $frq_mhz >= 14400) {
       $loss_per_foot = (7.8522 - 0.000206 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 14.4-15.3 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW132.pdf\">Andrew HELIAX EWP132</a><br>Elliptical Waveguide, 14.4-15.3 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP132<br>Elliptical Waveguide, 14.4-15.3 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW132.pdf\">Andrew HELIAX EWP132</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP132<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW180") {
     if ($frq_mhz <= 19700 && $frq_mhz >= 17300) {
       $loss_per_foot = (9.6646 - 0.0002009 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 17.3-19.7 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW180.pdf\">Andrew HELIAX EW180</a><br>Elliptical Waveguide, 17.3-19.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW180<br>Elliptical Waveguide, 17.3-19.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW180.pdf\">Andrew HELIAX EW180</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EW180<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EWP180") {
     if ($frq_mhz <= 19700 && $frq_mhz >= 17700) {
       $loss_per_foot = (9.6646 - 0.0002009 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 17.7-19.7 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW180.pdf\">Andrew HELIAX EWP180</a><br>Elliptical Waveguide, 17.7-19.7 GHz";
+	  $cab_desc2 = "Andrew HELIAX EWP180<br>Elliptical Waveguide, 17.7-19.7 GHz";
     }
     else {
       $loss_per_foot = 10;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW180.pdf\">Andrew HELIAX EWP180</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "Andrew HELIAX EWP180<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Andrew HELIAX EW220") {
     if ($frq_mhz <= 23600 && $frq_mhz >= 21200) {
       $loss_per_foot = (11.8539 - 0.0001445 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Elliptical Waveguide, 21.2-23.6 GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EW220.pdf\">Andrew HELIAX EW220</a><br>Elliptical Waveguide, 21.2-23.6 GHz";
+      $cab_desc2 = "Andrew HELIAX EW220<br>Elliptical Waveguide, 21.2-23.6 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/EW220.pdf\">Andrew HELIAX EW220</a><br>Exceeds Frequency Limit";
+	  $cab_desc2 = "Andrew HELIAX EW220<br>Exceeds Frequency Limit";
     }
   }
- elsif ($val eq "Andrew WR284") {
+ elsif ($val eq "WR284") {
     if ($frq_mhz <= 4000 && $frq_mhz >= 2600) {
       $loss_per_foot = (1.1628 - 0.0001659 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 2.6-4.0 GHz";
+      $cab_desc1 = "WR284<br>Rectangular Waveguide, 2.6-4.0 GHz";
+	  $cab_desc2 = "WR284<br>Rectangular Waveguide, 2.6-4.0 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR284 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR284 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR229") {
+  elsif ($val eq "WR229") {
     if ($frq_mhz <= 4900 && $frq_mhz >= 3300) {
       $loss_per_foot = (1.4981 - 0.0001677 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 3.3-4.9 GHz";
+      $cab_desc1 = "WR229<br>Rectangular Waveguide, 3.3-4.9 GHz";
+	  $cab_desc2 = "WR229<br>Rectangular Waveguide, 3.3-4.9 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR229 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR229 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR187") {
+  elsif ($val eq "WR187") {
     if ($frq_mhz <= 5800 && $frq_mhz >= 3900) {
       $loss_per_foot = (2.2445 - 0.0002179 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 3.9-5.8 GHz";
+      $cab_desc1 = "WR187<br>Rectangular Waveguide, 3.9-5.8 GHz";
+	  $cab_desc2 = "WR187<br>Rectangular Waveguide, 3.9-5.8 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+	  $cab_desc1 = "WR187 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR187 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR159") {
+  elsif ($val eq "WR159") {
     if ($frq_mhz <= 7000 && $frq_mhz >= 4900) {
       $loss_per_foot = (2.449 - 0.0001786 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 4.9-7.0 GHz";
+      $cab_desc1 = "WR159<br>Rectangular Waveguide, 4.9-7.0 GHz";
+	  $cab_desc2 = "WR159<br>Rectangular Waveguide, 4.9-7.0 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR159 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR159 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR137") {
+  elsif ($val eq "WR137") {
     if ($frq_mhz <= 8200 && $frq_mhz >= 5900) {
       $loss_per_foot = (3.0557 - 0.0001752 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 5.9-8.2 GHz";
+      $cab_desc1 = "WR137<br>Rectangular Waveguide, 5.9-8.2 GHz";
+	  $cab_desc2 = "WR137<br>Rectangular Waveguide, 5.9-8.2 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR137 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR137 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR112") {
+  elsif ($val eq "WR112") {
     if ($frq_mhz <= 10000 && $frq_mhz >= 7000) {
       $loss_per_foot =  (4.2834 - 0.000206 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 7.0-10.0 GHz";
+      $cab_desc1 = "WR112<br>Rectangular Waveguide, 7.0-10.0 GHz";
+	  $cab_desc2 = "WR112<br>Rectangular Waveguide, 7.0-10.0 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR112 Rectangular Waveguide<br>Exceeds Frequency Limit";
+	  $cab_desc2 = "WR112 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR90") {
+  elsif ($val eq "WR90") {
     if ($frq_mhz <= 12400 && $frq_mhz >= 8200) {
       $loss_per_foot =  (6.7045 - 0.0002979 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 8.2-12.4 GHz";
+      $cab_desc1 = "WR90<br>Rectangular Waveguide, 8.2-12.4 GHz";
+	  $cab_desc2 = "WR90<br>Rectangular Waveguide, 8.2-12.4 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR90 Rectangular Waveguide<br>Exceeds Frequency Limit";
+	  $cab_desc2 = "WR90 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR75") {
+  elsif ($val eq "WR75") {
     if ($frq_mhz <= 15000 && $frq_mhz >= 10000) {
       $loss_per_foot =  (8.0104 - 0.0002934 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 10.0-15.0 GHz";
+      $cab_desc1 = "WR75<br>Rectangular Waveguide, 10.0-15.0 GHz";
+	  $cab_desc2 = "WR75<br>Rectangular Waveguide, 10.0-15.0 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR75 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR75 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR62") {
+  elsif ($val eq "WR62") {
     if ($frq_mhz <= 18000 && $frq_mhz >= 12000) {
       $loss_per_foot = (10.7559 - 0.0003321 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 12.0-18.0 GHz";
+      $cab_desc1 = "WR62<br>Rectangular Waveguide, 12.0-18.0 GHz";
+	  $cab_desc2 = "WR62<br>Rectangular Waveguide, 12.0-18.0 GHz";
     }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR62 Rectangular Waveguide<br>Exceeds Frequency Limit";
+	  $cab_desc2 = "WR62 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
-  elsif ($val eq "Andrew WR42") {
+  elsif ($val eq "WR42") {
     if ($frq_mhz <= 26500 && $frq_mhz >= 18000) {
       $loss_per_foot = (21.2335 - 0.0004116 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Rigid Rectangular Waveguide, 18.0-26.5 GHz";
+      $cab_desc1 = "WR42<br>Rectangular Waveguide, 18.0-26.5 GHz";
+	  $cab_desc2 = "WR42<br>Rectangular Waveguide, 18.0-26.5 GHz";
     }
     else {
       $loss_per_foot = 20;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "WR42 Rectangular Waveguide<br>Exceeds Frequency Limit";
+      $cab_desc2 = "WR42 Rectangular Waveguide<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Belden 9913 (RG-8)") {
     $loss_per_foot = ((0.12050 * sqrt $frq_mhz) + (0.00066 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+	$cab_desc1 = "<a href=\"$pdfdir/9913.pdf\">Belden 9913</a><br>RG-8, #10 Solid Core, PE Dielc.";
+    $cab_desc2 = "Belden 9913<br>RG-8, #10 Solid Core, PE Dielc.";
   }
   elsif ($val eq "Belden 8237 (RG-8)") {
     $loss_per_foot = ((0.16925 * sqrt $frq_mhz) + (0.00204 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc1 = "<a href=\"$pdfdir/8237.pdf\">Belden 8237</a><br>RG-8, #13 Strd. Core, PE Dielc.";
+    $cab_desc2 = "Belden 9913<br>RG-8, #13 Strnd. Core, PE Dielc.";
   }
   elsif ($val eq "Belden 8267 (RG-213)") {
     $loss_per_foot = ((0.18993 * sqrt $frq_mhz) + (0.00216 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc1 = "<a href=\"$pdfdir/8267.pdf\">Belden 8267</a><br>RG-8, #13 Strd. Core, PE Dielc., MIL-SPEC";
+    $cab_desc2 = "Belden 9913<br>RG-8, #13 Strnd. Core, PE Dielc., MIL-SPEC";
   }
   elsif ($val eq "Belden 9258 (RG-8X)") {
     $loss_per_foot = ((0.26904 * sqrt $frq_mhz) + (0.00572 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc1 = "<a href=\"$pdfdir/9258.pdf\">Belden 9258</a><br>RG-8X, #16 Strd. Core, PE Dielc.";
+    $cab_desc2 = "Belden 9258<br>RG-8X, #16 Strnd. Core, PE Dielc.";
   }
   elsif ($val eq "Belden 8240 (RG-58)") {
     $loss_per_foot = ((0.34190 * sqrt $frq_mhz) + (0.00377 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
+    $cab_desc1 = "<a href=\"$pdfdir/8240.pdf\">Belden 8240</a><br>RG-58, #20 Solid Core, PE Dielc.";
+    $cab_desc2 = "Belden 8240<br>RG-58, #20 Solid Core, PE Dielc.";
   }
   elsif ($val eq "M&P AIRBORNE 10") {
     if ($frq_mhz <= 12000) {
       $loss_per_foot = (1.242 + 0.001312 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "3/8\" PE Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/MP-Airborne10.pdf\">M&amp;P AIRBORNE 10</a><br>3/8\" PE Dielectric / 50 ohm";
+      $cab_desc2 = "M&amp;P AIRBORNE 10<br>3/8\" PE Dielectric / 50 ohm";
    }
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/MP-Airborne10.pdf\">M&amp;P AIRBORNE 10</a><br>Exceeds Frequency Limit";
+	  $cab_desc2 = "M&amp;P AIRBORNE 10<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "M&P BROAD PRO 50") {
     if ($frq_mhz <= 12000) {
       $loss_per_foot =  (1.3126 + 0.00135 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "3/8\" PE Dielectric / 50 ohm";
+      $cab_desc1 = "<a href=\"$pdfdir/MP-BroadPro-50.pdf\">M&amp;P BROAD PRO 50</a><br>3/8\" PE Dielectric / 50 ohm";
+      $cab_desc2 = "M&amp;P BROAD PRO 50<br>3/8\" PE Dielectric / 50 ohm";
 	}
     else {
       $loss_per_foot = 15;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc = "Exceeds Frequency Limit";
+      $cab_desc1 = "<a href=\"$pdfdir/MP-BroadPro-50.pdf\">M&amp;P BROAD PRO 50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "M&amp;P BROAD PRO 50<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "Crap RG-8") {
     $loss_per_foot = ((0.21 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
-	$cab_desc = "Stuff I found at a hamfest";
+	$cab_desc1 = "Crap RG-8<br>Stuff I found at a hamfest";
+	$cab_desc2 = "Crap RG-8<br>Stuff I found at a hamfest";
   }
   elsif ($val eq "Other") {
     if ($val2 == 0) {
-      $val2 = 7; $val1 = "feet";
+      $val2 = 1; 
+	  $val1 = "feet";
   }
   if ($val1 eq "meters") {
     $loss_per_meter = $val2 / 100;
     $loss_per_foot = $loss_per_meter / 3.2808399;
-	$cab_desc = "User Supplied";
+	$cab_desc1 = "User Supplied";
+	$cab_desc2 = "User Supplied";
    }
    elsif ($val1 eq "feet") {
      $loss_per_foot =  $val2 / 100;
      $loss_per_meter = $loss_per_foot * 3.2808399;
-	 $cab_desc = "User Supplied";
+	 $cab_desc1 = "User Supplied";
+	 $cab_desc2 = "User Supplied";
    }
   }
 }
@@ -3083,7 +3205,8 @@ sub Cable {
 &Cable($val = $tx_cab, $val1 = $check1, $val2 = $tx_cab_other);
 
 if ($tx_len_val eq "meters") {
-  $tx_cab_desc       = $cab_desc;
+  $tx_cab_desc1       = $cab_desc1;
+  $tx_cab_desc2       = $cab_desc2;
   $tx_cab_loss       = sprintf "%.2f", $tx_len * $loss_per_meter;
   $tx_length_m       = sprintf "%.2f", $tx_len;
   $tx_length_ft      = sprintf "%.2f", $tx_len / 0.3048;
@@ -3092,8 +3215,9 @@ if ($tx_len_val eq "meters") {
   $tx_loss_per_100m  = sprintf "%.2f", $loss_per_meter * 100;
   $tx_loss_per_100f  = sprintf "%.2f", $loss_per_foot * 100;
 }
-else {
-  $tx_cab_desc       = $cab_desc;
+elsif ($tx_len_val eq "feet") {
+  $tx_cab_desc1       = $cab_desc1;
+  $tx_cab_desc2       = $cab_desc2;
   $tx_cab_loss       = sprintf "%.2f", $tx_len * $loss_per_foot;
   $tx_length_m       = sprintf "%.2f", $tx_len * 0.3048; # ft to m
   $tx_length_ft      = sprintf "%.2f", $tx_len;
@@ -3133,7 +3257,8 @@ $tx_misc_gain        = sprintf "%.2f", $tx_misc_gain;
 &Cable($val = $rx_cab, $val1 = $check2, $val2 = $rx_cab_other);
 
 if ($rx_len_val eq "meters") {
-  $rx_cab_desc       = $cab_desc;
+  $rx_cab_desc1       = $cab_desc1;
+  $rx_cab_desc2       = $cab_desc2;
   $rx_cab_loss       = sprintf "%.2f", $rx_len * $loss_per_meter;
   $rx_length_m       = sprintf "%.2f", $rx_len;
   $rx_length_ft      = sprintf "%.2f", $rx_len / 0.3048; # m to ft
@@ -3142,8 +3267,9 @@ if ($rx_len_val eq "meters") {
   $rx_loss_per_100m  = sprintf "%.2f", $loss_per_meter * 100;
   $rx_loss_per_100f  = sprintf "%.2f", $loss_per_foot * 100;
 }
-else {
-  $rx_cab_desc       = $cab_desc;
+elsif ($rx_len_val eq "feet") {
+  $rx_cab_desc1       = $cab_desc1;
+  $rx_cab_desc2       = $cab_desc2;
   $rx_cab_loss       = sprintf "%.2f", $rx_len * $loss_per_foot;
   $rx_length_m       = sprintf "%.2f", $rx_len * 0.3048; # ft to m
   $rx_length_ft      = sprintf "%.2f", $rx_len;
@@ -5577,7 +5703,7 @@ print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><fon
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/True_north\">True North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP</font>&deg; to RX</td><td><font color=\"blue\">$AZLP</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/North_magnetic_pole\">Magnetic North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP_MN</font>&deg; to RX</td><td><font color=\"blue\">$AZLP_MN</font>&deg; to TX</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Magnetic_declination\">Magnetic Declination</a></b></td><td><font color=\"blue\">$magdec_tx</font>&deg; $magdir_tx</td><td><font color=\"blue\">$magdec_rx</font>&deg; $magdir_rx</td></tr>\n";
-print "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab<br>$tx_cab_desc</font></td><td><font color=\"blue\">$rx_cab<br>$rx_cab_desc</font></td></tr>\n";
+print "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab_desc1</font></td><td><font color=\"blue\">$rx_cab_desc1</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Length</b></td><td><font color=\"blue\">$tx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_length_m</font> meters)</td><td><font color=\"blue\">$rx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_length_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_100m</font> dB/100 meters)</td><td><font color=\"blue\">$rx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_100m</font> dB/100 meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_foot</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_meter</font> dB/meter)</td><td><font color=\"blue\">$rx_loss_per_foot</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_meter</font> dB/meter)</td></tr>\n";
@@ -5626,15 +5752,14 @@ if ($check3 eq "yes") {
 
 print "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
-print "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Terrain Roughness</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)<br>Calculated: <font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Atmospheric Pressure (Sea Level Corrected)</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars</td></tr>\n";
+print "<tr><td align=\"right\"><b>Atmospheric Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars&nbsp;&nbsp;(Sea Level Corrected)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Saturation Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$es</font> millibars</td></tr>\n";
 print "<tr><td align=\"right\"><b>Partial Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$vapor_p</font> millibars</td></tr>\n";
 print "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">$diecon</font>&nbsp;&nbsp;($diecon_desc)</td></tr>\n";
 printf "<tr><td align=\"right\"><b>Ground Conductivity</b></td><td colspan=\"2\"><font color=\"blue\">%.3f</font> Siemens/meter</td></tr>\n", $earcon;
-print "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\"><font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($cli_val)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($vig_val)<br>Calculated: <font color=\"blue\">$cli_vig_calc</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Longley-Rice Climate Type</b></td><td colspan=\"2\"><font color=\"blue\">$climate</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Crane Rain Region</b></td><td colspan=\"2\"><font color=\"blue\">$region</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Local Area Humidity Type</b></td><td colspan=\"2\"><font color=\"blue\">$rough_hum</font></td></tr>\n";
@@ -5796,7 +5921,7 @@ print "<table border=\"1\" cellpadding=\"6\">\n";
 print "<tr>\n";
 print "<td bgcolor=\"#CCCCBB\">\n";
 print "<pre><font size=\"4\">\n";
-print "<font color=\"maroon\"><b><u>HAAT Calculation</u></b></font>\n\n";
+print "<font color=\"maroon\"><b><u>SPLAT! HAAT Calculation</u></b></font>\n\n";
 
 open(F, "<", "$tx_name-site_report.txt") or die "Can't open file $tx_name-site_report.txt: $!\n";
 while (<F>) {
@@ -5810,7 +5935,7 @@ print "<table border=\"1\" cellpadding=\"6\">\n";
 print "<tr>\n";
 print "<td bgcolor=\"#BBCCBB\">\n";
 print "<pre><font size=\"4\">\n";
-print "<font color=\"maroon\"><b><u>HAAT Calculation</u></b></font>\n\n";
+print "<font color=\"maroon\"><b><u>SPLAT! HAAT Calculation</u></b></font>\n\n";
 
 open(F, "<", "$rx_name-site_report.txt") or die "Can't open file $rx_name-site_report.txt: $!\n";
 while (<F>) {
@@ -5825,7 +5950,7 @@ if ($do_div eq "yes") {
   print "<tr>\n";
   print "<td bgcolor=\"#BBCCBB\">\n";
   print "<pre><font size=\"4\">\n";
-  print "<font color=\"maroon\"><b><u>HAAT Calculation</u></b></font>\n\n";
+  print "<font color=\"maroon\"><b><u>SPLAT! HAAT Calculation</u></b></font>\n\n";
   open(F, "<", "$rx_div_name-site_report.txt") or die "Can't open file $rx_div_name-site_report.txt: $!\n";
   while (<F>) {
     chomp $_;
@@ -5982,7 +6107,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/True_north\">True North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP</font>&deg; to RX</td><td><font color=\"blue\">$AZLP</font>&deg; to TX</td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/North_magnetic_pole\">Magnetic North</a> Azimuth</b></td><td><font color=\"blue\">$AZSP_MN</font>&deg; to RX</td><td><font color=\"blue\">$AZLP_MN</font>&deg; to TX</td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Magnetic_declination\">Magnetic Declination</a></b></td><td><font color=\"blue\">$magdec_tx</font>&deg; $magdir_tx</td><td><font color=\"blue\">$magdec_rx</font>&deg; $magdir_rx</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab<br>$tx_cab_desc</font></td><td><font color=\"blue\">$rx_cab<br>$rx_cab_desc</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Transmission Line Type</b></td><td><font color=\"blue\">$tx_cab_desc2</font></td><td><font color=\"blue\">$rx_cab_desc2</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Transmission Line Length</b></td><td><font color=\"blue\">$tx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_length_m</font> meters)</td><td><font color=\"blue\">$rx_length_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_length_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_100m</font> dB/100 meters)</td><td><font color=\"blue\">$rx_loss_per_100f</font> dB/100 feet&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_100m</font> dB/100 meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Transmission Line Loss Specification</b></td><td><font color=\"blue\">$tx_loss_per_foot</font> dB/foot&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$tx_loss_per_meter</font> dB/meter)</td><td><font color=\"blue\">$rx_loss_per_foot</font> dB/foot&nbsp;&nbsp;(<font color=\"blue\">$rx_loss_per_meter</font> dB/meter)</td></tr>\n";
@@ -6015,15 +6140,14 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   }
   print F "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Terrain Roughness (Supplied)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Terrain Roughness (Calculated)</b></td><td colspan=\"2\"><font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Terrain Roughness</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)<br>Calculated: <font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Atmospheric Pressure (Sea Level Corrected)</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Saturation Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$es</font> millibars</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Partial Vapor Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$vapor_p</font> millibars</td></tr>\n";
-  printf F "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">%.f</font></td></tr>\n", $diecon;
+  print F "<tr><td align=\"right\"><b>Ground Dielectric Constant</b></td><td colspan=\"2\"><font color=\"blue\">$diecon</font>&nbsp;&nbsp;($diecon_desc)</td></tr>\n";
   printf F "<tr><td align=\"right\"><b>Ground Conductivity</b></td><td colspan=\"2\"><font color=\"blue\">%.3f</font> Siemens/meter</td></tr>\n", $earcon;
-  print F "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\"><font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($cli_val)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Vigants-Barnett Climate Factor</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$cli_vig</font>&nbsp;&nbsp;($vig_val)<br>Calculated: <font color=\"blue\">$cli_vig_calc</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Longley-Rice Climate Type</b></td><td colspan=\"2\"><font color=\"blue\">$climate</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Crane Rain Region</b></td><td colspan=\"2\"><font color=\"blue\">$region</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Local Area Humidity Type</b></td><td colspan=\"2\"><font color=\"blue\">$rough_hum</font></td></tr>\n";
@@ -6187,7 +6311,7 @@ open(F, ">", "haat.html") or die "Can't open haat.html: $!\n" ;
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Terrain Analysis Reports</b></font></td></tr></table></center><br>\n";
-  print F "<pre><font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+  print F "<pre><font color=\"maroon\"><b>SPLAT! HAAT Calculation</b></font>\n\n";
 
   open(F1, "<", "$tx_name-site_report.txt") or die "Can't open file $tx_name-site_report.txt: $!\n";
     while (<F1>) {
@@ -6196,7 +6320,7 @@ open(F, ">", "haat.html") or die "Can't open haat.html: $!\n" ;
     }
   close F1;
 
-  print F "\n<font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+  print F "\n<font color=\"maroon\"><b>SPLAT! HAAT Calculation</b></font>\n\n";
 
   open(F1, "<", "$rx_name-site_report.txt") or die "Can't open file $rx_name-site_report.txt: $!\n";
     while (<F1>) {
@@ -6206,7 +6330,7 @@ open(F, ">", "haat.html") or die "Can't open haat.html: $!\n" ;
   close F1;
 
   if ($do_div eq "yes") {
-    print F "<font color=\"maroon\"><b>HAAT Calculation</b></font>\n\n";
+    print F "<font color=\"maroon\"><b>SPLAT! HAAT Calculation</b></font>\n\n";
 
     open(F1, "<", "$rx_div_name-site_report.txt") or die "Can't open file $rx_div_name-site_report.txt: $!\n";
       while (<F1>) {
