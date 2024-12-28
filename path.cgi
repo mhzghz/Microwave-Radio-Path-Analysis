@@ -2357,13 +2357,13 @@ sub Cable {
 	if ($frq_mhz <= 18000) {
 	  $loss_per_foot = ((0.175364 * sqrt $frq_mhz) + (0.000416 * $frq_mhz)) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc1 = "<a href=\"$pdfdir/FSJ1-50A.pdf\">Andrew HELIAX FSJ1-50A</a><br>1/4\" Flexible Foam Dielectric";
+      $cab_desc1 = "<a href=\"$pdfdir/HELIAX.pdf\">Andrew HELIAX FSJ1-50A</a><br>1/4\" Flexible Foam Dielectric";
 	  $cab_desc2 = "Andrew HELIAX FSJ1-50A<br>1/4\" Flexible, Foam Dielectric";
 	}
 	else {
       $loss_per_foot =  5;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-	  $cab_desc1 = "<a href=\"$pdfdir/FSJ1-50A.pdf\">Andrew HELIAX FSJ1-50A</a><br>Exceeds Frequency Limit";
+	  $cab_desc1 = "<a href=\"$pdfdir/HELIAX.pdf\">Andrew HELIAX FSJ1-50A</a><br>Exceeds Frequency Limit";
       $cab_desc2 = "Andrew HELIAX FSJ1-50A<br>Exceeds Frequency Limit";
     }
   } 
