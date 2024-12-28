@@ -858,7 +858,7 @@ print <<EOF;
 <br><br>
 <table border="4" cellpadding="8">
 <tr>
-<td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Longley-Rice Path Calculation Parameters</b></font></td>
+<td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Longley-Rice/ITWOMv3 Path Calculation Parameters</b></font></td>
 </tr>
 </table>
 

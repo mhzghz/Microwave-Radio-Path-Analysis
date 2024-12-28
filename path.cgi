@@ -1797,9 +1797,11 @@ elsif ($tilt > 0) {
   $inner = ($tx_ant_ht_ov_ft / tan(deg2rad($tilt) + deg2rad($tx_ant_bw) / 2)) / 5280;
   # Calculate the outer radius of the coverage area, providing insight into the maximum reach of your antenna’s signal.
   $outer = ($tx_ant_ht_ov_ft / tan(deg2rad($tilt) - deg2rad($tx_ant_bw) / 2)) / 5280;
-  $inner = sprintf "%.2f", $inner;
-  $outer = sprintf "%.2f", $outer;
-
+  $inner_mi = sprintf "%.2f", $inner;
+  $inner_km = sprintf "%.2f", $inner * 1.609344;
+  $outer_mi = sprintf "%.2f", $outer;
+  $outer_km = sprintf "%.2f", $outer * 1.609344;
+  
   if ($outer <= 0) {
     # Horizon means that the -3dB point on the main lobe shoots off into the horizon and does not touch the earth (assuming flat terrain.)
     $outer = "Horizon";
@@ -1864,17 +1866,8 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set mxtics 20\n";
   print F "set tics out\n";
   print F "set border 3\n";
-  print F "set label 1 '\\U+1F985'\n"; # eagle
-  print F "set label 2 '\\U+1F983'\n"; # turkey
   print F "set label 3 '\\U+1F6F8'\n"; # ufo
-  print F "set label 4 '\\U+1F986'\n"; # duck
-  $eagle  = sprintf "%.2f", rand(0.87-0.60) + 0.61;
-  $turkey = sprintf "%.2f", rand(0.81-0.55) + 0.54;
-  $duck   = sprintf "%.2f", rand(0.79-0.40) + 0.41;
-  print F "set label 1 at screen 0.5, screen $eagle font ',30'\n";
-  print F "set label 2 at screen 0.35, screen $turkey font ',30'\n";
   print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
-  print F "set label 4 at screen 0.65, screen $duck font ',30'\n";
   print F "set key below enhanced font \"Helvetica,18\"\n";
   print F "set grid back xtics ytics mxtics mytics\n";
 
@@ -1898,6 +1891,8 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
   print F "set x2label \"{/:Bold Frequency: } $frq_mhz MHz\t\t{/:Bold Azimuth: } $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\" tc rgb \"blue\"\n";
   print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
+  print F "set y2label \"Estimated Path Loss (dB)\" font \"Helvetica,22\"\n";
+  print F "set y2tics 5\n";
   print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
   print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
 
@@ -1941,22 +1936,22 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
     # Do clutter
 	if ($do_div eq "yes") {
       # Do clutter and diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
     }
 	elsif ($do_div eq "no") {
 	  # Do clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
 	}
   }
   elsif ($clutter == 0) {
     # No clutter
     if ($do_div eq "yes") {
 	  # No clutter, but with diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
      }
 	 elsif ($do_div eq "no") {
 	  # No clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\"\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
      }
   }
 close F;
@@ -5342,7 +5337,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	$step_km = $dist * 1.609344;
 
 	if ($step_km == 0) {
-      $step_km = 0.03;
+      $step_km = 0.01;
     }
 
     chomp($coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $step_km $AZSP`);
@@ -5435,6 +5430,18 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	print F "set yrange [($min_elev - 5) to ($ymax + 10)]\n";
 	print F "set xrange [0.0 to $dist_mi]\n";
 	print F "set encoding utf8\n";
+	print F "set label 1 '\\U+1F985'\n"; # eagle
+    print F "set label 2 '\\U+1F983'\n"; # turkey
+    print F "set label 3 '\\U+1F6F8'\n"; # ufo
+    print F "set label 4 '\\U+1F986'\n"; # duck
+    $eagle  = sprintf "%.2f", rand(0.87-0.60) + 0.61;
+    $turkey = sprintf "%.2f", rand(0.81-0.55) + 0.54;
+    $duck   = sprintf "%.2f", rand(0.79-0.40) + 0.41;
+    print F "set label 1 at screen 0.5, screen $eagle font ',30'\n";
+    print F "set label 2 at screen 0.35, screen $turkey font ',30'\n";
+    print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
+    print F "set label 4 at screen 0.65, screen $duck font ',30'\n";
+	print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
     print F "set term pngcairo enhanced size 2000,1600\n";
     print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
