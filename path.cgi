@@ -1252,7 +1252,7 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
       
-	  # This is the one used for the TerrainProfile TX to RX
+	  # This is the one used for the Diversity TerrainProfile TX to RX
 	  system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
     elsif ($do_div eq "no") {
@@ -1266,8 +1266,8 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
-	  # This is the one used for the TerrainProfile TX to RX
-      system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+	  # This is the one used for the Non-Diversity TerrainProfile TX to RX
+	  system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
     }
   }
   elsif ($quality eq "High / Slow") {
@@ -1294,15 +1294,8 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
+	  # This is the one used for the HD Non-Diversity TerrainProfile TX to RX
       system("$splat -hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
-      system("/bin/mv profile.gp profile2-div.gp");
-      system("/bin/mv reference.gp reference2-div.gp");
-      system("/bin/mv fresnel.gp fresnel2-div.gp");
-      system("/bin/mv fresnel_pt_6.gp fresnel_pt_62-div.gp");
-      system("/bin/mv curvature.gp curvature2-div.gp");
-      system("/bin/mv elevation-profile.gp elevation-profile2-div.gp");
-      system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
-      system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
 	}
 	elsif($do_div eq "yes") {
       system("$splat -hd -sdelim ':' -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
@@ -1335,8 +1328,8 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
 	  #
-      # This is the one used for the TerrainProfile TX to RX
-      system("$splat -hd -sdelim ':'-hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      # This is the one used for the HD Diversity TerrainProfile TX to RX
+	  system("$splat -hd -sdelim ':'-hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
   }
 }
@@ -1374,7 +1367,7 @@ else {
     system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
     system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
 
-    system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -imperial -gpsav -d $splatdir >/dev/null 2>&1");
+	system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -imperial -gpsav -d $splatdir >/dev/null 2>&1");
   }
   elsif ($do_div eq "no") {
     system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -imperial -gpsav -kml -d $splatdir >/dev/null 2>&1");
@@ -1810,16 +1803,16 @@ elsif ($tilt > 0) {
 
 ## Plot Fancy Terrain Profile: TX to RX
 #
-open(F1, "<", "profile2.gp") or die "Can't open file profile2.gp: $!\n";
+open(F1, "<", "profile2.gp") or die "Can't open file profile2.gp: $!\n";          # Ground elevation used for SPLAT! analysis
 open(F2, ">", "profile-k.gp") or die "Can't open file profile-k.gp: $!\n";        # Ground elevation without K-factor
-open(F3, ">", "profile-terr.gp") or die "Can't open file profile-terr.gp: $!\n";
+open(F3, ">", "profile-terr.gp") or die "Can't open file profile-terr.gp: $!\n";  # Ground elevation with K-factor
   while (<F1>) {
     chomp;
     ($dist, $elev) = split(/\t/);
     $d1 = $dist_mi - $dist;
     $d2 = ($dist_mi + $dist) - $dist_mi;
     $ht =  ($d1 * $d2) / (1.5 * $k);
-	$new = sprintf "%.6f", $elev - $ht; # subtract earth k-factor from terrain data
+	$new = sprintf "%.6f", $elev - $ht; # Subtract Earth K-factor from terrain data
     print F2 "$dist\t$new\n";
 	print F3 "$dist\t$elev\n";
 }
@@ -1893,12 +1886,12 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
   print F "set y2label \"Estimated Path Loss (dB)\" font \"Helvetica,22\"\n";
   print F "set y2tics 5\n";
-  print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
-  print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
+  print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
+  print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
 
   if ($do_div eq "yes") {
 	my $a = $rx_ant_ht_ov_ft + $div_ft;
-    print F "set arrow from $dist_mi,$rx_ant_ht_ov_ft to $dist_mi,$a head size screen 0.008,40.0,30.0 filled lw 3\n";
+    print F "set arrow from $dist_mi,$rx_ant_ht_ov_ft to $dist_mi,$a front head size screen 0.008,40.0,30.0 filled lw 3\n";
 	print F "set label \"Div. $a     \\n\\n\" right front at $dist_mi,$a tc rgb \"gray60\"\n";
   }
 
@@ -1936,22 +1929,22 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
     # Do clutter
 	if ($do_div eq "yes") {
       # Do clutter and diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
     }
 	elsif ($do_div eq "no") {
 	  # Do clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"path-loss.gp\" title 'Path Loss' axes x1y2 lt 6 lw 1 dashtype 9\n";
 	}
   }
   elsif ($clutter == 0) {
     # No clutter
     if ($do_div eq "yes") {
 	  # No clutter, but with diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5, \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
      }
 	 elsif ($do_div eq "no") {
 	  # No clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 0 lw 1 dashtype 1\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
      }
   }
 close F;
@@ -5449,12 +5442,12 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
     print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
 	print F "set style fill solid\n";
-    print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
-    print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft head size screen 0.008,45.0,30.0 filled lw 3\n";
+    print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
+    print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
 
 	if ($do_div eq "yes") {
       my $a = $rx_ant_ht_ov_ft + $div_ft;
-      print F "set arrow from $dist_mi,$rx_ant_ht_ov_ft to $dist_mi,$a head size screen 0.008,40.0,30.0 filled lw 3\n";
+      print F "set arrow from $dist_mi,$rx_ant_ht_ov_ft to $dist_mi,$a front head size screen 0.008,40.0,30.0 filled lw 3\n";
       print F "set label \"Div. $a     \\n\\n\" right front at $dist_mi,$a tc rgb \"gray60\"\n";
     }
 
@@ -5501,7 +5494,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     }
 
 	if ($do_div eq "no") {
-	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" with lines lw 6 linecolor rgb \"white\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
 	}
 	elsif  ($do_div eq "yes") {
       print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
