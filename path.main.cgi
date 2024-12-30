@@ -218,6 +218,14 @@ print <<EOF;
 <option>Belden 8240 (RG-58)</option>
 <option>M&P AIRBORNE 10</option>
 <option>M&P BROAD PRO 50</option>
+<option>RFS HELIFLEX HCA78-50</option>
+<option>RFS HELIFLEX HCA118-50</option>
+<option>RFS HELIFLEX HCA158-50</option>
+<option>RFS HELIFLEX HCA300-50</option>
+<option>RFS FLEXWELL E60</option>
+<option>RFS FLEXWELL EP60</option>
+<option>RFS FLEXWELL E65</option>
+<option>RFS FLEXWELL EP65</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>
@@ -464,6 +472,14 @@ print <<EOF;
 <option>Belden 8240 (RG-58)</option>
 <option>M&P AIRBORNE 10</option>
 <option>M&P BROAD PRO 50</option>
+<option>RFS HELIFLEX HCA78-50</option>
+<option>RFS HELIFLEX HCA118-50</option>
+<option>RFS HELIFLEX HCA158-50</option>
+<option>RFS HELIFLEX HCA300-50</option>
+<option>RFS FLEXWELL E60</option>
+<option>RFS FLEXWELL EP60</option>
+<option>RFS FLEXWELL E65</option>
+<option>RFS FLEXWELL EP65</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>

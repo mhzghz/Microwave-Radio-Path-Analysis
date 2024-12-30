@@ -1780,7 +1780,6 @@ if ($tilt < 0) {
     $inner_mi = "Error";
     $inner_km = "Error"
   }
-
 }
 elsif ($tilt > 0) {
   # TX is lower than RX, so make tilt DOWNWARD
@@ -1794,10 +1793,16 @@ elsif ($tilt > 0) {
   $inner_km = sprintf "%.2f", $inner * 1.609344;
   $outer_mi = sprintf "%.2f", $outer;
   $outer_km = sprintf "%.2f", $outer * 1.609344;
-  
-  if ($outer <= 0) {
-    # Horizon means that the -3dB point on the main lobe shoots off into the horizon and does not touch the earth (assuming flat terrain.)
-    $outer = "Horizon";
+
+  # Horizon means that the -3dB point on the main lobe shoots off into the horizon and does not touch the earth (assuming flat terrain.) 
+  if ($outer <= 0 || $outer > $dist_mi) {
+    $outer_mi = "Horizon";
+    $outer_km = "Horizon";
+  }
+
+  if ($inner <= 0) {
+    $inner_mi = "Error";
+    $inner_km = "Error"
   }
 }
 
@@ -2809,7 +2814,7 @@ sub Cable {
       $loss_per_foot =  (2.2812 - 0.0001367 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc1 = "<a href=\"$pdfdir/EW63.pdf\">Andrew HELIAX EW63</a><br>Elliptical Waveguide, 5.9-7.1 GHz";
-	  $cab_desc1 = "Andrew HELIAX EW63<br>Elliptical Waveguide, 5.9-7.1 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW63<br>Elliptical Waveguide, 5.9-7.1 GHz";
     }
     else {
       $loss_per_foot = 10;
@@ -2851,7 +2856,7 @@ sub Cable {
       $loss_per_foot = (2.2342 - 0.0001042 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc1 = "<a href=\"$pdfdir/EW64.pdf\">Andrew HELIAX EW64</a><br>Elliptical Waveguide, 6.4-7.8 GHz";
-	  $cab_desc1 = "Andrew HELIAX EW64<br>Elliptical Waveguide, 6.4-7.8 GHz";
+	  $cab_desc2 = "Andrew HELIAX EW64<br>Elliptical Waveguide, 6.4-7.8 GHz";
     }
     else {
       $loss_per_foot = 10;
@@ -3254,6 +3259,122 @@ sub Cable {
       $cab_desc2 = "M&amp;P BROAD PRO 50<br>Exceeds Frequency Limit";
     }
   }
+
+  elsif ($val eq "RFS HELIFLEX HCA78-50") {
+    if ($frq_mhz <= 3000) {
+      $loss_per_foot =  (0.3049 + 0.000751 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA78-50.pdf\">RFS HELIFLEX HCA78-50</a><br>7/8\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA78-50<br>7/8\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA78-50.pdf\">RFS HELIFLEX HCA78-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA78-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS HELIFLEX HCA118-50") {
+    if ($frq_mhz <= 3000) {
+      $loss_per_foot =  (0.2343 + 0.0005971 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA118-50.pdf\">RFS HELIFLEX HCA118-50</a><br>1-1/8\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA118-50<br>1-1/8\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA118-50.pdf\">RFS HELIFLEX HCA118-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA118-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS HELIFLEX HCA158-50") {
+    if ($frq_mhz <= 3000) {
+      $loss_per_foot =  (0.1645 + 0.0003985 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA158-50.pdf\">RFS HELIFLEX HCA158-50</a><br>1-5/8\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA158-50<br>1-5/8\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA158-50.pdf\">RFS HELIFLEX HCA158-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA158-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS HELIFLEX HCA300-50") {
+    if ($frq_mhz <= 1700) {
+      $loss_per_foot =  (0.0792 + 0.0003667 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA300-50.pdf\">RFS HELIFLEX HCA300-50</a><br>3\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA300-50<br>3\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA300-50.pdf\">RFS HELIFLEX HCA300-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA300-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E60") {
+    if ($frq_mhz <= 6425 && $frq_mhz >= 5600) {
+      $loss_per_foot = (1.9547 - 0.0001242 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E60.pdf\">RFS FLEXWELL E60</a><br>Elliptical Waveguide, 5.6-6.4 GHz";
+      $cab_desc2 = "RFS FLEXWELL E60<br>Elliptical Waveguide, 5.6-6.4 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+	  $cab_desc1 = "<a href=\"$pdfdir/E60.pdf\">RFS FLEXWELL E60</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E60<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL EP60") {
+    if ($frq_mhz <= 6425 && $frq_mhz >= 5600) {
+      $loss_per_foot = (2.0029 - 0.0001325 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP60.pdf\">RFS FLEXWELL EP60</a><br>Elliptical Waveguide, 5.6-6.4 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP60<br>Elliptical Waveguide, 5.6-6.4 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP60.pdf\">RFS FLEXWELL EP60</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP60<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E65") {
+    if ($frq_mhz <= 7125 && $frq_mhz >= 5900) {
+      $loss_per_foot = (2.4509 - 0.0001643 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E65.pdf\">RFS FLEXWELL E65</a><br>Elliptical Waveguide, 5.9-7.1GHz";
+      $cab_desc2 = "RFS FLEXWELL E65<br>Elliptical Waveguide, 5.9-7.1 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E65.pdf\">RFS FLEXWELL E65</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E65<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL EP65") {
+    if ($frq_mhz <= 7125 && $frq_mhz >= 5900) {
+      $loss_per_foot = (2.4509 - 0.0001643 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP65.pdf\">RFS FLEXWELL EP65</a><br>Elliptical Waveguide, 5.9-7.1GHz";
+      $cab_desc2 = "RFS FLEXWELL EP65<br>Elliptical Waveguide, 5.9-7.1 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP65.pdf\">RFS FLEXWELL EP65</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP65<br>Exceeds Frequency Limit";
+    }
+  }
+
+
+
   elsif ($val eq "Crap RG-8") {
     $loss_per_foot = ((0.21 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
     $loss_per_meter = $loss_per_foot * 3.2808399;
@@ -5144,6 +5265,45 @@ else {
     $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
   }
 }
+
+## Smooth Earth Diffraction Loss
+# ITU Rec. P.526-14
+
+# For horizontal polarization at all frequencies, and for vertical polarization above 20 MHz over land
+# or 300 MHz over sea, Beta may be taken as equal to 1
+$Beta = 1;
+$ae   = 6378.137 * $k; # Earth radius with k-factor, km
+
+$X  = 2.188 * $Beta * ($frq_mhz ** (1/3)) * ($ae ** -(2/3)) * $dist_km;
+$Y1 = 0.009575 * $Beta * ($frq_mhz ** (2/3)) * ($ae ** -(1/3)) * $rx_ant_ht_m;
+$Y2 = 0.009575 * $Beta * ($frq_mhz ** (2/3)) * ($ae ** -(1/3)) * $tx_ant_ht_m;
+
+if ($X >= 1.6) {
+  $FX = 11 + (10 * log($X)) - (17.6 * $X);
+}
+elsif ($X < 1.6) {
+  $FX = (-20 * log($X)) - (5.6488 * ($X ** 1.425));
+}
+
+$B1 = $Beta * $Y1;
+$B2 = $Beta * $Y2;
+
+if ($B1 > 2) {
+  $GY1 = 17.6 * (($B1 - 1.1) ** (1/2)) - (5 * log($B1 - 1.1)) - 8;
+}
+elsif ($B1 <= 2) {
+  $GY1 = 20 * log($B1 + (0.1 * ($B1 ** 3)));
+}
+
+if ($B2 > 2) {
+  $GY2 = 17.6 * (($B2 - 1.1) ** (1/2)) - (5 * log($B2 - 1.1)) - 8;
+}
+elsif ($B2 <= 2) {
+  $GY2 = 20 * log($B2 + (0.1 * ($B2 ** 3)));
+}
+
+$diff_loss = sprintf "%.2f", abs($FX + $GY1 + $GY2);
+
 ## Ideal Fade Margin
 #
 $min_fade = log10(((0.9995 - 1) / (-2.5 * 2 * $cli_vig * $frq_ghz * ($dist_mi ** 3) * (10 ** -6)))) * -10;
@@ -5430,11 +5590,10 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     $eagle  = sprintf "%.2f", rand(0.87-0.60) + 0.61;
     $turkey = sprintf "%.2f", rand(0.81-0.55) + 0.54;
     $duck   = sprintf "%.2f", rand(0.79-0.40) + 0.41;
-    print F "set label 1 at screen 0.5, screen $eagle font ',30'\n";
-    print F "set label 2 at screen 0.35, screen $turkey font ',30'\n";
+    print F "set label 1 at screen 0.5, screen $eagle front font ',30'\n";
+    print F "set label 2 at screen 0.35, screen $turkey front font ',30'\n";
     print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
-    print F "set label 4 at screen 0.65, screen $duck font ',30'\n";
-	print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
+    print F "set label 4 at screen 0.65, screen $duck front font ',30'\n";
     print F "set term pngcairo enhanced size 2000,1600\n";
     print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
@@ -5494,7 +5653,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     }
 
 	if ($do_div eq "no") {
-	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" with lines lw 6 linecolor rgb \"white\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
 	}
 	elsif  ($do_div eq "yes") {
       print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
@@ -5736,12 +5895,241 @@ if ($do_lulc eq "yes" && $country eq "United States") {
       $rx_land_loss = sprintf "%.2f", 0;
     }
   }
-}
+
+  if ($frq_mhz <= 50) {
+    if ($tx_land eq "Developed, Low Intensity") {
+	  $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+	  $tx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+	  $tx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+	  $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+	  $tx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+	  $tx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+	  $tx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+	  $tx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+	  $tx_land_loss = sprintf "%.2f", 2;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 2; 	
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+	  $tx_land_loss = sprintf "%.2f", 3;
+    }
+    else {
+	  $tx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 50 && $frq_mhz <= 100) {
+    if ($tx_land eq "Developed, Low Intensity") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+      $tx_land_loss = sprintf "%.2f", 6;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+      $tx_land_loss = sprintf "%.2f", 6;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+      $tx_land_loss = sprintf "%.2f", 3;
+    }
+    else {
+      $tx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 100 && $frq_mhz <= 200) {
+    if ($tx_land eq "Developed, Low Intensity") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+      $tx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+      $tx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+      $tx_land_loss = sprintf "%.2f", 4;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    else {
+      $tx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 200 && $frq_mhz <= 500) {
+    if ($tx_land eq "Developed, Low Intensity") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+      $tx_land_loss = sprintf "%.2f", 5;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    else {
+      $tx_land_loss = sprintf "%.2f", 0;
+    }
+  } 
+  elsif ($frq_mhz > 500 && $frq_mhz <= 1000) {
+    if ($tx_land eq "Developed, Low Intensity") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+      $tx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+      $tx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+      $tx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+      $tx_land_loss = sprintf "%.2f", 7;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+      $tx_land_loss = sprintf "%.2f", 10;
+    }
+    else {
+      $tx_land_loss = sprintf "%.2f", 0;
+    }
+  }
+  elsif ($frq_mhz > 1000) {
+    if ($tx_land eq "Developed, Low Intensity") {
+      $tx_land_loss = sprintf "%.2f", 15;
+    }
+    elsif ($tx_land eq "Developed, Medium Intensity") {
+      $tx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($tx_land eq "Developed, High Intensity") {
+      $tx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($tx_land eq "Developed, Open Space") {
+      $tx_land_loss = sprintf "%.2f", 17;
+    }
+    elsif ($tx_land eq "Deciduous Forest") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Evergreen Forest") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Mixed Forest") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Grassland/Herbaceous") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Shrub/Scrub") {
+      $tx_land_loss = sprintf "%.2f", 9;
+    }
+    elsif ($tx_land eq "Woody Wetlands") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    elsif ($tx_land eq "Emergent Herbaceous Wetland") {
+      $tx_land_loss = sprintf "%.2f", 12;
+    }
+    else {
+      $tx_land_loss = sprintf "%.2f", 0;
+    }
+  }}
 elsif ($country ne "United States") {
-  $graze_land  = "N/A";
-  $tx_land = "N/A";
-  $rx_land = "N/A";
+  $graze_land   = "N/A";
+  $tx_land      = "N/A";
+  $rx_land      = "N/A";
   $rx_land_loss = "N/A";
+  $tx_land_loss = "N/A";
 }
 
 ############################################################################################
@@ -5889,15 +6277,16 @@ print "<tr><td align=\"right\"><b>Effective Rain Path Distance</b></td><td align
 print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)<br>Water Vapor Density: <font color=\"blue\">$wvd</font> gm/m<sup>3</sup></td></tr>\n";
 print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td>&nbsp;</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Smooth Earth Diffraction Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$diff_loss</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
-print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -5913,15 +6302,15 @@ print "<tr><td align=\"right\"><b>Minimum Composite Fade Margin for This Climate
 print "<tr><td align=\"right\"><b>Potential Upfade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Unfaded Values</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
-print "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
-print "<tr><td align=\"right\"><b>ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$tfm_itm_color\">$tfm_itm</font> dB</td><td><font color=\"$tfm_itm_color_rain\">$tfm_itm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Received Signal Level</b></td><td><font color=\"blue\">$rx_div_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_div_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$div_tfm_color\">$div_tfm_itm</font> dB</td><td><font color=\"$div_tfm_color_rain\">$div_tfm_itm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Free-Space Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_color\">$cmp_fs</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_rain_color\">$cmp_fs_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
+print "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+print "<tr><td align=\"right\"><b>ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$tfm_itm_color\">$tfm_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$tfm_itm_color_rain\">$tfm_itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Received Signal Level</b></td><td><font color=\"blue\">$rx_div_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_div_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$div_tfm_color\">$div_tfm_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$div_tfm_color_rain\">$div_tfm_itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Free-Space Loss Composite Fade Margin</b></td><td><font color=\"$cmp_fs_color\">$cmp_fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_fs_rain_color\">$cmp_fs_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -5947,9 +6336,9 @@ print "<td bgcolor=\"#7EBDE5\"><b>Required Composite Fade Margin</b></td></tr>\n
 print "<tr><td align=\"right\"><b>One-Way Bell System Short-Haul</b></td><td><font color=\"blue\">$obj_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj_nodiv_fs_cfm</font> dB</td></tr>\n";   
 print "<tr><td align=\"right\"><b>One-Way Bell System Long-Haul</b></td><td><font color=\"blue\">$obj1_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj1_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj1_nodiv_fs_cfm</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>One-Way ITU-R High-Grade</b></td><td><font color=\"blue\">$obj2_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj2_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj2_nodiv_fs_cfm</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Short-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_cfm_two</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Long-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_cfm_two</font> dB</td></tr>\n";
-print "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way ITU-R High-Grade</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+print "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way Bell System Short-Haul</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+print "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way Bell System Long-Haul</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+print "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way ITU-R High-Grade</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_cfm_two</font> dB</td></tr>\n";
 print "</table><br><br>\n";
 
 # AAA
@@ -5958,47 +6347,47 @@ print "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"5
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/Free-Space)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_fs_per</font>%</td><td><font color=\"blue\">$SES_nodiv_fs_per_rain</font>%</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_fs_yr</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val</td><td><font color=\"blue\">$worst_nodiv_fs_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val_rain</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade_fs</font> $worst_amp_fade_fs_val</td><td><font color=\"blue\">$worst_amp_fade_fs_rain</font> $worst_amp_fade_fs_val</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_fs_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_fs_per_rain</font>%</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_fs_yr</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_nodiv_fs_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade_fs</font> $worst_amp_fade_fs_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_amp_fade_fs_rain</font> $worst_amp_fade_fs_val</td></tr>\n";
 
 # BBB
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_itm_yr_rain</font> SES/year</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_itm_per</font>%</td><td><font color=\"blue\">$SES_nodiv_itm_per_rain</font>%</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_itm_yr</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val</td><td><font color=\"blue\">$worst_nodiv_itm_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val_rain</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade</font> $worst_amp_fade_val</td><td><font color=\"blue\">$worst_amp_fade_rain</font> $worst_amp_fade_rain_val</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_itm_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_itm_yr_rain</font> SES/year</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_itm_per_rain</font>%</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_itm_yr</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_nodiv_itm_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade</font> $worst_amp_fade_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_amp_fade_rain</font> $worst_amp_fade_rain_val</td></tr>\n";
 
 # DDD
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-print "<tr><td align=\"right\"><b>Space Diversity Improvement Factor</b></td><td><font color=\"$Isd_color\">$Isd_itm</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db</font> dB)&nbsp;&nbsp;$Isd_message_itm</td><td><font color=\"$Isd_color_rain\">$Isd_itm_rain</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db_rain</font> dB)&nbsp;&nbsp;$Isd_message_itm_rain</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_div_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_div_itm_yr_rain</font> SES/year</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_div_itm_per</font>%</td><td><font color=\"blue\">$SES_div_itm_per_rain</font>%</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_div_itm_yr</font>&nbsp;&nbsp;$worst_div_itm_yr_val</td><td><font color=\"blue\">$worst_div_itm_yr_rain</font>&nbsp;&nbsp;$worst_div_itm_yr_val_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>Space Diversity Improvement Factor</b></td><td><font color=\"$Isd_color\">$Isd_itm</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db</font> dB)&nbsp;&nbsp;$Isd_message_itm</td><td bgcolor=\"#BBCCBB\"><font color=\"$Isd_color_rain\">$Isd_itm_rain</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db_rain</font> dB)&nbsp;&nbsp;$Isd_message_itm_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_div_itm_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_div_itm_yr_rain</font> SES/year</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_div_itm_per_rain</font>%</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_div_itm_yr</font>&nbsp;&nbsp;$worst_div_itm_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_div_itm_yr_rain</font>&nbsp;&nbsp;$worst_div_itm_yr_val_rain</td></tr>\n";
 
 # EEE
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Frequency Diversity (Vigants/ITWOMv3)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
 print "<tr><td align=\"right\"><b>Diversity Frequency</b></td><td colspan=\"2\"><font color=\"blue\">$frq_ghz_div</font> GHz&nbsp;&nbsp;&nbsp;&nbsp;(&Delta;F: <font color=\"blue\">$df_mhz</font> MHz)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Frequency Diversity Improvement Factor</b></td><td><font color=\"$Ifd_color\">$Ifd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm</td><td><font color=\"$Ifd_color_rain\">$Ifd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm_rain</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_frq_div_yr_itm</font> SES/year</td><td><font color=\"blue\">$SES_frq_div_yr_itm_rain</font> SES/year</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_frq_div_itm_per</font>%</td><td><font color=\"blue\">$SES_frq_div_itm_per_rain</font>%</td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_frq_div_mo_itm</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val</td><td><font color=\"blue\">$worst_frq_div_mo_itm_rain</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>Frequency Diversity Improvement Factor</b></td><td><font color=\"$Ifd_color\">$Ifd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm</td><td bgcolor=\"#BBCCBB\"><font color=\"$Ifd_color_rain\">$Ifd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm_rain</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_frq_div_yr_itm</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_frq_div_yr_itm_rain</font> SES/year</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_frq_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_frq_div_itm_per_rain</font>%</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_frq_div_mo_itm</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_frq_div_mo_itm_rain</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val_rain</td></tr>\n";
 
 # FFF
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Hybrid Diversity (Vigants/ITWOMv3)</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-print "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td>&nbsp;</td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td></td></tr>\n";
-print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td></td></tr>\n";
+print "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+print "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+print "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
 print "</table><br><br>\n";
 
 # CCC
@@ -6222,7 +6611,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
 
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Terrain &amp; Atmospheric Conditions</b></font></td></tr>\n";
-  print F "<tr><td bgcolor=\"#7EBDE5\" colspan=\"3\"><b><i>Specifications</i></b></td><tr>\n";
+  print F "<tr><td bgcolor=\"#7EBDE5\" colspan=\"3\"><b><i>Specifications</i></b></td></tr>\n";
   if ($check3 eq "no") {
     print F "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;(<font color=\"blue\">$k_dec</font> - $k_val)</td></tr>\n";
   }
@@ -6275,15 +6664,16 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$water_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$water_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$water_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td>&nbsp;</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Smooth Earth Diffraction Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$diff_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Diversity Path Loss</b></td><td><font color=\"blue\">$div_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$div_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Total Atmospheric + Rain Path Losses</b></td><td><font color=\"blue\">$atmos_norain</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$atmos_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$fs_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_pl_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(Primary Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$itm_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_pl_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>(Diversity Path)&nbsp;&nbsp;ITWOMv3 + Atmospheric + Misc. Losses</b></td><td><font color=\"blue\">$div_itm_pl</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$div_itm_pl_rain</font> dB</td></tr>\n";
   print F "</table><br><br>\n";
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Calculated Fade Margins</b></font></td></tr>\n";
@@ -6298,15 +6688,15 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Potential Upfade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$upfade</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Path Mean Time Delay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$time_delay</font> nanoseconds</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Unfaded Values</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>ITWOMv3 Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$tfm_itm_color\">$tfm_itm</font> dB</td><td><font color=\"$tfm_itm_color_rain\">$tfm_itm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Received Signal Level</b></td><td><font color=\"blue\">$rx_div_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_uvolt</font> &micro;V)</td><td><font color=\"blue\">$rx_div_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$div_tfm_color\">$div_tfm_itm</font> dB</td><td><font color=\"$div_tfm_color_rain\">$div_tfm_itm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Free-Space Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_color\">$cmp_fs</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_fs_rain_color\">$cmp_fs_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#CCCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_pwr_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space Thermal Fade Margin</b></td><td><font color=\"$tfm_color\">$tfm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$tfm_color_rain\">$tfm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Loss Received Signal Level</b></td><td><font color=\"blue\">$rx_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$tfm_itm_color\">$tfm_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$tfm_itm_color_rain\">$tfm_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Received Signal Level</b></td><td><font color=\"blue\">$rx_div_pwr_itm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_uvolt</font> &micro;V)</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$rx_div_pwr_itm_rain</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$rx_div_pwr_itm_rain_uvolt</font> &micro;V)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Thermal Fade Margin</b></td><td><font color=\"$div_tfm_color\">$div_tfm_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$div_tfm_color_rain\">$div_tfm_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Free-Space Loss Composite Fade Margin</b></td><td><font color=\"$cmp_fs_color\">$cmp_fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_fs_rain_color\">$cmp_fs_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Non-Diverstiy ITWOMv3 Loss Composite Fade Margin</b></td><td><font color=\"$cmp_itm_color\">$cmp_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_itm_rain_color\">$cmp_itm_rain</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity ITWOMv3 Loss Composite Fade Margin</b></td><td><font color=\"$cmp_div_itm_color\">$cmp_div_itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"$cmp_div_itm_rain_color\">$cmp_div_itm_rain</font> dB\</td></tr>\n";
   print F "</table><br><br><br><br><br><br><br><br>\n";
 
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
@@ -6344,9 +6734,9 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>One-Way Bell System Short-Haul</b></td><td><font color=\"blue\">$obj_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj_nodiv_fs_cfm</font> dB</td></tr>\n";   
   print F "<tr><td align=\"right\"><b>One-Way Bell System Long-Haul</b></td><td><font color=\"blue\">$obj1_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj1_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj1_nodiv_fs_cfm</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>One-Way ITU-R High-Grade</b></td><td><font color=\"blue\">$obj2_nodiv_fs</font> SES/year</td><td><font color=\"blue\">$obj2_nodiv_fs_per</font>%</td><td><font color=\"blue\">$obj2_nodiv_fs_cfm</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Short-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj_nodiv_fs_cfm_two</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way Bell System Long-Haul</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj1_nodiv_fs_cfm_two</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\" bgcolor=\"#CCCCBB\"><b>Two-Way ITU-R High-Grade</b></td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_per_two</font>%</td><td bgcolor=\"#CCCCBB\"><font color=\"blue\">$obj2_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way Bell System Short-Haul</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way Bell System Long-Haul</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj1_nodiv_fs_cfm_two</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\" bgcolor=\"#BBCCBB\"><b>Two-Way ITU-R High-Grade</b></td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_two</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_per_two</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$obj2_nodiv_fs_cfm_two</font> dB</td></tr>\n";
   print F "</table><br><br></font></body></html>\n";
 close F;
 
@@ -6359,40 +6749,40 @@ open(F, ">", "index3.html") or die "Can't open index3.html: $!\n" ;
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"4\"><font size=\"5\"><b>Calculated Outage Objectives &amp; Probabilities</b></font></td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/Free-Space)</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_fs_per</font>%</td><td><font color=\"blue\">$SES_nodiv_fs_per_rain</font>%</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_fs_yr</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val</td><td><font color=\"blue\">$worst_nodiv_fs_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val_rain</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade_fs</font> $worst_amp_fade_fs_val</td><td><font color=\"blue\">$worst_amp_fade_fs_rain</font> $worst_amp_fade_fs_val</td></tr>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_fs_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_fs_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_fs_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_fs_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_fs_yr</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_nodiv_fs_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_fs_yr_val_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade_fs</font> $worst_amp_fade_fs_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_amp_fade_fs_rain</font> $worst_amp_fade_fs_val</td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Without Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_nodiv_itm_yr_rain</font> SES/year</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_itm_per</font>%</td><td><font color=\"blue\">$SES_nodiv_itm_per_rain</font>%</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_itm_yr</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val</td><td><font color=\"blue\">$worst_nodiv_itm_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val_rain</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade</font> $worst_amp_fade_val</td><td><font color=\"blue\">$worst_amp_fade_rain</font> $worst_amp_fade_rain_val</td></tr>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_nodiv_itm_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_itm_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_nodiv_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_nodiv_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_nodiv_itm_yr</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_nodiv_itm_yr_rain</font>&nbsp;&nbsp;$worst_nodiv_itm_yr_val_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Amplitude Dispersion Fading Outage</b></td><td><font color=\"blue\">$worst_amp_fade</font> $worst_amp_fade_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_amp_fade_rain</font> $worst_amp_fade_rain_val</td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Spaced Vertical Antenna Diversity (Vigants/ITWOMv3)</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-  print F "<tr><td align=\"right\"><b>Space Diversity Improvement Factor</b></td><td><font color=\"$Isd_color\">$Isd_itm</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db</font> dB)</td><td><font color=\"$Isd_color_rain\">$Isd_itm_rain</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db_rain</font> dB)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_div_itm_yr</font> SES/year</td><td><font color=\"blue\">$SES_div_itm_yr_rain</font> SES/year</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_div_itm_per</font>%</td><td><font color=\"blue\">$SES_div_itm_per_rain</font>%</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_div_itm_yr</font>&nbsp;&nbsp;$worst_div_itm_yr_val</td><td><font color=\"blue\">$worst_div_itm_yr_rain</font>&nbsp;&nbsp;$worst_div_itm_yr_val_rain</td></tr>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Space Diversity Improvement Factor</b></td><td><font color=\"$Isd_color\">$Isd_itm</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db</font> dB)</td><td bgcolor=\"#BBCCBB\"><font color=\"$Isd_color_rain\">$Isd_itm_rain</font>&nbsp;&nbsp;(<font color=\"blue\">$Isd_itm_db_rain</font> dB)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_div_itm_yr</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_div_itm_yr_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_div_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_div_itm_yr</font>&nbsp;&nbsp;$worst_div_itm_yr_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_div_itm_yr_rain</font>&nbsp;&nbsp;$worst_div_itm_yr_val_rain</td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Frequency Diversity (Vigants/ITWOMv3)</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Diversity Frequency</b></td><td colspan=\"2\"><font color=\"blue\">$frq_ghz_div</font> GHz&nbsp;&nbsp;&nbsp;&nbsp;(&Delta;F: <font color=\"blue\">$df_mhz</font> MHz)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Frequency Diversity Improvement Factor</b></td><td><font color=\"$Ifd_color\">$Ifd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm</td><td><font color=\"$Ifd_color_rain\">$Ifd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm_rain</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_frq_div_yr_itm</font> SES/year</td><td><font color=\"blue\">$SES_frq_div_yr_itm_rain</font> SES/year</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_frq_div_itm_per</font>%</td><td><font color=\"blue\">$SES_frq_div_itm_per_rain</font>%</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_frq_div_mo_itm</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val</td><td><font color=\"blue\">$worst_frq_div_mo_itm_rain</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Frequency Diversity Improvement Factor</b></td><td><font color=\"$Ifd_color\">$Ifd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm</td><td bgcolor=\"#BBCCBB\"><font color=\"$Ifd_color_rain\">$Ifd_itm_rain</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ifd_message_itm_rain</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_frq_div_yr_itm</font> SES/year</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_frq_div_yr_itm_rain</font> SES/year</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_frq_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$SES_frq_div_itm_per_rain</font>%</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_frq_div_mo_itm</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$worst_frq_div_mo_itm_rain</font>&nbsp;&nbsp;$worst_frq_div_mo_itm_val_rain</td></tr>\n";
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>With Hybrid Diversity (Vigants/ITWOMv3)</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td>\n";
-  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td><tr>\n";
-  print F "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td>&nbsp;</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td>&nbsp;</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td>&nbsp;</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td>&nbsp;</td></tr>\n";
+  print F "<td bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Hybrid (Space + Frequency) Diversity Improvement Factor</b></td><td><font color=\"$Ihd_color\">$Ihd_itm</font>&nbsp;&nbsp;&nbsp;&nbsp;$Ihd_message</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Probability of Outage</b></td><td><font color=\"blue\">$SES_hyb_div_yr_itm</font> SES/year</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>One-Way Multipath Reliability</b></td><td><font color=\"blue\">$SES_hyb_div_itm_per</font>%</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Annual Multipath Severely Errored Seconds</b></td><td><font color=\"blue\">$worst_hyb_div_yr_itm</font>&nbsp;&nbsp;$worst_hyb_div_yr_itm_val</td><td bgcolor=\"#BBCCBB\">&nbsp;</td></tr>\n";
   print F "</table><br><br></font></body></html>\n";
 close F;
 
