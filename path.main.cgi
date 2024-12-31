@@ -201,6 +201,37 @@ print <<EOF;
 <option>Andrew HELIAX EW180</option>
 <option>Andrew HELIAX EWP180</option>
 <option>Andrew HELIAX EW220</option>
+<option>RFS HELIFLEX HCA78-50</option>
+<option>RFS HELIFLEX HCA118-50</option>
+<option>RFS HELIFLEX HCA158-50</option>
+<option>RFS HELIFLEX HCA214-50</option>
+<option>RFS HELIFLEX HCA300-50</option>
+<option>RFS HELIFLEX HCA400-50</option>
+<option>RFS HELIFLEX HCA495-50</option>
+<option>RFS FLEXWELL E38</option>
+<option>RFS FLEXWELL EP38</option>
+<option>RFS FLEXWELL ES46</option>
+<option>RFS FLEXWELL ESP46</option>
+<option>RFS FLEXWELL E60</option>
+<option>RFS FLEXWELL EP60</option>
+<option>RFS FLEXWELL E65</option>
+<option>RFS FLEXWELL EP65</option>
+<option>RFS FLEXWELL EP70</option>
+<option>RFS FLEXWELL E78</option>
+<option>RFS FLEXWELL EP78</option>
+<option>RFS FLEXWELL EP100</option>
+<option>RFS FLEXWELL E105</option>              
+<option>RFS FLEXWELL EP105</option>
+<option>RFS FLEXWELL E130</option>
+<option>RFS FLEXWELL EP130</option>
+<option>RFS FLEXWELL E150</option>
+<option>RFS FLEXWELL EP150</option>
+<option>RFS FLEXWELL E185</option>
+<option>RFS FLEXWELL EP185</option>
+<option>RFS FLEXWELL E220</option>
+<option>RFS FLEXWELL E250</option>
+<option>RFS FLEXWELL E300</option>
+<option>RFS FLEXWELL E380</option>
 <option>WR284</option>
 <option>WR229</option>
 <option>WR187</option>
@@ -218,14 +249,6 @@ print <<EOF;
 <option>Belden 8240 (RG-58)</option>
 <option>M&P AIRBORNE 10</option>
 <option>M&P BROAD PRO 50</option>
-<option>RFS HELIFLEX HCA78-50</option>
-<option>RFS HELIFLEX HCA118-50</option>
-<option>RFS HELIFLEX HCA158-50</option>
-<option>RFS HELIFLEX HCA300-50</option>
-<option>RFS FLEXWELL E60</option>
-<option>RFS FLEXWELL EP60</option>
-<option>RFS FLEXWELL E65</option>
-<option>RFS FLEXWELL EP65</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>
@@ -431,9 +454,9 @@ print <<EOF;
 <option>Andrew HELIAX EW37</option>
 <option>Andrew HELIAX EWP37</option>
 <option>Andrew HELIAX EWP37S</option>
-<option>Andrew HELIAX EW44</option>
-<option>Andrew HELIAX EWP44</option>
-<option>Andrew HELIAX EWS44</option>
+<option>Andrew HELIAX EW43</option>
+<option>Andrew HELIAX EWP43</option>
+<option>Andrew HELIAX EWS43</option>
 <option>Andrew HELIAX EW52</option>
 <option>Andrew HELIAX EWP52</option>
 <option>Andrew HELIAX EWP52S</option>
@@ -455,6 +478,37 @@ print <<EOF;
 <option>Andrew HELIAX EW180</option>
 <option>Andrew HELIAX EWP180</option>
 <option>Andrew HELIAX EW220</option>
+<option>RFS HELIFLEX HCA78-50</option>
+<option>RFS HELIFLEX HCA118-50</option>
+<option>RFS HELIFLEX HCA158-50</option>
+<option>RFS HELIFLEX HCA214-50</option>
+<option>RFS HELIFLEX HCA300-50</option>
+<option>RFS HELIFLEX HCA400-50</option>
+<option>RFS HELIFLEX HCA495-50</option>
+<option>RFS FLEXWELL E38</option>
+<option>RFS FLEXWELL EP38</option>
+<option>RFS FLEXWELL ES46</option>
+<option>RFS FLEXWELL ESP46</option>
+<option>RFS FLEXWELL E60</option>
+<option>RFS FLEXWELL EP60</option>
+<option>RFS FLEXWELL E65</option>
+<option>RFS FLEXWELL EP65</option>
+<option>RFS FLEXWELL EP70</option>
+<option>RFS FLEXWELL E78</option>
+<option>RFS FLEXWELL EP78</option>
+<option>RFS FLEXWELL EP100</option>
+<option>RFS FLEXWELL E105</option>              
+<option>RFS FLEXWELL EP105</option>
+<option>RFS FLEXWELL E130</option>
+<option>RFS FLEXWELL EP130</option>
+<option>RFS FLEXWELL E150</option>
+<option>RFS FLEXWELL EP150</option>
+<option>RFS FLEXWELL E185</option>
+<option>RFS FLEXWELL EP185</option>
+<option>RFS FLEXWELL E220</option>
+<option>RFS FLEXWELL E250</option>
+<option>RFS FLEXWELL E300</option>
+<option>RFS FLEXWELL E380</option>
 <option>WR284</option>
 <option>WR229</option>
 <option>WR187</option>
@@ -472,14 +526,6 @@ print <<EOF;
 <option>Belden 8240 (RG-58)</option>
 <option>M&P AIRBORNE 10</option>
 <option>M&P BROAD PRO 50</option>
-<option>RFS HELIFLEX HCA78-50</option>
-<option>RFS HELIFLEX HCA118-50</option>
-<option>RFS HELIFLEX HCA158-50</option>
-<option>RFS HELIFLEX HCA300-50</option>
-<option>RFS FLEXWELL E60</option>
-<option>RFS FLEXWELL EP60</option>
-<option>RFS FLEXWELL E65</option>
-<option>RFS FLEXWELL EP65</option>
 <option>Crap RG-8</option>
 <option>Other</option>
 </select>

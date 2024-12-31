@@ -3302,6 +3302,20 @@ sub Cable {
       $cab_desc2 = "RFS HELIFLEX HCA158-50<br>Exceeds Frequency Limit";
     }
   }
+  elsif ($val eq "RFS HELIFLEX HCA214-50") {
+    if ($frq_mhz <= 2300) {
+      $loss_per_foot =  (0.1288 + 0.0004053 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA214-50.pdf\">RFS HELIFLEX HCA214-50</a><br>2-1/4\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA214-50<br>2-1/4\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA214-50.pdf\">RFS HELIFLEX HCA2148-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA214-50<br>Exceeds Frequency Limit";
+    }
+  }
   elsif ($val eq "RFS HELIFLEX HCA300-50") {
     if ($frq_mhz <= 1700) {
       $loss_per_foot =  (0.0792 + 0.0003667 * $frq_mhz) / 100;
@@ -3314,6 +3328,90 @@ sub Cable {
       $loss_per_meter = $loss_per_foot * 3.2808399;
       $cab_desc1 = "<a href=\"$pdfdir/HCA300-50.pdf\">RFS HELIFLEX HCA300-50</a><br>Exceeds Frequency Limit";
       $cab_desc2 = "RFS HELIFLEX HCA300-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS HELIFLEX HCA400-50") {
+    if ($frq_mhz <= 1000) {
+      $loss_per_foot =  (0.05606 + 0.0003561 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA400-50.pdf\">RFS HELIFLEX HCA400-50</a><br>4\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA400-50<br>4\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA400-50.pdf\">RFS HELIFLEX HCA400-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA400-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS HELIFLEX HCA495-50") {
+    if ($frq_mhz <= 1000) {
+      $loss_per_foot =  (0.04487 + 0.0002695 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA495-50.pdf\">RFS HELIFLEX HCA495-50</a><br>5\" Air Dielectric";
+      $cab_desc2 = "RFS HELIFLEX HCA495-50<br>5\" Air Dielectric";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/HCA495-50.pdf\">RFS HELIFLEX HCA495-50</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS HELIFLEX HCA495-50<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E38") {
+    if ($frq_mhz <= 4200 && $frq_mhz >= 3100) {
+      $loss_per_foot = (1.5089 - 0.0002136 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E38.pdf\">RFS FLEXWELL E38</a><br>Elliptical Waveguide, 3.1-4.2 GHz";
+      $cab_desc2 = "RFS FLEXWELL E38<br>Elliptical Waveguide, 3.1-4.2 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E38.pdf\">RFS FLEXWELL E38</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E38<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL EP38") {
+    if ($frq_mhz <= 4200 && $frq_mhz >= 3100) {
+      $loss_per_foot = (1.5089 - 0.0002136 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP38.pdf\">RFS FLEXWELL EP38</a><br>Elliptical Waveguide, 3.1-4.2 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP38<br>Elliptical Waveguide, 3.1-4.2 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP38.pdf\">RFS FLEXWELL EP38</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP38<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL ES46") {
+    if ($frq_mhz <= 5000 && $frq_mhz >= 4400) {
+      $loss_per_foot = (1.1888 - 0.00002256 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/ES46.pdf\">RFS FLEXWELL ES46</a><br>Elliptical Waveguide, 4.4-5.0 GHz";
+      $cab_desc2 = "RFS FLEXWELL ES46<br>Elliptical Waveguide, 4.4-5.0 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/ES46.pdf\">RFS FLEXWELL ES46</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL ES46<br>Exceeds Frequency Limit";
+    }
+  }
+ elsif ($val eq "RFS FLEXWELL ESP46") {
+    if ($frq_mhz <= 5000 && $frq_mhz >= 4400) {
+      $loss_per_foot = (1.1888 - 0.00002256 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/ESP46.pdf\">RFS FLEXWELL ESP46</a><br>Elliptical Waveguide, 4.4-5.0 GHz";
+      $cab_desc2 = "RFS FLEXWELL ESP46<br>Elliptical Waveguide, 4.4-5.0 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/ESP46.pdf\">RFS FLEXWELL ES46</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL ESP46<br>Exceeds Frequency Limit";
     }
   }
   elsif ($val eq "RFS FLEXWELL E60") {
@@ -3348,7 +3446,7 @@ sub Cable {
     if ($frq_mhz <= 7125 && $frq_mhz >= 5900) {
       $loss_per_foot = (2.4509 - 0.0001643 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc1 = "<a href=\"$pdfdir/E65.pdf\">RFS FLEXWELL E65</a><br>Elliptical Waveguide, 5.9-7.1GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/E65.pdf\">RFS FLEXWELL E65</a><br>Elliptical Waveguide, 5.9-7.1 GHz";
       $cab_desc2 = "RFS FLEXWELL E65<br>Elliptical Waveguide, 5.9-7.1 GHz";
     }
     else {
@@ -3362,7 +3460,7 @@ sub Cable {
     if ($frq_mhz <= 7125 && $frq_mhz >= 5900) {
       $loss_per_foot = (2.4509 - 0.0001643 * $frq_mhz) / 100;
       $loss_per_meter = $loss_per_foot * 3.2808399;
-      $cab_desc1 = "<a href=\"$pdfdir/EP65.pdf\">RFS FLEXWELL EP65</a><br>Elliptical Waveguide, 5.9-7.1GHz";
+      $cab_desc1 = "<a href=\"$pdfdir/EP65.pdf\">RFS FLEXWELL EP65</a><br>Elliptical Waveguide, 5.9-7.1 GHz";
       $cab_desc2 = "RFS FLEXWELL EP65<br>Elliptical Waveguide, 5.9-7.1 GHz";
     }
     else {
@@ -3372,8 +3470,231 @@ sub Cable {
       $cab_desc2 = "RFS FLEXWELL EP65<br>Exceeds Frequency Limit";
     }
   }
+  elsif ($val eq "RFS FLEXWELL EP70") {
+    if ($frq_mhz <= 7800 && $frq_mhz >= 6400) {
+      $loss_per_foot = (2.5967 - 0.0001489 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP70.pdf\">RFS FLEXWELL EP70</a><br>Elliptical Waveguide, 6.4-7.8 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP70<br>Elliptical Waveguide, 6.4-7.8 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP70.pdf\">RFS FLEXWELL EP70</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP70<br>Exceeds Frequency Limit";
+    }
+  }
 
-
+  elsif ($val eq "RFS FLEXWELL E78") {
+    if ($frq_mhz <= 8500 && $frq_mhz >= 7100) {
+      $loss_per_foot = (2.746 - 0.0001239 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E78.pdf\">RFS FLEXWELL E78</a><br>Elliptical Waveguide, 7.1-8.5 GHz";
+      $cab_desc2 = "RFS FLEXWELL E78<br>Elliptical Waveguide, 7.1-8.5 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E78.pdf\">RFS FLEXWELL E78</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E78<br>Exceeds Frequency Limit";
+    }
+  }
+ elsif ($val eq "RFS FLEXWELL EP78") {
+    if ($frq_mhz <= 8500 && $frq_mhz >= 7100) {
+      $loss_per_foot = (2.746 - 0.0001239 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP78.pdf\">RFS FLEXWELL EP78</a><br>Elliptical Waveguide, 7.1-8.5 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP78<br>Elliptical Waveguide, 7.1-8.5 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP78.pdf\">RFS FLEXWELL EP78</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP78<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL EP100") {
+    if ($frq_mhz <= 10000 && $frq_mhz >= 8500) {
+      $loss_per_foot = (6.5049 - 0.0003982 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP100.pdf\">RFS FLEXWELL EP100</a><br>Elliptical Waveguide, 8.5-10.0 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP100<br>Elliptical Waveguide, 8.5-10.0 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP100.pdf\">RFS FLEXWELL EP100</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP100<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E105") {
+    if ($frq_mhz <= 11700 && $frq_mhz >= 10000) {
+      $loss_per_foot = (4.0994 - 0.00012 & $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E105.pdf\">RFS FLEXWELL E105</a><br>Elliptical Waveguide, 10.0-11.7 GHz";
+      $cab_desc2 = "RFS FLEXWELL E105<br>Elliptical Waveguide, 10.0-11.7 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E105.pdf\">RFS FLEXWELL E105</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E105<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL EP105") {
+    if ($frq_mhz <= 11700 && $frq_mhz >= 10000) {
+      $loss_per_foot = (4.0994 - 0.00012 & $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP105.pdf\">RFS FLEXWELL EP105</a><br>Elliptical Waveguide, 10.0-11.7 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP105<br>Elliptical Waveguide, 10.0-11.7 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP105.pdf\">RFS FLEXWELL EP105</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP105<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E130") {
+    if ($frq_mhz <= 13300 && $frq_mhz >= 10700) {
+      $loss_per_foot = (5.5306 - 0.0001649 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E130.pdf\">RFS FLEXWELL E130</a><br>Elliptical Waveguide, 10.7-13.3 GHz";
+      $cab_desc2 = "RFS FLEXWELL E130<br>Elliptical Waveguide, 10.7-13.3 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E130.pdf\">RFS FLEXWELL E130</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E130<br>Exceeds Frequency Limit";
+    }
+  }
+ elsif ($val eq "RFS FLEXWELL EP130") {
+    if ($frq_mhz <= 13300 && $frq_mhz >= 10700) {
+      $loss_per_foot = (5.5306 - 0.0001649 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP130.pdf\">RFS FLEXWELL EP130</a><br>Elliptical Waveguide, 10.7-13.3 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP130<br>Elliptical Waveguide, 10.7-13.3 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP130.pdf\">RFS FLEXWELL EP130</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP130<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E150") {
+    if ($frq_mhz <= 15400 && $frq_mhz >= 13400) {
+      $loss_per_foot = (6.3048 - 0.0001409 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E150.pdf\">RFS FLEXWELL E150</a><br>Elliptical Waveguide, 13.4-15.4 GHz";
+      $cab_desc2 = "RFS FLEXWELL E150<br>Elliptical Waveguide, 13.4-15.4 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E150.pdf\">RFS FLEXWELL E150</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E150<br>Exceeds Frequency Limit";
+    }
+  }
+ elsif ($val eq "RFS FLEXWELL EP150") {
+    if ($frq_mhz <= 15400 && $frq_mhz >= 13400) {
+      $loss_per_foot = (6.3048 - 0.0001409 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP150.pdf\">RFS FLEXWELL EP150</a><br>Elliptical Waveguide, 13.4-15.4 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP150<br>Elliptical Waveguide, 13.4-15.4 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP150.pdf\">RFS FLEXWELL EP150</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP150<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E185") {
+    if ($frq_mhz <= 19700 && $frq_mhz >= 17300) {
+      $loss_per_foot = (9.1257 - 0.0001725 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E185.pdf\">RFS FLEXWELL E185</a><br>Elliptical Waveguide, 17.3-19.7 GHz";
+      $cab_desc2 = "RFS FLEXWELL E185<br>Elliptical Waveguide, 17.3-19.7 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E185.pdf\">RFS FLEXWELL E185</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E185<br>Exceeds Frequency Limit";
+    }
+  }
+ elsif ($val eq "RFS FLEXWELL EP185") {
+    if ($frq_mhz <= 19700 && $frq_mhz >= 17300) {
+      $loss_per_foot = (9.1257 - 0.0001725 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP185.pdf\">RFS FLEXWELL EP185</a><br>Elliptical Waveguide, 17.3-19.7 GHz";
+      $cab_desc2 = "RFS FLEXWELL EP185<br>Elliptical Waveguide, 17.3-19.7 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/EP185.pdf\">RFS FLEXWELL EP185</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL EP185<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E220") {
+    if ($frq_mhz <= 23600 && $frq_mhz >= 21200) {
+      $loss_per_foot = (10.5428 - 0.00008492 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E220.pdf\">RFS FLEXWELL E220</a><br>Elliptical Waveguide, 21.2-23.6 GHz";
+      $cab_desc2 = "RFS FLEXWELL E220<br>Elliptical Waveguide, 21.2-23.6 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E220.pdf\">RFS FLEXWELL E220</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E220<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E250") {
+    if ($frq_mhz <= 26500 && $frq_mhz >= 24200) {
+      $loss_per_foot = (13.944 - 0.0001594 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E250.pdf\">RFS FLEXWELL E250</a><br>Elliptical Waveguide, 24.2-26.5 GHz";
+      $cab_desc2 = "RFS FLEXWELL E250<br>Elliptical Waveguide, 24.2-26.5 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E250.pdf\">RFS FLEXWELL E250</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E250<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E300") {
+    if ($frq_mhz <= 33400 && $frq_mhz >= 27500) {
+      $loss_per_foot = (24.9143 - 0.0003569 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E300.pdf\">RFS FLEXWELL E300</a><br>Elliptical Waveguide, 27.5-33.4 GHz";
+      $cab_desc2 = "RFS FLEXWELL E300<br>Elliptical Waveguide, 27.5-33.4 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E300.pdf\">RFS FLEXWELL E300</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E300<br>Exceeds Frequency Limit";
+    }
+  }
+  elsif ($val eq "RFS FLEXWELL E380") {
+    if ($frq_mhz <= 39500 && $frq_mhz >= 37000) {
+      $loss_per_foot = (27.2057 - 0.0002269 * $frq_mhz) / 100;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E380.pdf\">RFS FLEXWELL E380</a><br>Elliptical Waveguide, 37.0-39.5 GHz";
+      $cab_desc2 = "RFS FLEXWELL E380<br>Elliptical Waveguide, 37.0-39.5 GHz";
+    }
+    else {
+      $loss_per_foot = 15;
+      $loss_per_meter = $loss_per_foot * 3.2808399;
+      $cab_desc1 = "<a href=\"$pdfdir/E380.pdf\">RFS FLEXWELL E380</a><br>Exceeds Frequency Limit";
+      $cab_desc2 = "RFS FLEXWELL E380<br>Exceeds Frequency Limit";
+    }
+  }
 
   elsif ($val eq "Crap RG-8") {
     $loss_per_foot = ((0.21 * sqrt $frq_mhz) + (0.00026 * $frq_mhz)) / 100;
@@ -6605,8 +6926,8 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> m)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
   print F "</table><br><br><br><br><br><br><br><br><br><br><br>\n";
 
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
