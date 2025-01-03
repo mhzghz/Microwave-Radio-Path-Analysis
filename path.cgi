@@ -955,7 +955,10 @@ if ($do_utm eq "yes") {
   ($utm_zone_tx, $easting_tx, $northing_tx) = latlon_to_utm('WGS-84', $LAT1, $LON1_geo);
   # RX
   ($utm_zone_rx, $easting_rx, $northing_rx) = latlon_to_utm('WGS-84', $LAT2, $LON2_geo);
-
+  $northing_rx = sprintf "%.3f", $northing_rx / 1000;
+  $easting_rx  = sprintf "%.3f", $easting_rx / 1000;
+  $northing_tx = sprintf "%.3f", $northing_tx / 1000;
+  $easting_tx  = sprintf "%.3f", $easting_tx / 1000;
 }
 elsif ($do_utm eq "no") {
   $utm_zone_tx = "N/A";
@@ -1740,8 +1743,9 @@ elsif ($do_div eq "yes") {
 
 ## Calculate Antenna Tilt
 #
-#$TR = (180 / pi) * ((($rx_ant_ht_ov_ft - $tx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
-#$RT = (180 / pi) * ((($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
+$TR = sprintf "%.2f", (180 / pi) * ((($rx_ant_ht_ov_ft - $tx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
+$RT = sprintf "%.2f", (180 / pi) * ((($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
+
 if ($do_div eq "no") {
   $tilt = rad2deg(atan(($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / ((5280 * $dist_mi) - ($dist_mi / 7920 * $k))));
   $tilt_rtd = sprintf "%.2f", 0
@@ -1863,12 +1867,13 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set mytics 10\n";
   print F "set mxtics 20\n";
   print F "set tics out\n";
-  print F "set border 3\n";
+  print F "set border 7\n";
   print F "set label 3 '\\U+1F6F8'\n"; # ufo
   print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
   print F "set key below enhanced font \"Helvetica,18\"\n";
   print F "set grid back xtics ytics mxtics mytics\n";
-
+  print F "set xtics\n";
+  print F "set ytics nomirror\n";
   if ($tx_ant_ht_ov_ft > $rx_ant_ht_ov_ft) {
     $ymax = $tx_ant_ht_ov_ft + $div_ft;
   }
@@ -1889,8 +1894,8 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
   print F "set x2label \"{/:Bold Frequency: } $frq_mhz MHz\t\t{/:Bold Azimuth: } $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\" tc rgb \"blue\"\n";
   print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
-  print F "set y2label \"Estimated Path Loss (dB)\" font \"Helvetica,22\"\n";
-  print F "set y2tics 5\n";
+  print F "set y2label \"Estimated Path Loss (dB)\" font \"Helvetica,22\" textcolor rgb \"dark-grey\"\n";
+  print F "set y2tics textcolor rgb \"dark-grey\"\n";
   print F "set arrow from 0,$tx_elv_ft to 0,$tx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
   print F "set arrow from $dist_mi,$rx_elv_ft to $dist_mi,$rx_ant_ht_ov_ft front head size screen 0.008,45.0,30.0 filled lw 3\n";
 
@@ -1934,22 +1939,22 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
     # Do clutter
 	if ($do_div eq "yes") {
       # Do clutter and diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"reference-div.gp\" title \"Div. Reference Path\" with line lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lw 1 linecolor rgb \"dark-grey\" dashtype 7\n";
     }
 	elsif ($do_div eq "no") {
 	  # Do clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"path-loss.gp\" title 'Path Loss' axes x1y2 lt 6 lw 1 dashtype 9\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"clutter.gp\" title \"$gc_ft ft Additional Ground Clutter\" with lines lt 1 lw 2 linecolor rgb 'black' dashtype 3, \"path-loss.gp\" title 'Path Loss' axes x1y2 lw 1 linecolor rgb \"dark-grey\" dashtype 7\n";
 	}
   }
   elsif ($clutter == 0) {
     # No clutter
     if ($do_div eq "yes") {
 	  # No clutter, but with diversity antenna
-      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
+      print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Pri. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"Pri. First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"Pri. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" title \"Div. Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines title \"Div. $fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\" dashtype 5, \"path-loss.gp\" title 'Pri. Path Loss' axes x1y2 with lines lw 1 linecolor rgb \"dark-grey\" dashtype 7\n";
      }
 	 elsif ($do_div eq "no") {
 	  # No clutter, no diversity antenna
-	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lt 6 lw 1 dashtype 9\n";
+	  print F "plot \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\", \"profile-k.gp\" title \"1/1 Earth Terrain Profile\" with filledcurves above fc \"brown\", \"reference.gp\" title \"Reference Path\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines title \"First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines title \"$fres% First Fresnel Zone\" lt 1 lw 1 linecolor rgb \"red\", \"path-loss.gp\" title 'Path Loss' axes x1y2 with lines lw 1 linecolor rgb \"dark-grey\" dashtype 7\n";
      }
   }
 close F;
@@ -5893,14 +5898,16 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 
   open(F, ">", "splat3.gp") or die "Can't open splat3.gp: $!\n";
     print F "set clip\n";
-	print F "set tics scale 2, 1\n";
-	print F "set mytics 10\n";
-	print F "set mxtics 20\n";
-	print F "set tics out\n";
     print F "set border 3\n";
 	print F "set key below enhanced font \"Helvetica,18\"\n";
 	print F "set key noautotitle\n";
-	print F "set grid back xtics ytics mxtics mytics\n";
+	print F "set grid back\n";
+	print F "set ytics nomirror\n";
+	print F "set xtics nomirror\n";
+	print F "set mxtics 10\n";
+	print F "set mytics 10\n";
+	print F "set tics out\n";
+    print F "set tics scale 2, 1\n";
 	print F "set yrange [($min_elev - 5) to ($ymax + 10)]\n";
 	print F "set xrange [0.0 to $dist_mi]\n";
 	print F "set encoding utf8\n";
@@ -6496,7 +6503,7 @@ print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font
 print "<tr><td align=\"right\"><a href=\"https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description\"><b>Land Cover</b></a></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> meters</td><td><font color=\"blue\">$easting_rx</font> meters</td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> meters</td><td><font color=\"blue\">$northing_rx</font> meters</td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
 print "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
@@ -6901,7 +6908,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Land Cover</b></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> meters</td><td><font color=\"blue\">$easting_rx</font> meters</td></tr>\n";
-  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> meters</td><td><font color=\"blue\">$northing_rx</font> meters</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
