@@ -202,7 +202,7 @@ sub System {
   }
 }
 
-## Coordinate Cleanup
+## Get Coordinates and Cleanup
 #
 $LAT1_D =~ tr/0-9.//csd;
 $LAT1_M =~ tr/0-9.//csd;
@@ -282,12 +282,12 @@ elsif ($LAT1_val eq "South") {
 }
 
 if ($LON1_val eq "West") {
-  $LON1 = sprintf "%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
+  $LON1     = sprintf "%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
   $LON1_geo = sprintf "-%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
   $LON1_gnu = "W";
 }
 elsif ($LON1_val eq "East") {
-  $LON1 = sprintf "-%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
+  $LON1     = sprintf "-%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
   $LON1_geo = sprintf "%.6f", $LON1_D + ($LON1_M / 60) + ($LON1_S / 3600);
   $LON1_gnu = "E";
 }
@@ -302,16 +302,18 @@ elsif ($LAT2_val eq "South") {
 }
 
 if ($LON2_val eq "West") {
-  $LON2 = sprintf "%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
+  $LON2     = sprintf "%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
   $LON2_geo = sprintf "-%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
   $LON2_gnu = "W";
 }
 elsif ($LON2_val eq "East") {
-  $LON2 = sprintf "-%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
+  $LON2     = sprintf "-%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
   $LON2_geo = sprintf "%.6f", $LON2_D + ($LON2_M / 60) + ($LON2_S / 3600);
   $LON2_gnu = "E";
 }
 
+## Format Coordinates for Display
+#
 $LAT1_D = sprintf "%03d", $LAT1_D;
 $LAT1_M = sprintf "%02d", $LAT1_M;
 $LAT1_S = sprintf "%05.2f", $LAT1_S;
@@ -330,11 +332,11 @@ $LON2_S = sprintf "%05.2f", $LON2_S;
 
 ## Calculate Path Distance Based on LAT/LON
 #
+# Great Circle Distance
 $H = ($LON1 - $LON2) * (68.962 + 0.04525 * (($LAT1 + $LAT2) / 2) - 0.01274 * (($LAT1 + $LAT2) / 2) ** 2 + 0.00004117 * (($LAT1 + $LAT2) / 2) ** 3);
 $V = ($LAT1 - $LAT2) * (68.712 - 0.001184 * (($LAT1 + $LAT2) / 2) + 0.0002928 * (($LAT1 + $LAT2) / 2) ** 2 - 0.000002162 * (($LAT1 + $LAT2) / 2) ** 3);
-$dist_mi = sqrt(($H ** 2) + ($V ** 2));
-$dist_km = sprintf "%.2f", $dist_mi * 1.609344;
-$dist_mi = sprintf "%.2f", $dist_mi;
+$dist_km = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2)) * 1.609344;
+$dist_mi = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2));
 
 if ($dist_mi > 100 || $dist_mi < 0 || !$dist_mi) {
   print "<font color=\"red\"><b>PATH LENGTH TOO LONG OR TOO SHORT (100 MILES MAX): $dist_mi</font>";
@@ -404,7 +406,7 @@ if ($pwr_out_val eq "milliwatts") {
 }
 elsif ($pwr_out_val eq "watts") {
   $pwr_out = 10 * log10($pwr_out) + 30; # Watts to dBm
-  }
+}
 elsif ($pwr_out_val eq "kilowatts") {
   $pwr_out = 10 * log10($pwr_out) + 60; # kilowatts to dBm
 }
@@ -423,7 +425,7 @@ $pwr_out_dbw = sprintf "%.2f", 10 * log10((10 ** (($pwr_out - 30) / 10)));
 $pwr_out_dbk = sprintf "%.2f", (10 * log10((10 ** (($pwr_out - 30) / 10)))) - 30;
 $pwr_out_dbm = sprintf "%.2f", $pwr_out;
 
-## Get Fresnel zone
+## Get Fresnel Zone
 #
 $nth =~ tr/0-9//csd;
 
@@ -441,7 +443,7 @@ if ($gc_val eq "feet") {
   $gc_ft = sprintf "%.1f", $gc;
 }
 elsif ($gc_val eq "meters") {
-  $gc_ft = sprintf "%.1f", $gc / 0.3048; # meters to feet
+  $gc_ft = sprintf "%.1f", $gc * 3.2808399; # meters to feet
   $gc_m  = sprintf "%.1f", $gc;
 }
 
@@ -456,18 +458,18 @@ else {
 #
 $OK_CHARS='-a-zA-Z0-9_.+=()\[\] ';# Allowed Characters
 
-$project             =~ s/[^$OK_CHARS]//go;
-$tx_ant_notes        =~ s/[^$OK_CHARS]//go;
-$tx_notes            =~ s/[^$OK_CHARS]//go;
-$tx_name             =~ tr/A-Za-z0-9//csd;
-$tx_len              =~ tr/0-9.//csd;
-$tx_ant_gain         =~ tr/0-9.//csd;
-$rx_ant_gain_radome  =~ tr/0-9.//csd;
-$tx_ant_ht           =~ tr/0-9.//csd;
-$tx_misc_loss        =~ tr/0-9.//csd;
-$tx_misc_cab_loss    =~ tr/0-9.//csd;
-$tx_cab_other        =~ tr/0-9.//csd;
-$tx_misc_gain        =~ tr/0-9.//csd;
+$project            =~ s/[^$OK_CHARS]//go;
+$tx_ant_notes       =~ s/[^$OK_CHARS]//go;
+$tx_notes           =~ s/[^$OK_CHARS]//go;
+$tx_name            =~ tr/A-Za-z0-9//csd;
+$tx_len             =~ tr/0-9.//csd;
+$tx_ant_gain        =~ tr/0-9.//csd;
+$rx_ant_gain_radome =~ tr/0-9.//csd;
+$tx_ant_ht          =~ tr/0-9.//csd;
+$tx_misc_loss       =~ tr/0-9.//csd;
+$tx_misc_cab_loss   =~ tr/0-9.//csd;
+$tx_cab_other       =~ tr/0-9.//csd;
+$tx_misc_gain       =~ tr/0-9.//csd;
 
 # Limit characters for plotting
 $project      = sprintf "%.26s", $project;
@@ -494,7 +496,7 @@ if ($tx_ant_ht_val eq "feet") {
   $tx_ant_ht_ft = sprintf "%.2f", $tx_ant_ht;
 }
 elsif ($tx_ant_ht_val eq "meters") {
-  $tx_ant_ht_ft = sprintf "%.2f", $tx_ant_ht / 0.3048; # meters to feet
+  $tx_ant_ht_ft = sprintf "%.2f", $tx_ant_ht * 3.2808399; # meters to feet
   $tx_ant_ht_m  = sprintf "%.2f", $tx_ant_ht;
 }
 
@@ -540,11 +542,11 @@ if ($rx_ant_ht_val eq "feet") {
   $rx_ant_ht_ft = sprintf "%.2f", $rx_ant_ht;
 }
 elsif ($rx_ant_ht_val eq "meters") {
-  $rx_ant_ht_ft = sprintf "%.2f", $rx_ant_ht / 0.3048; # meters to feet
+  $rx_ant_ht_ft = sprintf "%.2f", $rx_ant_ht * 3.2808399; # meters to feet
   $rx_ant_ht_m  = sprintf "%.2f", $rx_ant_ht;
 }
 
-## Get Antenna Gains (Minus Radome Loss)
+## Calculate Antenna Gains, Minus Radome Losses
 #
 if ($tx_ant_val eq "dBd") {
   $tx_ant_gain_dbi    = sprintf "%.2f", ($tx_ant_gain + 2.15) - $tx_ant_gain_radome; # dBd to dBi
@@ -571,7 +573,7 @@ elsif ($rx_ant_val eq "dBi") {
 ## Get Diversity Antenna Parameters
 #
 if ($rx_div_ant_ht <= 1) {
-  $do_div        = "no"; # Don't do diversity calculations if spacing is less than 10 feet
+  $do_div        = "no"; # Don't do diversity calculations if spacing is less than 1 feet
   $div_ft        = sprintf "%.2f", 0;
   $div_m         = sprintf "%.2f", 0;
   $div_ant_dbi   = sprintf "%.2f", 0;
@@ -588,7 +590,7 @@ elsif ($rx_div_ant_ht > 1) {
     $div_ft = $rx_div_ant_ht;
   }
   elsif ($rx_div_ant_ht_val eq "meters") {
-    $div_ft = $rx_div_ant_ht / 0.3048; # meters to feet
+    $div_ft = $rx_div_ant_ht * 3.2808399; # meters to feet
     $div_m  = $rx_div_ant_ht;
   }
 
@@ -827,11 +829,11 @@ elsif ($check3 eq "no") {
   }
 
   $nunits  = sprintf "%.f", $nunits;
-  $vapor_p = "Not Applicable";
   $es      = sprintf "%.2f", exp(1.805 + (0.0738 * $temp_c) - (0.000298 * ($temp_c ** 2)));
   $atmos_p = sprintf "%.2f", 1013.25;
   $k_dec   = sprintf "%.2f", $k;
   $k_val   = "User Supplied";
+  $vapor_p = "Not Applicable";
 }
 
 ## Get Earth Dielectric Constant
@@ -914,14 +916,12 @@ elsif ($polar eq "Horizontal") {
   $ant = 0; # Horizontal
 }
 
-## Get Longley-Rice Confidence
+## Get Longley-Rice Confidence and Time
 #
-$sit =~ tr/0-9//csd;
-$si = sprintf "%.2f", $sit / 100;
-
-## Get Longley-Rice Time
-#
+$sit  =~ tr/0-9//csd;
 $time =~ tr/0-9//csd;
+
+$si = sprintf "%.2f", $sit / 100;
 $ti = sprintf "%.2f", $time / 100;
 
 ## Get Longley-Rice Climate
@@ -955,6 +955,7 @@ if ($do_utm eq "yes") {
   ($utm_zone_tx, $easting_tx, $northing_tx) = latlon_to_utm('WGS-84', $LAT1, $LON1_geo);
   # RX
   ($utm_zone_rx, $easting_rx, $northing_rx) = latlon_to_utm('WGS-84', $LAT2, $LON2_geo);
+
   $northing_rx = sprintf "%.3f", $northing_rx / 1000;
   $easting_rx  = sprintf "%.3f", $easting_rx / 1000;
   $northing_tx = sprintf "%.3f", $northing_tx / 1000;
@@ -972,192 +973,215 @@ elsif ($do_utm eq "no") {
 ## Attempt to Get the State from the TX LAT/LON
 #
 my $geocoder = Geo::Coder::OSM->new();
-my $result = $geocoder->reverse_geocode(lat => "$LAT1", lon => "$LON1_geo");
-  
-if ($result) {
-  # Get state from OSM
-  $country = $result->{address}{country};
-  $state   = $result->{address}{state};
-  $city    = $result->{address}{city};
-  $county  = $result->{address}{county};
+my $result_tx = $geocoder->reverse_geocode(lat => "$LAT1", lon => "$LON1_geo");
+my $result_rx = $geocoder->reverse_geocode(lat => "$LAT2", lon => "$LON2_geo");
+
+if ($result_rx) {
+  # Get RX sites stats from OSM
+  $country_rx = $result_rx->{address}{country};
+  $state_rx   = $result_rx->{address}{state};
+  $city_rx    = $result_rx->{address}{city};
+  $county_rx  = $result_rx->{address}{county};
+}
+
+if ($result_tx) {
+  # Get TX sites stats from OSM
+  $country_tx = $result_tx->{address}{country};
+  $state_tx   = $result_tx->{address}{state};
+  $city_tx    = $result_tx->{address}{city};
+  $county_tx  = $result_tx->{address}{county};
 }
 else {
   # Get user supplied state
   $geo =~ tr/A-Z//csd;
-  $state = $geo;
+  $state_tx = $geo;
 }
 
-if (!$county) { 
-  $county = "N/A";
+if (!$county_tx) { 
+  $county_tx = "N/A";
 }
   
-if (!$state) {
-  $state = "N/A";
+if (!$state_tx) {
+  $state_tx = "N/A";
 } 
 
-if (!$city) {
-  $city = $county;
+if (!$city_tx) {
+  $city_tx = $county_tx;
+}
+
+if (!$county_rx) {
+  $county_rx = "N/A";
+}
+
+if (!$state_rx) {
+  $state_rx = "N/A";
+}
+
+if (!$city_rx) {
+  $city_rx = $county_rx;
 }
 
 ## Convert State Names to 2-Letter Postal Codes
 # 
-if ($state eq "Alabama") {
-  $state_name = "AL";
+if ($state_tx eq "Alabama") {
+  $state_name_tx = "AL";
 }
-elsif ($state eq "Alaska") {
-  $state_name = "AK";
+elsif ($state_tx eq "Alaska") {
+  $state_name_tx = "AK";
 }
-elsif ($state eq "Arizona") {
-  $state_name = "AR";
+elsif ($state_tx eq "Arizona") {
+  $state_name_tx = "AR";
 } 
-elsif ($state eq "California") {
-  $state_name = "CA";
+elsif ($state_tx eq "California") {
+  $state_name_tx = "CA";
 }
-elsif ($state eq "Colorado") { 
-  $state_name = "CO";
+elsif ($state_tx eq "Colorado") { 
+  $state_name_tx = "CO";
 }
-elsif ($state eq "Connecticut") {
-  $state_name = "CT";
+elsif ($state_tx eq "Connecticut") {
+  $state_name_tx = "CT";
 }
-elsif ($state eq "Delaware") {
-  $state_name = "DE";
+elsif ($state_tx eq "Delaware") {
+  $state_name_tx = "DE";
 }
-elsif ($state eq "District of Columbia") {
-  $state_name = "DC";
+elsif ($state_tx eq "District of Columbia") {
+  $state_name_tx = "DC";
 }
-elsif ($state eq "Florida") {
-  $state_name = "FL";
+elsif ($state_tx eq "Florida") {
+  $state_name_tx = "FL";
 }
-elsif ($state eq "Georgia") {
-  $state_name = "GA";
+elsif ($state_tx eq "Georgia") {
+  $state_name_tx = "GA";
 }
-elsif ($state eq "Hawaii") { 
-  $state_name = "HI";
+elsif ($state_tx eq "Hawaii") { 
+  $state_name_tx = "HI";
 }
-elsif ($state eq "Idaho") {
-  $state_name = "ID";
+elsif ($state_tx eq "Idaho") {
+  $state_name_tx = "ID";
 }
-elsif ($state eq "Illinois") {
-  $state_name = "IL";
+elsif ($state_tx eq "Illinois") {
+  $state_name_tx = "IL";
 }
-elsif ($state eq "Indiana") {
-  $state_name = "IN";
+elsif ($state_tx eq "Indiana") {
+  $state_name_tx = "IN";
 }
-elsif ($state eq "Iowa") {
-  $state_name = "IA";
+elsif ($state_tx eq "Iowa") {
+  $state_name_tx = "IA";
 }
-elsif ($state eq "Kansas") {
-  $state_name = "KS";
+elsif ($state_tx eq "Kansas") {
+  $state_name_tx = "KS";
 }
-elsif ($state eq "Kentucky") {
-  $state_name = "KY";
+elsif ($state_tx eq "Kentucky") {
+  $state_name_tx = "KY";
 }
-elsif ($state eq "Louisiana") {
-  $state_name = "LA";
+elsif ($state_tx eq "Louisiana") {
+  $state_name_tx = "LA";
 }
-elsif ($state eq "Maine") {
-  $state_name = "ME";
+elsif ($state_tx eq "Maine") {
+  $state_name_tx = "ME";
 }
-elsif ($state eq "Maryland") {
-  $state_name = "MD";
+elsif ($state_tx eq "Maryland") {
+  $state_name_tx = "MD";
 }
-elsif ($state eq "Massachusetts") {
-  $state_name = "MA";
+elsif ($state_tx eq "Massachusetts") {
+  $state_name_tx = "MA";
 }
-elsif ($state eq "Michigan") {
-  $state_name = "MI";
+elsif ($state_tx eq "Michigan") {
+  $state_name_tx = "MI";
 }
-elsif ($state eq "Minnesota") {
-  $state_name = "MN";
+elsif ($state_tx eq "Minnesota") {
+  $state_name_tx = "MN";
 }
-elsif ($state eq "Mississippi") {
-  $state_name = "MS";
+elsif ($state_tx eq "Mississippi") {
+  $state_name_tx = "MS";
 }
-elsif ($state eq "Missouri") {
-  $state_name = "MO";
+elsif ($state_tx eq "Missouri") {
+  $state_name_tx = "MO";
 }
-elsif ($state eq "Montana") {
-  $state_name = "MT";
+elsif ($state_tx eq "Montana") {
+  $state_name_tx = "MT";
 }
-elsif ($state eq "Nebraska") {
-  $state_name = "NE";
+elsif ($state_tx eq "Nebraska") {
+  $state_name_tx = "NE";
 }
-elsif ($state eq "Nevada") {
-  $state_name = "NV";
+elsif ($state_tx eq "Nevada") {
+  $state_name_tx = "NV";
 }
-elsif ($state eq "New Hampshire") {
-  $state_name = "NH";
+elsif ($state_tx eq "New Hampshire") {
+  $state_name_tx = "NH";
 }
-elsif ($state eq "New Mexico") {
-  $state_name = "NM";
+elsif ($state_tx eq "New Mexico") {
+  $state_name_tx = "NM";
 }
-elsif ($state eq "New York") {
-  $state_name = "NY";
+elsif ($state_tx eq "New York") {
+  $state_name_tx = "NY";
 }
-elsif ($state eq "North Carolina") {
-  $state_name = "NC";
+elsif ($state_tx eq "North Carolina") {
+  $state_name_tx = "NC";
 }
-elsif ($state eq "North Dakota") {
-  $state_name = "ND";
+elsif ($state_tx eq "North Dakota") {
+  $state_name_tx = "ND";
 }
-elsif ($state eq "Ohio") {
-  $state_name = "OH";
+elsif ($state_tx eq "Ohio") {
+  $state_name_tx = "OH";
 }
-elsif ($state eq "Oklahoma") {
-  $state_name = "OK";
+elsif ($state_tx eq "Oklahoma") {
+  $state_name_tx = "OK";
 }
-elsif ($state eq "Oregon") {
-  $state_name = "OR";
+elsif ($state_tx eq "Oregon") {
+  $state_name_tx = "OR";
 }
-elsif ($state eq "Pennsylvania") {
-  $state_name = "PA";
+elsif ($state_tx eq "Pennsylvania") {
+  $state_name_tx = "PA";
 }
-elsif ($state eq "Rhode Island") {
-  $state_name = "RI";
+elsif ($state_tx eq "Rhode Island") {
+  $state_name_tx = "RI";
 }
-elsif ($state eq "South Carolina") {
-  $state_name = "SC";
+elsif ($state_tx eq "South Carolina") {
+  $state_name_tx = "SC";
 }
-elsif ($state eq "South Dakota") {
-  $state_name = "SD";
+elsif ($state_tx eq "South Dakota") {
+  $state_name_tx = "SD";
 }
-elsif ($state eq "Tennessee") {
-  $state_name = "TN";
+elsif ($state_tx eq "Tennessee") {
+  $state_name_tx = "TN";
 }
-elsif ($state eq "Texas") {
-  $state_name = "TX";
+elsif ($state_tx eq "Texas") {
+  $state_name_tx = "TX";
 }
-elsif ($state eq "Utah") {
-  $state_name = "UT";
+elsif ($state_tx eq "Utah") {
+  $state_name_tx = "UT";
 }
-elsif ($state eq "Vermont") {
-  $state_name = "VT";
+elsif ($state_tx eq "Vermont") {
+  $state_name_tx = "VT";
 }
-elsif ($state eq "Virginia") {
-  $state_name = "VA";
+elsif ($state_tx eq "Virginia") {
+  $state_name_tx = "VA";
 }
-elsif ($state eq "Washington") {
-  $state_name = "WA";
+elsif ($state_tx eq "Washington") {
+  $state_name_tx = "WA";
 }
-elsif ($state eq "West Virginia") {
-  $state_name = "WV";
+elsif ($state_tx eq "West Virginia") {
+  $state_name_tx = "WV";
 }
-elsif ($state eq "Wisconsin") {
-  $state_name = "WI";
+elsif ($state_tx eq "Wisconsin") {
+  $state_name_tx = "WI";
 }
-elsif ($state eq "Wyoming") {
-  $state_name = "WY";
+elsif ($state_tx eq "Wyoming") {
+  $state_name_tx = "WY";
 }
 else {
-  $state_name = "NONE";
+  $state_name_tx = "NONE";
 }
 
-if ($country eq "United States") {
-  $cities   = $state_name . ".dat";
-  $counties = $state_name . ".co.dat";
+## City/County Data for SPLAT!
+#
+if ($country_tx eq "United States") {
+  $cities   = $state_name_tx . ".dat";
+  $counties = $state_name_tx . ".co.dat";
 }
 
-## Config SPLAT!
+## Generate Config Files for SPLAT!
 #
 open(TX, ">", "tx.qth") or die "Can't open tx.qth: $!\n" ;
   print TX "$tx_name\n";
@@ -1210,7 +1234,7 @@ close TX;
 
 # Run SPLAT!
 #
-if ($country eq "United States") {
+if ($country_tx eq "United States") {
   if ($quality eq "Low / Fast") {
 
     $qual = "SRTMv3 3 Arc-Second Resolution (Standard)";
@@ -1225,6 +1249,7 @@ if ($country eq "United States") {
     }
 
 	if ($do_div eq "yes") {
+	  # Diversity: TX -> RX Primary Path
       system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	  system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
@@ -1234,7 +1259,8 @@ if ($country eq "United States") {
       system("/bin/mv elevation-profile.gp elevation-profile1.gp");
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
 	  system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
-
+      
+	  # Diversity: TX -> RX Diversity Path
 	  system("$splat -t tx.qth -r rx-div.qth -p pro1-div -e ElevPro1-div -gc $gc_ft -H PathProfile1-div -l PathLoss1-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1-div.gp");
       system("/bin/mv reference.gp reference1-div.gp");
@@ -1245,6 +1271,7 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1-div.gp >/dev/null 2>&1");
 
+	  # Diversity: RX Diversity Path -> TX
       system("$splat -t rx-div.qth -r tx.qth -p pro2-div -e ElevPro2-div -gc $gc_ft -H PathProfile2-div -l PathLoss2-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile2-div.gp");
 	  system("/bin/mv reference.gp reference2-div.gp");
@@ -1254,11 +1281,13 @@ if ($country eq "United States") {
       system("/bin/mv elevation-profile.gp elevation-profile2-div.gp");
       system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
-      
-	  # This is the one used for the Diversity TerrainProfile TX to RX
+     
+	  # Diversity: RX Primary Path to TX 
+	  # This is the one used for the Diversity TerrainProfile
 	  system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
     elsif ($do_div eq "no") {
+	  # Non-Diversity: TX -> RX
       system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
@@ -1269,7 +1298,8 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
-	  # This is the one used for the Non-Diversity TerrainProfile TX to RX
+	  # Non-Diversity: RX -> TX
+	  # This is the one used for the Non-Diversity TerrainProfile
 	  system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
     }
   }
@@ -1287,6 +1317,7 @@ if ($country eq "United States") {
     }
 
     if ($do_div eq "no") {
+	  # Non-Diversity: TX -> RX
 	  system("$splat -hd -sdelim ':' -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
@@ -1297,10 +1328,12 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
-	  # This is the one used for the HD Non-Diversity TerrainProfile TX to RX
+	  # Non-Diversity: RX -> TX
+	  # This is the one used for the HD Non-Diversity TerrainProfile
       system("$splat -hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
 	elsif($do_div eq "yes") {
+	  # Diversity: TX -> RX Primary Path
       system("$splat -hd -sdelim ':' -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
@@ -1311,6 +1344,7 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
+	  # Diversity: TX -> RX Diversity Path 
       system("$splat  -hd -sdelim ':' -t tx.qth -r rx-div.qth -p pro1-div -e ElevPro1-div -gc $gc_ft -H PathProfile1-div -l PathLoss1-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1-div.gp");
       system("/bin/mv reference.gp reference1-div.gp");
@@ -1321,6 +1355,7 @@ if ($country eq "United States") {
       system("/bin/mv elevation-reference.gp elevation-reference1-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter1-div.gp >/dev/null 2>&1");
 
+	  # Diversity: RX Diversity Path -> TX
       system("$splat -hd -sdelim ':' -t rx-div.qth -r tx.qth -p pro2-div -e ElevPro2-div -gc $gc_ft -H PathProfile2-div -l PathLoss2-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile2-div.gp");
       system("/bin/mv reference.gp reference2-div.gp");
@@ -1330,8 +1365,9 @@ if ($country eq "United States") {
       system("/bin/mv elevation-profile.gp elevation-profile2-div.gp");
       system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
       system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
-	  #
-      # This is the one used for the HD Diversity TerrainProfile TX to RX
+	  
+	  # Diversity: RX Primary Path -> TX 
+      # This is the one used for the HD Diversity TerrainProfile
 	  system("$splat -hd -sdelim ':'-hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
   }
@@ -1339,7 +1375,9 @@ if ($country eq "United States") {
 else {
   # International
   $qual = "SRTMv3 3 Arc-Second Resolution (Standard)";
+
   if ($do_div eq "yes") {
+	# Diversity: TX -> RX Primary Path
     system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -imperial -gpsav -kml -d $splatdir >/dev/null 2>&1");
     system("/bin/mv profile.gp profile1.gp");
     system("/bin/mv reference.gp reference1.gp");
@@ -1349,7 +1387,8 @@ else {
     system("/bin/mv elevation-profile.gp elevation-profile1.gp");
     system("/bin/mv elevation-reference.gp elevation-reference1.gp");
     system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
-
+    
+	# Diversity: TX -> RX Diversity Path
     system("$splat -t tx.qth -r rx-div.qth -p pro1-div -e ElevPro1-div -gc $gc_ft -H PathProfile1-div -l PathLoss1-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir >/dev/null 2>&1");
     system("/bin/mv profile.gp profile1-div.gp");
     system("/bin/mv reference.gp reference1-div.gp");
@@ -1360,6 +1399,7 @@ else {
     system("/bin/mv elevation-reference.gp elevation-reference1-div.gp");
     system("/bin/mv elevation-clutter.gp elevation-clutter1-div.gp >/dev/null 2>&1");
 
+	# Diversity: RX Diversity Path -> TX
     system("$splat -t rx-div.qth -r tx.qth -p pro2-div -e ElevPro2-div -gc $gc_ft -H PathProfile2-div -l PathLoss2-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdir >/dev/null 2>&1");
     system("/bin/mv profile.gp profile2-div.gp");
     system("/bin/mv reference.gp reference2-div.gp");
@@ -1370,45 +1410,35 @@ else {
     system("/bin/mv elevation-reference.gp elevation-reference2-div.gp");
     system("/bin/mv elevation-clutter.gp elevation-clutter2-div.gp >/dev/null 2>&1");
 
+	# Diversity: RX Primary Path -> TX
 	system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -imperial -gpsav -d $splatdir >/dev/null 2>&1");
   }
   elsif ($do_div eq "no") {
+	# Non-Diversity: TX -> RX
     system("$splat -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -imperial -gpsav -kml -d $splatdir >/dev/null 2>&1");
+
+	# Non-Diversity; RX -> TX
 	system("$splat -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -imperial -gpsav -d $splatdir >/dev/null 2>&1");
   }
 }
 
-## Total hack
+## Total Hack to Remove Antenna Heights from SPLAT! Terrain Profile Data
 #
 $first = `/usr/bin/head -n 1 profile.gp`;
 ($a, $tx_elv_ft) = split('\t', $first);
 chomp $tx_elv_ft;
-$tx_elv_ft = $tx_elv_ft - $tx_ant_ht_ft;
-$tx_elv_ft = sprintf "%.2f", $tx_elv_ft;
-$tx_elv_m = sprintf "%.2f", $tx_elv_ft * 0.3048;
-
-# Clean up any data gaps
-if ($tx_elv_ft eq "-5000.0") {
-  $tx_elv_m = sprintf "%.2f", 0;
-  $tx_elv_ft = sprintf "%.2f", 0;
-}
+$tx_elv_ft = sprintf "%.2f", ($tx_elv_ft - $tx_ant_ht_ft);
+$tx_elv_m  = sprintf "%.2f", ($tx_elv_ft - $tx_ant_ht_ft) * 0.3048;
 
 $last = `/usr/bin/tail -n 1 profile.gp`;
 ($a, $rx_elv_ft) = split('\t', $last);
 chomp $rx_elv_ft;
-$rx_elv_ft = $rx_elv_ft - $rx_ant_ht_ft;
-$rx_elv_ft = sprintf "%.2f", $rx_elv_ft;
-$rx_elv_m = sprintf "%.2f", $rx_elv_ft * 0.3048;
-
-# Clean up any data gaps
-if ($rx_elv_ft eq "-5000.0") {
-  $rx_elv_m = sprintf "%.2f", 0;
-  $rx_elv_ft = sprintf "%.2f", 0;
-}
+$rx_elv_ft = sprintf "%.2f", ($rx_elv_ft - $rx_ant_ht_ft);
+$rx_elv_m  = sprintf "%.2f", ($rx_elv_ft - $rx_ant_ht_ft) * 0.3048;
 
 # Get antenna height above AMSL
-$tx_ant_ht_ov_m = sprintf "%.2f", $tx_elv_m + $tx_ant_ht_m;
-$rx_ant_ht_ov_m = sprintf "%.2f", $rx_elv_m + $rx_ant_ht_m;
+$tx_ant_ht_ov_m  = sprintf "%.2f", $tx_elv_m + $tx_ant_ht_m;
+$rx_ant_ht_ov_m  = sprintf "%.2f", $rx_elv_m + $rx_ant_ht_m;
 $tx_ant_ht_ov_ft = sprintf "%.2f", $tx_elv_ft + $tx_ant_ht_ft;
 $rx_ant_ht_ov_ft = sprintf "%.2f", $rx_elv_ft + $rx_ant_ht_ft;
 
@@ -1463,12 +1493,12 @@ foreach $e (@ELEV) {
   $count++;
 }
 
-$avg_ht_ft = sprintf "%.2f", ($ee / $count);
-$avg_ht_m = sprintf "%.2f", ($ee / $count) * 0.3048;
+$avg_ht_ft   = sprintf "%.2f", ($ee / $count);
+$avg_ht_m    = sprintf "%.2f", ($ee / $count) * 0.3048;
 $min_elev_ft = sprintf "%.2f", $min_elev;
-$min_elev_m = sprintf "%.2f", $min_elev * 0.3048;
+$min_elev_m  = sprintf "%.2f", $min_elev * 0.3048;
 $max_elev_ft = sprintf "%.2f", $max_elev;
-$max_elev_m = sprintf "%.2f", $max_elev * 0.3048;
+$max_elev_m  = sprintf "%.2f", $max_elev * 0.3048;
 
 ## Earth Bulge
 #
@@ -1484,7 +1514,7 @@ else {
 
 ## Maximum Fresnel Zone Radius
 #
-$max_fres_m  = sprintf "%.2f", 17.34 * sqrt($dist_km / (4 * $frq_ghz));
+$max_fres_m  = sprintf "%.2f", (17.34 * sqrt($dist_km / (4 * $frq_ghz)));
 $max_fres_ft = sprintf "%.2f", (17.34 * sqrt($dist_km / (4 * $frq_ghz))) / 0.3048;
 
 ## Obstruction Arrows on Terrain Graph (Only First 5) 
@@ -1547,9 +1577,10 @@ elsif ($do_div eq "no") {
 #
 $pathdist = sprintf "%.f", ($max_dist + 10);
 
-if ($country eq "United States") {
+if ($country_tx eq "United States") {
   if ($quality eq "Low / Fast") {
     system("$splat -t tx.qth -L $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap1 -sc -png -imperial -itwom -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+
 	if ($do_div eq "no") {
       system("$splat -t rx.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap2 -sc -png -imperial -itwom -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
@@ -1585,7 +1616,7 @@ else {
 
 ## Generate Line-of-Sight Coverage at TX and RX
 #
-if ($country eq "United States") {
+if ($country_tx eq "United States") {
   if ($quality eq "Low / Fast") {
     if ($do_div eq "no") {
       system("$splat -t tx.qth rx.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap -sc -png -imperial -d $splatdir -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
@@ -1663,14 +1694,14 @@ if ($do_mag eq "yes") {
   $dec_date    = sprintf "%.2f", $year + ($day_of_year / 365);
 
   # TX Site
-  open(F, ">", "magdec.py") or die "Can't open magdec.py: $!\n";
+  open(F, ">", "magdec-tx.py") or die "Can't open magdec-tx.py: $!\n";
     print F "from pygeomag import GeoMag\n";
-    print F "geo_mag = GeoMag()\n";
+    print F "geo_mag = GeoMag(coefficients_file='wmm/WMM_2025.COF')\n";
     print F "result = geo_mag.calculate(glat=$LAT1, glon=$LON1_geo, alt=0, time=$dec_date)\n";
     print F "print(result.d)\n";
   close F;
 
-  chomp($value1 = `/usr/bin/python3 ./magdec.py`);
+  chomp($value1 = `/usr/bin/python3 ./magdec-tx.py`);
   $magdec_tx = sprintf "%.2f", $value1;
 
   if ($magdec_tx < 0) {
@@ -1693,14 +1724,14 @@ if ($do_mag eq "yes") {
   $magdec_tx = abs($magdec_tx);
 
   # RX Site
-  open(F, ">", "magdec.py");
+  open(F, ">", "magdec-rx.py");
     print F "from pygeomag import GeoMag\n";
-    print F "geo_mag = GeoMag()\n";
+    print F "geo_mag = GeoMag(coefficients_file='wmm/WMM_2025.COF')\n";
     print F "result = geo_mag.calculate(glat=$LAT2, glon=$LON2_geo, alt=0, time=$dec_date)\n";
     print F "print(result.d)\n";
   close F;
 
-  chomp($value2 = `/usr/bin/python3 ./magdec.py`);
+  chomp($value2 = `/usr/bin/python3 ./magdec-rx.py`);
   $magdec_rx = sprintf "%.2f", $value2;
 
   if ($magdec_rx < 0) {
@@ -1743,8 +1774,8 @@ elsif ($do_div eq "yes") {
 
 ## Calculate Antenna Tilt
 #
-$TR = sprintf "%.2f", (180 / pi) * ((($rx_ant_ht_ov_ft - $tx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
-$RT = sprintf "%.2f", (180 / pi) * ((($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
+#$TR = sprintf "%.2f", (180 / pi) * ((($rx_ant_ht_ov_ft - $tx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
+#$RT = sprintf "%.2f", (180 / pi) * ((($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / (5280 * $dist_mi)) - ($dist_mi / (7920 * $k)));
 
 if ($do_div eq "no") {
   $tilt = rad2deg(atan(($tx_ant_ht_ov_ft - $rx_ant_ht_ov_ft) / ((5280 * $dist_mi) - ($dist_mi / 7920 * $k))));
@@ -5795,18 +5826,19 @@ if ($do_div eq "yes") {
 # If two signals reach the receiver in phase, then the signal amplifies. This is called upfade
 $upfade = sprintf "%.2f", (10 * log10($dist_mi)) - (0.03 * $dist_mi);
 
-## Mean Time Delay
+## Mean Path Time Delay
 #
 $time_delay = sprintf "%.2f", 0.7 * ($dist_km / 50) ** 1.3; # nanoseconds
 
 ## National Land Cover Map - Experimental / Requires 'ptelev' and NLCD 2021 data from the FCC's TVStudy program
 #
-if ($do_lulc eq "yes" && $country eq "United States") {
+if ($do_lulc eq "yes" && $country_tx eq "United States") {
 
   $LULC_LAT1 = abs($LAT1);
   $LULC_LON1 = abs($LON1);
   $LULC_LAT2 = abs($LAT2);
   $LULC_LON2 = abs($LON2);
+  $do_duck   = "no";
 
   open(F1, ">", "lulc.gp") or die "Can't open lulc.gp: $!\n";
   open(F2, "<", "profile2.gp") or die "Can't open profile2.gp: $!\n";
@@ -5867,6 +5899,11 @@ if ($do_lulc eq "yes" && $country eq "United States") {
     }
     elsif ($land eq "Woody Wetlands") {
       $color = "0xBBD7ED";
+      if ($do_duck eq "no") {
+	    $do_duck   = "yes";
+	    $duck_dist = $dist;
+	    $duck_elev = $elev;
+	  }
     }
     elsif ($land eq "Emergent Herbaceous Wetland") {
       $color = "0x71A4C1";
@@ -5898,12 +5935,12 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 
   open(F, ">", "splat3.gp") or die "Can't open splat3.gp: $!\n";
     print F "set clip\n";
-    print F "set border 3\n";
+    print F "set border 7\n";
 	print F "set key below enhanced font \"Helvetica,18\"\n";
 	print F "set key noautotitle\n";
-	print F "set grid back\n";
+	print F "set grid back mxtics mytics\n";
 	print F "set ytics nomirror\n";
-	print F "set xtics nomirror\n";
+	print F "set xtics\n";
 	print F "set mxtics 10\n";
 	print F "set mytics 10\n";
 	print F "set tics out\n";
@@ -5914,14 +5951,17 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	print F "set label 1 '\\U+1F985'\n"; # eagle
     print F "set label 2 '\\U+1F983'\n"; # turkey
     print F "set label 3 '\\U+1F6F8'\n"; # ufo
-    print F "set label 4 '\\U+1F986'\n"; # duck
+	print F "set label 4 '\\U+1F986'\n"; # duck
     $eagle  = sprintf "%.2f", rand(0.87-0.60) + 0.61;
     $turkey = sprintf "%.2f", rand(0.81-0.55) + 0.54;
-    $duck   = sprintf "%.2f", rand(0.79-0.40) + 0.41;
     print F "set label 1 at screen 0.5, screen $eagle front font ',30'\n";
     print F "set label 2 at screen 0.35, screen $turkey front font ',30'\n";
     print F "set label 3 at screen 0.015, screen 0.97 font ',30'\n";
-    print F "set label 4 at screen 0.65, screen $duck front font ',30'\n";
+
+	if ($do_duck eq "yes") {
+      print F "set label 4 at $duck_dist,$duck_elev front font ',30'\n";
+	}
+
     print F "set term pngcairo enhanced size 2000,1600\n";
     print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
@@ -5938,7 +5978,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
       print F "set label \"Div. $a     \\n\\n\" right front at $dist_mi,$a tc rgb \"gray60\"\n";
     }
 
-    if ($do_lulc eq "yes" && $country eq "United States") {
+    if ($do_lulc eq "yes" && $country_tx eq "United States") {
       chomp($graze_coord = `lib/ptelev 13 $LULC_LAT1 $LULC_LON1 $grazing_dis_km $AZSP`);
       ($lat, $lon) = split ',', $graze_coord;
       chomp($graze_elev = `lib/ptelev -t 0 1 $lat $lon`);
@@ -5954,7 +5994,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
 	  $graze_land  = "N/A";
 	}
 
-	if ($country ne "United States") {
+	if ($country_tx ne "United States") {
       $graze_land  = "N/A";
     }
 
@@ -6452,7 +6492,7 @@ if ($do_lulc eq "yes" && $country eq "United States") {
       $tx_land_loss = sprintf "%.2f", 0;
     }
   }}
-elsif ($country ne "United States") {
+elsif ($country_tx ne "United States") {
   $graze_land   = "N/A";
   $tx_land      = "N/A";
   $rx_land      = "N/A";
@@ -6476,7 +6516,7 @@ print "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bg
 print "<center>\n";
 print "<p><a href=\"tmp/$mon-$mday/$RAN/TerrainProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/TerrainProfile1.png\" height=\"480\" width=\"640\"></a>\n";
 
-if ($do_lulc eq "yes" && $country eq "United States") {
+if ($do_lulc eq "yes" && $country_tx eq "United States") {
   print "&nbsp;&nbsp;<a href=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\"><img src=\"tmp/$mon-$mday/$RAN/LULCProfile1.png\" height=\"480\" width=\"640\"></a></p>\n";
 }
 
@@ -6502,7 +6542,7 @@ print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font 
 print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
 print "<tr><td align=\"right\"><a href=\"https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description\"><b>Land Cover</b></a></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> meters</td><td><font color=\"blue\">$easting_rx</font> meters</td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> kilometers</td><td><font color=\"blue\">$easting_rx</font> kilometers</td></tr>\n";
 print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
 print "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
@@ -6581,6 +6621,7 @@ print "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"5
 print "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
 print "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+print "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td><font color=\"blue\">$city_tx</font>, <font color=\"blue\">$state_tx</font><br>(<font color=\"blue\">$country_rx</font>)</td><td><font color=\"blue\">$city_tx</font>, <font color=\"blue\">$state_rx</font><br>(<font color=\"blue\">$country_rx</font>)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Distance to the Radio Horizon</b></td><td><font color=\"blue\">$tx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$tx_rad_hor_km</font> km)</td><td><font color=\"blue\">$rx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rx_rad_hor_km</font> km)</tr>\n";
 print "<tr><td align=\"right\"><b>Path Minimum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$min_elev_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Path Average Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$avg_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$avg_ht_m</font> meters)</td></tr>\n";
@@ -6588,7 +6629,6 @@ print "<tr><td align=\"right\"><b>Path Maximum Elevation</b></td><td align=\"cen
 print "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
 print "</table><br><br>\n";
@@ -6833,7 +6873,7 @@ while ($line = <F>) {
 close F;
 
 print "</font></td></tr></table>\n";
-print "<br><b>General Coverage Topographical Map<br>$country ($city, $state)</b><br><a href=\"tmp/$mon-$mday/$RAN/TopoMap.png\"><img src=\"tmp/$mon-$mday/$RAN/TopoMap.png\" height=\"480\" width=\"640\"></a>\n";
+print "<br><b>General Coverage Topographical Map<br>$country_tx ($city_tx, $state_tx)</b><br><a href=\"tmp/$mon-$mday/$RAN/TopoMap.png\"><img src=\"tmp/$mon-$mday/$RAN/TopoMap.png\" height=\"480\" width=\"640\"></a>\n";
 
 if ($do_div eq "no") {
   print "<br><br><b>Approximate Line-of Sight Radio Coverage with a $tx_ant_ht_ft ft Receive Antenna Height<br><font color=\"#00FF00\">$tx_name</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#00FFFF\">$rx_name </font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#FFFF00\">$tx_name+$rx_name</font></b><br><a href=\"tmp/$mon-$mday/$RAN/LOSMap.png\"><img src=\"tmp/$mon-$mday/$RAN/LOSMap.png\" height=\"480\" width=\"640\"></a>\n";
@@ -6880,7 +6920,7 @@ print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" 
 print F "<center>\n";
 print F "<p><img src=\"TerrainProfile1.png\" height=\"480\" width=\"640\"></p>\n";
 
-if ($do_lulc eq "yes" && $country eq "United States") {
+if ($do_lulc eq "yes" && $country_tx eq "United States") {
   print F "<p><img src=\"LULCProfile1.png\" height=\"480\" width=\"640\">\n";
 }
 
@@ -6907,7 +6947,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Land Cover</b></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
-  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> meters</td><td><font color=\"blue\">$easting_rx</font> meters</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> kilometers</td><td><font color=\"blue\">$easting_rx</font> kilometers</td></tr>\n";
   print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
@@ -6969,6 +7009,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td bgcolor=\"#7EBDE5\"><b><i>Specifications</i></b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>$tx_name&nbsp;&nbsp;(TX)</b></td>\n";
   print F "<td bgcolor=\"#7EBDE5\"><b>$rx_name&nbsp;&nbsp;(RX)</b></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td><font color=\"blue\">$city_tx</font>, <font color=\"blue\">$state_tx</font><br>(<font color=\"blue\">$country_tx</font>)</td><td><font color=\"blue\">$city_tx</font>, <font color=\"blue\">$state_rx</font><br>(<font color=\"blue\">$country_rx</font>)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Distance to the Radio Horizon</b></td><td><font color=\"blue\">$tx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$tx_rad_hor_km</font> km)</td><td><font color=\"blue\">$rx_rad_hor_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$rx_rad_hor_km</font> km)</tr>\n";
   print F "<tr><td align=\"right\"><b>Path Minimum Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$min_elev_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$min_elev_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Path Average Elevation</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$avg_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$avg_ht_m</font> meters)</td></tr>\n";
@@ -6976,7 +7017,6 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Earth Bulge at Path Midpoint</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$bulge_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$bulge_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$max_fres_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$max_fres_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Region for Terrain Plotting</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$city</font>, <font color=\"blue\">$state</font>&nbsp;&nbsp;(<font color=\"blue\">$country</font>)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
   print F "</table><br><br><br><br><br><br><br><br><br><br><br>\n";
@@ -7214,7 +7254,7 @@ open(F, ">", "index5.html") or die "Can't open index5.html: $!\n" ;
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<center>\n";
-  print F "<p><img src=\"TopoMap.png\" height=\"480\" width=\"640\"><br><b>General Coverage Topographical Map<br>$country ($city, $state)</b></p>\n";
+  print F "<p><img src=\"TopoMap.png\" height=\"480\" width=\"640\"><br><b>General Coverage Topographical Map<br>$country_tx ($city_tx, $state_tx)</b></p>\n";
   if ($do_div eq "no") {
     print F "<p><img src=\"LOSMap.png\" height=\"480\" width=\"640\"><br><b>Approximate Line-of Sight Radio Coverage with a $tx_ant_ht_ft ft Receive Antenna Height<br><font color=\"#00FF00\">$tx_name</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#00FFFF\">$rx_name </font>&nbsp;&nbsp;&nbsp;&nbsp;<font color=\"#FFFF00\">$tx_name+$rx_name</font></b></p>\n";
   }
