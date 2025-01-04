@@ -25,3 +25,13 @@ The ptelev source file (clutil.c) needs a slight tweak to work with 2021 NLCD da
 'pdf.tgz' contains PDF datasheets for the various types of coax/wavegude transmission lines.
 
 Try it out! http://gbppr.ddns.net/path.main.cgi
+
+![Example terrain and path profile](TerrainProfile1.png)
+
+![Example land cover profile](LULCProfile1.png)
+
+
+
+
+
+
