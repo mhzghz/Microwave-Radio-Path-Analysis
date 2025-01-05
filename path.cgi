@@ -11,13 +11,15 @@
 $ENV{PATH} = "/bin:/usr/bin:/usr/local/bin";
 select STDOUT;
 $| = 1;
+use warnings;
+require "flush.pl";
+
 use Math::Trig;
 use Math::Complex;
 use Time::Piece; 
 use Geo::Coder::OSM;       # For lat/lon to state decoding / Install: sudo cpan Geo::Coder::OSM
 use Geo::Coordinates::UTM; # For UTM results / Install: sudo cpan Geo::Coordinates::UTM
-use warnings;
-require "flush.pl";
+use GIS::Distance;         # For the Vincenty great circle distance calculations / Install: sudo cpan GIS::Distance
 
 ## User Setup
 #
@@ -31,9 +33,10 @@ my $splatdirhd = "/media/gbppr/500GB/sdf-hd";
 my $pdfdir     = "../pdf"; # Location of coax/waveguide PDF datasheets
 my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
-my $do_mag     = "yes"; # Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
-my $do_utm     = "yes"; # Requires the installation of Geo::Coordinates::UTM
-my $do_lulc    = "yes"; # Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
+my $do_mag     = "yes"; # Calculate magnetic declinations - Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
+my $do_utm     = "yes"; # Calculates UTM coordinates - Requires the installation of Geo::Coordinates::UTM
+my $do_lulc    = "yes"; # Generates U.S land coverage maps - Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
+my $do_vinc    = "yes"; # Uses the proper Vincenty great circle distance calculations - Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
 my $DEBUG      = 0;  # 0=leave temp files 1=delete temp file
 
 ## Create a random directory for working files
@@ -332,11 +335,20 @@ $LON2_S = sprintf "%05.2f", $LON2_S;
 
 ## Calculate Path Distance Based on LAT/LON
 #
-# Great Circle Distance
-$H = ($LON1 - $LON2) * (68.962 + 0.04525 * (($LAT1 + $LAT2) / 2) - 0.01274 * (($LAT1 + $LAT2) / 2) ** 2 + 0.00004117 * (($LAT1 + $LAT2) / 2) ** 3);
-$V = ($LAT1 - $LAT2) * (68.712 - 0.001184 * (($LAT1 + $LAT2) / 2) + 0.0002928 * (($LAT1 + $LAT2) / 2) ** 2 - 0.000002162 * (($LAT1 + $LAT2) / 2) ** 3);
-$dist_km = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2)) * 1.609344;
-$dist_mi = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2));
+if ($do_vinc eq "yes") {
+  # Great circle distance (ellipsoid)
+  $gis = GIS::Distance->new('Vincenty');
+  $distance = $gis->distance($LAT1, $LON1, $LAT2, $LON2);
+  $dist_km  = sprintf "%.2f", $distance;
+  $dist_mi  = sprintf "%.2f", $distance * 0.62137119;
+}
+else {
+  # Great circle distance (spherical)
+  $H = ($LON1 - $LON2) * (68.962 + 0.04525 * (($LAT1 + $LAT2) / 2) - 0.01274 * (($LAT1 + $LAT2) / 2) ** 2 + 0.00004117 * (($LAT1 + $LAT2) / 2) ** 3);
+  $V = ($LAT1 - $LAT2) * (68.712 - 0.001184 * (($LAT1 + $LAT2) / 2) + 0.0002928 * (($LAT1 + $LAT2) / 2) ** 2 - 0.000002162 * (($LAT1 + $LAT2) / 2) ** 3);
+  $dist_km = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2)) * 1.609344;
+  $dist_mi = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2));
+}
 
 if ($dist_mi > 100 || $dist_mi < 0 || !$dist_mi) {
   print "<font color=\"red\"><b>PATH LENGTH TOO LONG OR TOO SHORT (100 MILES MAX): $dist_mi</font>";
@@ -659,7 +671,7 @@ if ($do_div eq "yes") {
   $div_space_m  = sprintf "%.2f", $div_check * $wav_half_ft * 0.3048; # feet to meters
 
 }
-elsif ($do_div eq "no") {
+else {
 
   # Calculate ideal spacing based on wavelength
   $div_space_m  = $wav_m * ((3 * ($dist_km * 1000)) / (8 * $tx_ant_ht_m));
@@ -961,7 +973,7 @@ if ($do_utm eq "yes") {
   $northing_tx = sprintf "%.3f", $northing_tx / 1000;
   $easting_tx  = sprintf "%.3f", $easting_tx / 1000;
 }
-elsif ($do_utm eq "no") {
+else {
   $utm_zone_tx = "N/A";
   $easting_tx  = "N/A";
   $northing_tx = "N/A";
@@ -972,9 +984,9 @@ elsif ($do_utm eq "no") {
 
 ## Attempt to Get the State from the TX LAT/LON
 #
-my $geocoder = Geo::Coder::OSM->new();
-my $result_tx = $geocoder->reverse_geocode(lat => "$LAT1", lon => "$LON1_geo");
-my $result_rx = $geocoder->reverse_geocode(lat => "$LAT2", lon => "$LON2_geo");
+my $geocoder  = Geo::Coder::OSM->new();
+my $result_tx = $geocoder->reverse_geocode(lat => $LAT1, lon => $LON1_geo);
+my $result_rx = $geocoder->reverse_geocode(lat => $LAT2, lon => $LON2_geo);
 
 if ($result_rx) {
   # Get RX sites stats from OSM
@@ -1424,17 +1436,31 @@ else {
 
 ## Total Hack to Remove Antenna Heights from SPLAT! Terrain Profile Data
 #
-$first = `/usr/bin/head -n 1 profile.gp`;
-($a, $tx_elv_ft) = split('\t', $first);
-chomp $tx_elv_ft;
-$tx_elv_ft = sprintf "%.2f", ($tx_elv_ft - $tx_ant_ht_ft);
-$tx_elv_m  = sprintf "%.2f", ($tx_elv_ft - $tx_ant_ht_ft) * 0.3048;
+chomp($first = `/usr/bin/head -n 1 profile.gp`);
+($first_dist, $first_elev) = split '\t', $first;
+$new_elev = $first_elev - $tx_ant_ht_ft; # Subtract TX antenna height from FIRST elevation point
 
-$last = `/usr/bin/tail -n 1 profile.gp`;
-($a, $rx_elv_ft) = split('\t', $last);
-chomp $rx_elv_ft;
-$rx_elv_ft = sprintf "%.2f", ($rx_elv_ft - $rx_ant_ht_ft);
-$rx_elv_m  = sprintf "%.2f", ($rx_elv_ft - $rx_ant_ht_ft) * 0.3048;
+if ($new_elev > 0) {
+  $tx_elv_ft = sprintf "%.2f", $new_elev;
+  $tx_elv_m  = sprintf "%.2f", $new_elev * 0.3048;
+}
+else {
+  $tx_elv_ft = sprintf "%.2f", 0;
+  $tx_elv_m  = sprintf "%.2f", 0;
+}
+
+chomp($last = `/usr/bin/tail -n 1 profile.gp`);
+($last_dist, $last_elev) = split '\t', $last ;
+$new_elev = $last_elev - $rx_ant_ht_ft; # Subtract RX antenna height from LAST elevation point
+
+if ($new_elev > 0) {
+  $rx_elv_ft = sprintf "%.2f", $new_elev;
+  $rx_elv_m  = sprintf "%.2f", $new_elev * 0.3048;
+}
+else {
+  $rx_elv_ft = sprintf "%.2f", 0;
+  $rx_elv_m  = sprintf "%.2f", 0;
+}
 
 # Get antenna height above AMSL
 $tx_ant_ht_ov_m  = sprintf "%.2f", $tx_elv_m + $tx_ant_ht_m;
@@ -1444,19 +1470,23 @@ $rx_ant_ht_ov_ft = sprintf "%.2f", $rx_elv_ft + $rx_ant_ht_ft;
 
 # Subtract TX and RX antenna heights from elevation data
 open(F, ">", "elev1") or die "Can't open elev1: $!\n";
-  $first = `head -n 1 profile.gp`;
-  ($a, $b) = split('\t', $first);
-  chomp $b;
+  chomp($first = `head -n 1 profile.gp`);
+  ($a, $b) = split '\t', $first;
   $b = $b - $tx_ant_ht_ft;
+  if ($b < 0) {
+    $b = 0;
+  }
   print F "$a\t$b\n";
 close F;
 
 &System($args = "/usr/bin/tail -n +2 profile.gp >> elev1");
 
-$last = `tail -n 1 profile.gp`;
+chomp($last = `tail -n 1 profile.gp`);
 ($a, $b) = split('\t', $last);
-chomp $b;
 $b = $b - $rx_ant_ht_ft;
+if ($b < 0) {
+  $b = 0;
+}
 
 &System($args = "/usr/bin/head -n -1 elev1 > profile2.gp");
 
