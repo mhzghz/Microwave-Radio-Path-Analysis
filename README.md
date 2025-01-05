@@ -16,7 +16,7 @@ Requires the installation of Geo::Coder::OSM (Perl) if you wish to calculate the
 
 (Install: sudo cpan Geo::Coder::OSM)
 
-Requires the installation of GIS::Distance (Perl) if you wish to use Vincenty great-circle distance calculations: https://en.wikipedia.org/wiki/Vincenty%27s_formulae
+Requires the installation of GIS::Distance (Perl) if you wish to use Vincenty great-circle distance calculations: https://en.wikipedia.org/wiki/Vincenty's_formulae
 
 (Install: sudo cpan GIS::Distance)
 
