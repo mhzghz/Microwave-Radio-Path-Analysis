@@ -19,7 +19,7 @@ use Math::Complex;
 use Time::Piece; 
 use Geo::Coder::OSM;       # For lat/lon to state decoding / Install: sudo cpan Geo::Coder::OSM
 use Geo::Coordinates::UTM; # For UTM results / Install: sudo cpan Geo::Coordinates::UTM
-use GIS::Distance;         # For the Vincenty great circle distance calculations / Install: sudo cpan GIS::Distance
+use GIS::Distance;         # For the Vincenty great-circle distance calculations / Install: sudo cpan GIS::Distance
 
 ## User Setup
 #
@@ -36,7 +36,7 @@ my $htmldoc    = "/usr/bin/htmldoc";
 my $do_mag     = "yes"; # Calculate magnetic declinations - Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
 my $do_utm     = "yes"; # Calculates UTM coordinates - Requires the installation of Geo::Coordinates::UTM
 my $do_lulc    = "yes"; # Generates U.S land coverage maps - Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
-my $do_vinc    = "yes"; # Uses the proper Vincenty great circle distance calculations - Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
+my $do_vinc    = "yes"; # Uses the proper Vincenty great-circle distance calculations - Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
 my $DEBUG      = 0;  # 0=leave temp files 1=delete temp file
 
 ## Create a random directory for working files
@@ -336,14 +336,14 @@ $LON2_S = sprintf "%05.2f", $LON2_S;
 ## Calculate Path Distance Based on LAT/LON
 #
 if ($do_vinc eq "yes") {
-  # Great circle distance (ellipsoid)
+  # Great-circle distance (ellipsoid)
   $gis = GIS::Distance->new('Vincenty');
   $distance = $gis->distance($LAT1, $LON1, $LAT2, $LON2);
   $dist_km  = sprintf "%.2f", $distance;
   $dist_mi  = sprintf "%.2f", $distance * 0.62137119;
 }
 else {
-  # Great circle distance (spherical)
+  # Great-circle distance (spherical)
   $H = ($LON1 - $LON2) * (68.962 + 0.04525 * (($LAT1 + $LAT2) / 2) - 0.01274 * (($LAT1 + $LAT2) / 2) ** 2 + 0.00004117 * (($LAT1 + $LAT2) / 2) ** 3);
   $V = ($LAT1 - $LAT2) * (68.712 - 0.001184 * (($LAT1 + $LAT2) / 2) + 0.0002928 * (($LAT1 + $LAT2) / 2) ** 2 - 0.000002162 * (($LAT1 + $LAT2) / 2) ** 3);
   $dist_km = sprintf "%.2f", sqrt(($H ** 2) + ($V ** 2)) * 1.609344;
@@ -5618,7 +5618,7 @@ $graze    = (($tx_ant_ht_ov_m + $rx_ant_ht_ov_m) / $dist_km) * ((1 - $gr_m) * (1
 $graze_mr = sprintf "%.2f", $graze; # millirad
 $graze_dg = sprintf "%.2f", $graze * 0.0572958; # millirad to degree
 
-## Path Reflection Point
+## GTE Lenkurt - Path Reflection Point
 #
 if ($k_str eq "Infinity") {
   if ($tx_ant_ht_ft >= $rx_ant_ht_ft) {
@@ -5652,6 +5652,59 @@ else {
     $grazing_dis_km = sprintf "%.2f", $grazing_dis * 1.609344;
   }
 }
+
+## Path Reflection Point
+#
+# From Boithias (1987) and George Kizer's book
+# 
+# h1 = physical height of the antenna at one end of the path above the reflection point physical height
+# h1 = physical height of the antenna at the other end of the path above the reflection point physical height
+# D = total path distance
+# d1 = distance from one end of the path to the reflection point
+# d2 =  distance from the other end of the path to the reflection point
+# B = normalized distance from the center of the path to the reflection  point (-1 to +1)
+# units should be in meters and radians
+
+if ($tx_ant_ht_m >= $rx_ant_ht_m) {
+  $h1 = $tx_ant_ht_m;
+  $h2 = $rx_ant_ht_m
+}
+elsif ($rx_ant_ht_m > $tx_ant_ht_m) {
+  $h1 = $rx_ant_ht_m;
+  $h2 = $tx_ant_ht_m
+}
+
+$C = ($h1 - $h2) / ($h1 + $h2);
+$M = (($dist_km * 1000) ** 2) / (4 * 6378137 * $k * ($h1 + $h2));
+$B = (2 * sqrt(($M + 1) / (3 * $M))) * (cos((pi / 3) + ((1 / 3) * acos(((3 * $C) / 2) * sqrt((3 * $M) / (($M + 1) ** 3))))));
+$d1 = (($dist_km * 1000) / 2) * (1 + $B);
+$d2 = ($dist_km * 1000) - $d1;
+
+$grazing_dis_mi = sprintf "%.2f", $d1 * 0.0006213712;
+$grazing_dis_km = sprintf "%.2f", $d1 / 1000;
+
+$angle_of_incid = sprintf "%.2f", rad2deg((($h1 + $h2) / ($dist_km * 1000)) * (1 - $M * (1 + ($B ** 2))));
+
+# Direct path
+$Id = sqrt((($dist_km * 1000) ** 2) + (($h1 - $h2) ** 2));
+# Indirect path
+$Ii = sqrt((($dist_km * 1000) ** 2) + (($h1 + $h2) ** 2));
+# Phase difference between paths
+$phase_delta = (($Ii - $Id) / $wav_m) * (2 * pi);
+
+# Relative signal amplitude
+$L = 1; # reflection coefficient
+$Arx = sqrt(((1 + $L * cos($phase_delta)) ** 2) + (($L * sin($phase_delta)) ** 2));
+
+if ($Arx >= 1) {
+  $Arx_mess = "(Received Signal O.K.)";
+}
+elsif ($Arx < 1) {
+  $Arx_mess = "(Received Signal Diminished)";
+}
+
+$fade_depth = sprintf "%.2f", 10 * log($Arx);
+$phase_delta = sprintf "%.2f", rad2deg($phase_delta);
 
 ## Smooth Earth Diffraction Loss
 # ITU Rec. P.526-14
@@ -6628,7 +6681,7 @@ if ($check3 eq "yes") {
 }
 
 print "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
+print "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)&nbsp;&nbsp;(Phase Change: <font color=\"blue\">$phase_delta</font>&deg;)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
 print "<tr><td align=\"right\"><b>Terrain Roughness</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)<br>Calculated: <font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Atmospheric Pressure</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars&nbsp;&nbsp;(Sea Level Corrected)</td></tr>\n";
@@ -6676,7 +6729,8 @@ print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Water Vapor</b></
 print "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>Potential Smooth Earth Diffraction Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$diff_loss</font> dB</td></tr>\n";
-print "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Depth of Fade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fade_depth</font> dB&nbsp;&nbsp;$Arx_mess</td></tr>\n";
+print "<tr><td align=\"right\"><b>Potential Additional Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
 print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
 print "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
 print "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
@@ -7063,7 +7117,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Potential Smooth Earth Diffraction Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$diff_loss</font> dB</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Potential Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Additional Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>ITWOMv3 Primary Path Loss</b></td><td><font color=\"blue\">$itm</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$itm_rain</font> dB</td></tr>\n";
