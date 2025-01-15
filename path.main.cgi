@@ -15,6 +15,7 @@ $| = 1;
 #
 my $pic     = "../pics/path.png";
 my $form    = "./path.cgi";
+my $clutter = "../pics/NLCD-clutter.html";
 
 ## Print MIME
 #
@@ -44,7 +45,7 @@ print <<EOF;
 </center>
 
 <center>
-<p><img src="$pic" border="0" height="480" width="640"></a><br><b><font color="red">EXPERIMENTAL - WORK IN PROGRESS - MAY GIVE WEIRD RESULTS</font></b></p>
+<p><img src="$pic" border="0" height="480" width="640"><br><b><font color="red">EXPERIMENTAL - WORK IN PROGRESS - MAY GIVE WEIRD RESULTS</font></b></p>
 </center>
 
 <form action="$form" method="post">
@@ -386,7 +387,7 @@ print <<EOF;
 
 <tr>
 <td align="right"><b>Equipment Model / Notes</b></td>
-<td><input type="text" name="rx_notes" size="30 value="">
+<td><input type="text" name="rx_notes" size="30" value="">
 </tr>
 
 <tr>
@@ -1016,6 +1017,17 @@ print <<EOF;
 <td>(Note 21)</td>
 </tr>
 <tr><td></td></tr>
+
+<tr>
+<td align="right"><b>Use Additional Land Clutter Height Template?</b></td>
+<td><select name="land_clutter">
+<option selected>No</option>
+<option>Yes</option>
+</select></td>
+<td>(Note 22)</td>
+</tr>
+<tr><td></td></tr>
+
 </table>
 </td>
 </tr>
@@ -1100,6 +1112,8 @@ print <<EOF;
 <p>20.)&nbsp;&nbsp;Here is a good overview of Longley-Rice <a href="https://www.softwright.com/faq/support/longley_rice_variability.html">Time Variability</a>.</p>
 
 <p>21.)&nbsp;&nbsp;Uses <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Shuttle Radar Topography Mission</a> elevation data for terrain generation.&nbsp;&nbsp;<b>Low / Fast</b> uses 3 arc-second resolution, and <b>High / Slow</b> uses 1 arc-second resolution.&nbsp;&nbsp;Only a few LAT/LONS (mostly in the U.S.) work with HD resolution terrain data right now, and the plotting is quite slow.</p>
+
+<p>22.)&nbsp;&nbsp;Adds <a href="$clutter">additional height</a> to the plotted Earth terrain profile based on the results in the 2021 U.S. National Land Cover Database.&nbsp;&nbsp;The added heights are just educated guesses and <i>not</i> the actual height of the obstacles.</p>
 </blockquote>
 
 <p>Plotting done using <a href="http://www.gbppr.net/splat">SPLAT! v2.0</a> by <a href="http://www.qsl.net/kd2bd">John A. Magliacane</a> (KD2BD) and <a href="https://github.com/hoche/splat">hoche</a>.</p>

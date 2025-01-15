@@ -190,6 +190,7 @@ my $sit = $FORM{'sit'};
 my $time = $FORM{'time'};
 
 my $quality = $FORM{'quality'};
+my $land_clutter = $FORM{'land_clutter'};
 
 my $tx_ant_notes = $FORM{'tx_ant_notes'};
 my $rx_ant_notes = $FORM{'rx_ant_notes'};
@@ -5923,7 +5924,7 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
   $LULC_LON2 = abs($LON2);
   $do_duck   = "no";
 
-  open(F1, ">", "lulc.gp") or die "Can't open lulc.gp: $!\n";
+  open(F1, ">", "lulc1.gp") or die "Can't open lulc1.gp: $!\n";
   open(F2, "<", "profile2.gp") or die "Can't open profile2.gp: $!\n";
   while (<F2>) {
 	chomp;
@@ -5994,15 +5995,18 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
     else {
       $color = "0xE1CDCE"; # Developed, Open Space
     }
-
+   
+    $dist = sprintf "%.6f", $dist;
+    $elev = sprintf "%.6f", $elev;
 	print F1 "$dist\t$elev\t$color\n";
     $color =~ s/0x/#/g;  # Turn 0x into # for gnuplot key color codes
     $data = $land . ":" . $color;
     push(@DATA, $data);
-
   }
+  close F2;
+  close F1;
 
-  # Generate Land Usage Key Boxes
+  # Generate Land Usage Key Boxes for GNUPlot
   %unique = ();
   foreach my $item (@DATA) {
     $unique{$item} ++;
@@ -6016,6 +6020,95 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
     push(@KEY, $var);
   }
 
+  # Generate Land Clutter Height Template
+  $land_clutter =~ tr/A-Za-z//csd;
+
+  if ($land_clutter eq "Yes") {
+    $do_template = "yes";
+  }
+  elsif ($land_clutter eq "No") {
+    $do_template = "no";
+  }
+
+  open(F1, ">", "lulc2.gp") or die "Can't open lulc2.gp: $!\n";
+  open(F2, "<", "lulc1.gp") or die "Can't open lulc1.gp: $!\n";
+    while (<F2>) {
+      chomp;
+      ($dist, $elev, $land) = split '\t';
+
+	  # Additional heights are in feet and are basically just guesses...
+      if ($land eq "0x486DA2") {
+	    # Open Water
+	    $elev = $elev + 0;
+      }
+      elsif ($land eq "0xE7EFFC") {
+	    # Perennial Ice/Snow
+	    $elev = $elev + 0;
+      }
+      elsif ($land eq "0xDC9881") {
+        # Developed, Low Intensity
+	    $elev = $elev + 15;
+      }
+      elsif ($land eq "0xF10100") {
+	    # Developed, Medium Intensity
+	    $elev = $elev + 25;
+      }
+      elsif ($land eq "0xAB0101") {
+	    # Developed, High Intensity
+	    $elev = $elev + 40;
+      }
+      elsif ($land eq "0xE1CDCE") {
+	    # Developed, Open Space
+	    $elev = $elev + 6;
+      }
+      elsif ($land eq "0xB3AFA4") {
+	    #  Barren Land (Rock/Sand/Clay)
+	    $elev = $elev + 0;
+      }
+      elsif ($land eq "0x6BA966") {
+	    # Deciduous Forest
+	    $elev = $elev + 50;
+      }
+      elsif ($land eq "0x1D6533") {
+	    # Evergreen Forest
+	    $elev = $elev + 85;
+      }
+      elsif ($land eq "0xBDCC93") {
+	    # Mixed Forest
+	    $elev = $elev + 65;
+      }
+      elsif ($land eq "0xEDECCD") {
+	    # Grassland/Herbaceous
+	    $elev = $elev + 3;
+      }
+      elsif ($land eq "0xD1BB82") {
+	    # Shrub/Scrub
+	    $elev = $elev + 6;
+      }
+      elsif ($land eq "0xDDD83E") {
+	    # Pasture/Hay
+	    $elev = $elev + 2;
+      }
+      elsif ($land eq "0xAE7229") {
+	    # Cultivated Crops
+	    $elev = $elev + 3;
+      }
+      elsif ($land eq "0xBBD7ED") {
+	    # Woody Wetlands
+	    $elev = $elev + 12;
+       }
+      elsif ($land eq "0x71A4C1") {
+	    # Emergent Herbaceous Wetland
+	    $elev = $elev + 15;
+      }
+
+	  $dist = sprintf "%.6f", $dist;
+	  $elev = sprintf "%.6f", $elev;
+	  print F1 "$dist\t$elev\t$land\n";
+    }
+  close F1;
+  close F2;
+ 
   open(F, ">", "splat3.gp") or die "Can't open splat3.gp: $!\n";
     print F "set clip\n";
     print F "set border 7\n";
@@ -6046,7 +6139,12 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
 	}
 
     print F "set term pngcairo enhanced size 2000,1600\n";
-    print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
+	if ($do_template eq "no") {
+      print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
+	}
+	elsif ($do_template eq "yes") {
+	  print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data + Clutter Heights (2021)}\" font \"Helvetica,30\"\n";
+	}
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
 	print F "set x2label \"{/:Bold Frequency:} $frq_mhz MHz }\t\t{/:Bold Azimuth: } $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\" tc rgb \"blue\"\n";
     print F "set ylabel \"Elevation - Above Mean Sea Level (feet)\" font \"Helvetica,22\"\n";
@@ -6104,12 +6202,25 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
     }
 
 	if ($do_div eq "no") {
-	  print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	  if ($do_template eq "no") {
+	    print F "plot \"lulc1.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+      }
+
+	  if ($do_template eq "yes") {
+	    print F "plot \"lulc2.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with lines lt 1 lw 2 linecolor rgb \"black\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+	  }
 	}
 	elsif  ($do_div eq "yes") {
-      print F "plot \"lulc.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
+	  if ($do_template eq "no") {
+        print F "plot \"lulc1.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
+	  }
+
+	  if ($do_template eq "yes") {
+	    print F "plot \"lulc2.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with lines lt 1 lw 2 linecolor rgb \"black\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
+	  }
 	}
   close F;
+
   &System($args = "$gnuplot splat3.gp >/dev/null 2>&1");
 
   # Get TX & RX Site Land Cover
@@ -6956,7 +7067,7 @@ while ($line = <F>) {
 }
 close F;
 
-print "</font></td></tr></table>\n";
+print "</font></pre></td></tr></table>\n";
 print "<br><b>General Coverage Topographical Map<br>$country_tx ($city_tx, $state_tx)</b><br><a href=\"tmp/$mon-$mday/$RAN/TopoMap.png\"><img src=\"tmp/$mon-$mday/$RAN/TopoMap.png\" height=\"480\" width=\"640\"></a>\n";
 
 if ($do_div eq "no") {
@@ -6980,6 +7091,7 @@ elsif ($do_div eq "yes") {
 print "<br><br><a href=\"tmp/$mon-$mday/$RAN/$tx_name-to-$rx_name.kml\"><b>Google Earth KML File</b></a>\n";
 print "<br><br><a href=\"tmp/$mon-$mday/$RAN/$outpdf\"><b>Microwave Radio Path Analysis PDF Report</b></a>\n";
 print "<br><br><b>Links to USGS topoView :&nbsp;&nbsp;<a href=\"https://ngmdb.usgs.gov/topoview/viewer/#11/$LAT1/$LON1_geo\">$tx_name</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href=\"https://ngmdb.usgs.gov/topoview/viewer/#11/$LAT2/$LON2_geo\">$rx_name</a></b>\n";
+print "<br><br><b>Links to CapTopo :&nbsp;&nbsp;<a href=\"https://caltopo.com/map.html#ll=$LAT1,$LON1_geo&z=15&b=mbt\">$tx_name</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href=\"https://caltopo.com/map.html#ll=$LAT2,$LON2_geo&z=15&b=mbt\">$rx_name</a></b>\n";
 print "<br><br><b>Links to OpenStreetMap :&nbsp;&nbsp;<a href=\"https://www.openstreetmap.org/?mlat=$LAT1&mlon=$LON1_geo#map=16/$LAT1/$LON1_geo\">$tx_name</a>&nbsp;&nbsp;-&nbsp;&nbsp;<a href=\"https://www.openstreetmap.org/?mlat=$LAT2&mlon=$LON2_geo#map=16/$LAT2/$LON2_geo\">$rx_name</a></b>\n";
 print "<br><br><b>Links to Google Maps :&nbsp;&nbsp;<a href=\"https://www.google.com/maps/search/?api=1&query=$LAT1,$LON1_geo\">$tx_name</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"https://www.google.com/maps/search/?api=1&query=$LAT2,$LON2_geo\">$rx_name</a></b>\n";
 print "<br><br><font size=\"-1\"><a href=\"http://www.gbppr.net\">GBPPR RadLab</a> $ver</font><br><font color=\"red\"><b>EXPERIMENTAL</b></font>\n";
@@ -7071,7 +7183,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
     print F "<tr><td align=\"right\"><b>Effective Earth Radius (K-Factor)</b></td><td colspan=\"2\"><font color=\"blue\">$k_str</font>&nbsp;&nbsp;($k_val)&nbsp;&nbsp;&nbsp;&nbsp;(Local Elevation: <font color=\"blue\">$k_ht_ft</font> feet / <font color=\"blue\">$k_ht_m</font> m)</td></tr>\n";
   }
   print F "<tr><td align=\"right\"><b>Grazing Angle</b></td><td colspan=\"2\"><font color=\"blue\">$graze_dg</font>&deg;&nbsp;&nbsp;(<font color=\"blue\">$graze_mr</font> milliradians)</td></tr>\n";
-  print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Approximate Distance to Reflection Point</b></td><td colspan=\"2\"><font color=\"blue\">$grazing_dis_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$grazing_dis_km</font> kilometers)&nbsp;&nbsp;(Phase Change: <font color=\"blue\">$phase_delta</font>&deg;)<br>Land Cover: <font color=\"blue\">$graze_land</font></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Terrain Roughness</b></td><td colspan=\"2\">Supplied: <font color=\"blue\">$rough_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_m</font> meters)<br>Calculated: <font color=\"blue\">$rough_calc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rough_calc_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Average Annual Temperature</b></td><td colspan=\"2\"><font color=\"blue\">$temp_f</font>&deg; F&nbsp;&nbsp;(<font color=\"blue\">$temp_c</font>&deg; C)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Atmospheric Pressure (Sea Level Corrected)</b></td><td colspan=\"2\"><font color=\"blue\">$atmos_p</font> millibars</td></tr>\n";
@@ -7117,6 +7229,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Estimated Attenuation Due to Oxygen Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$oxy_att_total</font> dB&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_mi</font> dB/mile)&nbsp;&nbsp;(<font color=\"blue\">$oxy_att_km</font> dB/km)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Miscellaneous Path Losses</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$tx_misc_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Potential Smooth Earth Diffraction Loss</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$diff_loss</font> dB</td></tr>\n";
+  print F "<tr><td align=\"right\"><b>Potential Depth of Fade</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$fade_depth</font> dB&nbsp;&nbsp;$Arx_mess</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Potential Additional Land Cover Loss</b></td><td><font color=\"blue\">$tx_land_loss</font> dB</td><td><font color=\"blue\">$rx_land_loss</font> dB</td></tr>\n";
   print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Ideal vs. Realistic Expectations</i></b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>Without Rain Loss</b></td><td align=\"center\" bgcolor=\"#7EBDE5\"><b>With Rain Loss (Crane)</b></td></tr>\n";
   print F "<tr><td align=\"right\"><b>Friis Free-Space Path Loss</b></td><td><font color=\"blue\">$fs</font> dB</td><td bgcolor=\"#BBCCBB\"><font color=\"blue\">$fs_rain</font> dB</td></tr>\n";
