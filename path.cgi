@@ -182,20 +182,54 @@ my $gc_val = $FORM{'gc_val'};
 my $k_ht = $FORM{'k_ht'};
 my $k_ht_val = $FORM{'k_ht_val'};
 
-my $earcon = $FORM{'earcon'};
-my $diecon = $FORM{'diecon'};
+my $earcon  = $FORM{'earcon'};
+my $diecon  = $FORM{'diecon'};
 my $climate = $FORM{'climate'};
-my $polar = $FORM{'polar'};
-my $sit = $FORM{'sit'};
-my $time = $FORM{'time'};
-
-my $quality = $FORM{'quality'};
-my $land_clutter = $FORM{'land_clutter'};
+my $polar   = $FORM{'polar'};
+my $sit     = $FORM{'sit'};
+my $time    = $FORM{'time'};
 
 my $tx_ant_notes = $FORM{'tx_ant_notes'};
 my $rx_ant_notes = $FORM{'rx_ant_notes'};
-my $tx_notes = $FORM{'tx_notes'};
-my $rx_notes = $FORM{'rx_notes'};
+my $tx_notes     = $FORM{'tx_notes'};
+my $rx_notes     = $FORM{'rx_notes'};
+
+my $quality      = $FORM{'quality'};
+my $land_clutter = $FORM{'land_clutter'};
+
+my $ht_water  = $FORM{'ht_water'};
+my $ht_ice    = $FORM{'ht_ice'};
+my $ht_devlow = $FORM{'ht_devlow'};
+my $ht_devmed = $FORM{'ht_devmed'};
+my $ht_devhgh = $FORM{'ht_devhgh'};
+my $ht_devspc = $FORM{'ht_devspc'};
+my $ht_barrn  = $FORM{'ht_barrn'};
+my $ht_dedfor = $FORM{'ht_dedfor'};
+my $ht_evrfor = $FORM{'ht_evrfor'};
+my $ht_mxdfor = $FORM{'ht_mxdfor'};
+my $ht_grass  = $FORM{'ht_grass'};
+my $ht_shrub  = $FORM{'ht_shrub'};
+my $ht_hay    = $FORM{'ht_hay'};
+my $ht_crop   = $FORM{'ht_crop'};
+my $ht_wood   = $FORM{'ht_wood'};
+my $ht_hrbwet = $FORM{'ht_hrbwet'};
+
+my $ht_water_val  = $FORM{'ht_water_val'};
+my $ht_ice_val    = $FORM{'ht_ice_val'};
+my $ht_devlow_val = $FORM{'ht_devlow_val'};
+my $ht_devmed_val = $FORM{'ht_devmed_val'};
+my $ht_devhgh_val = $FORM{'ht_devhgh_val'};
+my $ht_devspc_val = $FORM{'ht_devspc_val'};
+my $ht_barrn_val  = $FORM{'ht_barrn_val'};
+my $ht_dedfor_val = $FORM{'ht_dedfor_val'};
+my $ht_evrfor_val = $FORM{'ht_evrfor_val'};
+my $ht_mxdfor_val = $FORM{'ht_mxdfor_val'};
+my $ht_grass_val  = $FORM{'ht_grass_val'};
+my $ht_shrub_val  = $FORM{'ht_shrub_val'};
+my $ht_hay_val    = $FORM{'ht_hay_val'};
+my $ht_crop_val   = $FORM{'ht_crop_val'};
+my $ht_wood_val   = $FORM{'ht_wood_val'};
+my $ht_hrbwet_val = $FORM{'ht_hrbwet_val'};
 
 ## Subroutines
 #
@@ -883,7 +917,7 @@ elsif ($diecon eq "13 : Pastoral, Medium Hills, Forestation") {
 }
 elsif ($diecon eq "12 : Marshy Land, Flat Country, Densely Wooded") {
   $diecon = 12;
-   $diecon_desc = "Marshy Land, Flat Country, Densely Wooded";
+  $diecon_desc = "Marshy Land, Flat Country, Densely Wooded";
 }
 elsif ($diecon eq "11 : Rocky Soil, Steep Hills, Mountainous") {
   $diecon = 11;
@@ -903,12 +937,15 @@ elsif ($diecon eq "4 : Poor Ground") {
 }
 elsif ($diecon eq "3 : Heavy Industrial Areas, Very Dry Ground") {
   $diecon = 3;
-   $diecon_desc = "Heavy Industrial Areas";
+  $diecon_desc = "Heavy Industrial Areas";
 }
 
 if (!$diecon) {
   $diecon = 15;
+  $diecon_desc = "Average Ground, Farmland, Forest";
 }
+
+$diecon = sprintf "%.1f", $diecon;
 
 ## Get Earth Conductivity
 #
@@ -1995,7 +2032,7 @@ open(F, ">", "splat2.gp") or die "Can't open splat2.gp: $!\n";
   print F "set label '{/:Bold Ant Hgt: } $rx_ant_ht_ft ft' right at $dist_mi,graph 1.02 tc rgb \"blue\"\n";
   print F "set timestamp '%d-%b-%Y %H:%M CST' bottom font \"Helvetica\"\n";
   print F "set output \"TerrainProfile1.png\"\n";
-  print F "set style fill transparent solid 0.6 border -1\n";
+  print F "set style fill transparent solid 0.8 border -1\n";
 
   if ($clutter == 1) {
     # Do clutter
@@ -6022,6 +6059,38 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
 
   # Generate Land Clutter Height Template
   $land_clutter =~ tr/A-Za-z//csd;
+  $ht_water  =~ tr/0-9.//csd;
+  $ht_ice    =~ tr/0-9.//csd;
+  $ht_devlow =~ tr/0-9.//csd;
+  $ht_devmed =~ tr/0-9.//csd;
+  $ht_devhgh =~ tr/0-9.//csd;
+  $ht_devspc =~ tr/0-9.//csd;
+  $ht_barrn  =~ tr/0-9.//csd;
+  $ht_dedfor =~ tr/0-9.//csd;
+  $ht_evrfor =~ tr/0-9.//csd;
+  $ht_mxdfor =~ tr/0-9.//csd;
+  $ht_grass  =~ tr/0-9.//csd;
+  $ht_shrub  =~ tr/0-9.//csd;
+  $ht_hay    =~ tr/0-9.//csd;
+  $ht_crop   =~ tr/0-9.//csd;
+  $ht_wood   =~ tr/0-9.//csd;
+  $ht_hrbwet =~ tr/0-9.//csd;
+  $ht_water_val  =~ tr/A-Za-z//csd;
+  $ht_ice_val    =~ tr/A-Za-z//csd;
+  $ht_devlow_val =~ tr/A-Za-z//csd;
+  $ht_devmed_val =~ tr/A-Za-z//csd;
+  $ht_devhgh_val =~ tr/A-Za-z//csd;
+  $ht_devspc_val =~ tr/A-Za-z//csd;
+  $ht_barrn_val  =~ tr/A-Za-z//csd;
+  $ht_dedfor_val =~ tr/A-Za-z//csd;
+  $ht_evrfor_val =~ tr/A-Za-z//csd;
+  $ht_mxdfor_val =~ tr/A-Za-z//csd;
+  $ht_grass_val  =~ tr/A-Za-z//csd;
+  $ht_shrub_val  =~ tr/A-Za-z//csd;
+  $ht_hay_val    =~ tr/A-Za-z//csd;
+  $ht_crop_val   =~ tr/A-Za-z//csd;
+  $ht_wood_val   =~ tr/A-Za-z//csd;
+  $ht_hrbwet_val =~ tr/A-Za-z//csd;
 
   if ($land_clutter eq "Yes") {
     $do_template = "yes";
@@ -6030,76 +6099,221 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
     $do_template = "no";
   }
 
+  # Open Water
+  if ($ht_water_val eq "meters") {
+    $ht_water_ft = sprintf "%.1f", $ht_water * 3.2808399;
+	$ht_water_m  = sprintf "%.1f", $ht_water;
+  }
+  elsif ($ht_water_val eq "feet") {
+    $ht_water_ft = sprintf "%.1f", $ht_water; 
+	$ht_water_m  = sprintf "%.1f", $ht_water * 0.3048;
+  }
+  # Perennial Ice/Snow
+  if ($ht_ice_val eq "meters") {
+    $ht_ice_ft = sprintf "%.1f", $ht_ice * 3.2808399;
+	$ht_ice_m = sprintf "%.1f", $ht_ice;
+  }
+  elsif ($ht_ice_val eq "feet") {
+    $ht_ice_ft = sprintf "%.1f", $ht_ice;
+	$ht_ice_m = sprintf "%.1f", $ht_ice * 0.3048;
+  }
+  # Developed, Low Intensity
+  if ($ht_devlow_val eq "meters") {
+    $ht_devlow_ft = sprintf "%.1f", $ht_devlow * 3.2808399;
+	$ht_devlow_m = sprintf "%.1f", $ht_devlow;
+  }
+  elsif ($ht_devlow_val eq "feet") {
+    $ht_devlow_ft = sprintf "%.1f", $ht_devlow;
+	$ht_devlow_m = sprintf "%.1f", $ht_devlow * 0.3048;
+  }
+  # Developed, Medium Intensity
+  if ($ht_devmed_val eq "meters") {
+    $ht_devmed_ft = sprintf "%.1f", $ht_devmed * 3.2808399;
+	$ht_devmed_m = sprintf "%.1f", $ht_devmed;
+  }
+  elsif ($ht_devmed_val eq "feet") {
+    $ht_devmed_ft = sprintf "%.1f", $ht_devmed;
+	$ht_devmed_m = sprintf "%.1f", $ht_devmed * 0.3048;
+  }
+  # Developed, High Intensity
+  if ($ht_devhgh_val eq "meters") {
+    $ht_devhgh_ft = sprintf "%.1f", $ht_devhgh * 3.2808399;
+	$ht_devhgh_m = sprintf "%.1f", $ht_devhgh;
+  }
+  elsif ($ht_devhgh_val eq "feet") {
+    $ht_devhgh_ft = sprintf "%.1f", $ht_devhgh;
+	$ht_devhgh_m = sprintf "%.1f", $ht_devhgh * 0.3048;
+  }
+  # Developed, Open Space
+  if ($ht_devspc_val eq "meters") {
+    $ht_devspc_ft = sprintf "%.1f", $ht_devspc * 3.2808399;
+	$ht_devspc_m = sprintf "%.1f", $ht_devspc;
+  }
+  elsif ($ht_devspc_val eq "feet") {
+    $ht_devspc_ft = sprintf "%.1f", $ht_devspc;
+	$ht_devspc_m = sprintf "%.1f", $ht_devspc * 0.3048;
+  }
+  # Barren Land (Rock/Sand/Clay)
+  if ($ht_barrn_val eq "meters") {
+    $ht_barrn_ft = sprintf "%.1f", $ht_barrn * 3.2808399;
+	$ht_barrn_m = sprintf "%.1f", $ht_barrn;
+  }
+  elsif ($ht_barrn_val eq "feet") {
+    $ht_barrn_ft = sprintf "%.1f", $ht_barrn;
+	$ht_barrn_m = sprintf "%.1f", $ht_barrn * 0.3048;
+  }
+  # Deciduous Forest 
+  if ($ht_dedfor_val eq "meters") {
+    $ht_dedfor_ft = sprintf "%.1f", $ht_dedfor * 3.2808399;
+	$ht_dedfor_m = sprintf "%.1f", $ht_dedfor;
+  }
+  elsif ($ht_dedfor_val eq "feet") {
+    $ht_dedfor_ft = sprintf "%.1f", $ht_dedfor;
+	$ht_dedfor_m = sprintf "%.1f", $ht_dedfor * 0.3048;
+  }
+  # Evergreen Forest
+  if ($ht_evrfor_val eq "meters") {
+    $ht_evrfor_ft = sprintf "%.1f", $ht_evrfor * 3.2808399;
+	$ht_evrfor_m = sprintf "%.1f", $ht_evrfor;
+  }
+  elsif ($ht_evrfor_val eq "feet") {
+    $ht_evrfor_ft = sprintf "%.1f", $ht_evrfor;
+	$ht_evrfor_m = sprintf "%.1f", $ht_evrfor * 0.3048;
+  }
+  # Mixed Forest
+  if ($ht_mxdfor_val eq "meters") {
+    $ht_mxdfor_ft = sprintf "%.1f", $ht_mxdfor * 3.2808399;
+	$ht_mxdfor_m = sprintf "%.1f", $ht_mxdfor;
+  }
+  elsif ($ht_mxdfor_val eq "feet") {
+    $ht_mxdfor_ft = sprintf "%.1f", $ht_mxdfor;
+	$ht_mxdfor_m = sprintf "%.1f", $ht_mxdfor * 0.3048;
+  }
+  # Grassland/Herbaceous
+  if ($ht_grass_val eq "meters") {
+    $ht_grass_ft = sprintf "%.1f", $ht_grass * 3.2808399;
+	$ht_grass_m = sprintf "%.1f", $ht_grass;
+  }
+  elsif ($ht_grass_val eq "feet") {
+    $ht_grass_ft = sprintf "%.1f", $ht_grass;
+	$ht_grass_m = sprintf "%.1f", $ht_grass * 0.3048;
+  }
+  # Shrub/Scrub
+  if ($ht_shrub_val eq "meters") {
+    $ht_shrub_ft = sprintf "%.1f", $ht_shrub * 3.2808399;
+	$ht_shrub_m = sprintf "%.1f", $ht_shrub;
+  }
+  elsif ($ht_shrub_val eq "feet") {
+    $ht_shrub_ft = sprintf "%.1f", $ht_shrub;
+	$ht_shrub_m = sprintf "%.1f", $ht_shrub * 0.3048;
+  }
+  # Pasture/Hay
+  if ($ht_hay_val eq "meters") {
+    $ht_hay_ft = sprintf "%.1f", $ht_hay * 3.2808399;
+	$ht_hay_m = sprintf "%.1f", $ht_hay;
+  }
+  elsif ($ht_shrub_val eq "feet") {
+    $ht_hay_ft = sprintf "%.1f", $ht_hay;
+	$ht_hay_m = sprintf "%.1f", $ht_hay * 0.3048;
+  }
+  # Cultivated Crops
+  if ($ht_crop_val eq "meters") {
+    $ht_crop_ft = sprintf "%.1f", $ht_crop * 3.2808399;
+	$ht_crop_m = sprintf "%.1f", $ht_crop;
+  }
+  elsif ($ht_crop_val eq "feet") {
+    $ht_crop_ft = sprintf "%.1f", $ht_crop;
+	$ht_crop_m = sprintf "%.1f", $ht_crop * 0.3048;
+  }
+  # Woody Wetlands
+  if ($ht_wood_val eq "meters") {
+    $ht_wood_ft = sprintf "%.1f", $ht_wood * 3.2808399;
+	$ht_wood_m = sprintf "%.1f", $ht_wood;
+  }
+  elsif ($ht_wood_val eq "feet") {
+    $ht_wood_ft = sprintf "%.1f", $ht_wood;
+	$ht_wood_m = sprintf "%.1f", $ht_wood * 0.3048;
+  }
+  # Emergent Herbaceous Wetland
+  if ($ht_hrbwet_val eq "meters") {
+    $ht_hrbwet_ft = sprintf "%.1f", $ht_hrbwet * 3.2808399;
+	$ht_hrbwet_m = sprintf "%.1f", $ht_hrbwet;
+  }
+  elsif ($ht_hrbwet_val eq "feet") {
+    $ht_hrbwet_ft = sprintf "%.1f", $ht_hrbwet;
+	$ht_hrbwet_m = sprintf "%.1f", $ht_hrbwet * 0.3048;
+  }
+
   open(F1, ">", "lulc2.gp") or die "Can't open lulc2.gp: $!\n";
   open(F2, "<", "lulc1.gp") or die "Can't open lulc1.gp: $!\n";
     while (<F2>) {
       chomp;
       ($dist, $elev, $land) = split '\t';
-
-	  # Additional heights are in feet and are basically just guesses...
+	  
+	  # Additional clutter heights in feet
       if ($land eq "0x486DA2") {
 	    # Open Water
-	    $elev = $elev + 0;
+	    $elev = $elev + $ht_water_ft;
       }
       elsif ($land eq "0xE7EFFC") {
 	    # Perennial Ice/Snow
-	    $elev = $elev + 0;
+	    $elev = $elev + $ht_ice_ft;
       }
       elsif ($land eq "0xDC9881") {
         # Developed, Low Intensity
-	    $elev = $elev + 15;
+	    $elev = $elev + $ht_devlow_ft;
       }
       elsif ($land eq "0xF10100") {
 	    # Developed, Medium Intensity
-	    $elev = $elev + 25;
+	    $elev = $elev + $ht_devmed_ft;
       }
       elsif ($land eq "0xAB0101") {
 	    # Developed, High Intensity
-	    $elev = $elev + 40;
+	    $elev = $elev + $ht_devhgh_ft;
       }
       elsif ($land eq "0xE1CDCE") {
 	    # Developed, Open Space
-	    $elev = $elev + 6;
+	    $elev = $elev + $ht_devspc_ft;
       }
       elsif ($land eq "0xB3AFA4") {
-	    #  Barren Land (Rock/Sand/Clay)
-	    $elev = $elev + 0;
+	    # Barren Land (Rock/Sand/Clay)
+	    $elev = $elev + $ht_barrn_ft;
       }
       elsif ($land eq "0x6BA966") {
 	    # Deciduous Forest
-	    $elev = $elev + 50;
+	    $elev = $elev + $ht_dedfor_ft;
       }
       elsif ($land eq "0x1D6533") {
 	    # Evergreen Forest
-	    $elev = $elev + 85;
+	    $elev = $elev + $ht_evrfor_ft;
       }
       elsif ($land eq "0xBDCC93") {
 	    # Mixed Forest
-	    $elev = $elev + 65;
+	    $elev = $elev + $ht_mxdfor_ft;
       }
       elsif ($land eq "0xEDECCD") {
 	    # Grassland/Herbaceous
-	    $elev = $elev + 3;
+	    $elev = $elev + $ht_grass_ft;
       }
       elsif ($land eq "0xD1BB82") {
 	    # Shrub/Scrub
-	    $elev = $elev + 6;
+	    $elev = $elev + $ht_shrub_ft;
       }
       elsif ($land eq "0xDDD83E") {
 	    # Pasture/Hay
-	    $elev = $elev + 2;
+	    $elev = $elev + $ht_hay_ft;
       }
       elsif ($land eq "0xAE7229") {
 	    # Cultivated Crops
-	    $elev = $elev + 3;
+	    $elev = $elev + $ht_crop_ft;
       }
       elsif ($land eq "0xBBD7ED") {
 	    # Woody Wetlands
-	    $elev = $elev + 12;
-       }
+	    $elev = $elev + $ht_wood_ft;
+      }
       elsif ($land eq "0x71A4C1") {
 	    # Emergent Herbaceous Wetland
-	    $elev = $elev + 15;
+	    $elev = $elev + $ht_hrbwet_ft;
       }
 
 	  $dist = sprintf "%.6f", $dist;
@@ -6203,19 +6417,23 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
 
 	if ($do_div eq "no") {
 	  if ($do_template eq "no") {
+		# No Diversity, No Land Clutter
 	    print F "plot \"lulc1.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
       }
 
 	  if ($do_template eq "yes") {
-	    print F "plot \"lulc2.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with lines lt 1 lw 2 linecolor rgb \"black\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
+		# No Diversity, With Land Clutter
+		print F "plot \"lulc2.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with filledcurves above fc \"grey80\" fs transparent solid 0.5, \"profile-terr.gp\" with lines lt 1 lw 1 linecolor rgb \"black\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\"$keyentry\n";
 	  }
 	}
 	elsif  ($do_div eq "yes") {
 	  if ($do_template eq "no") {
+		# With Diversity, No Land Clutter
         print F "plot \"lulc1.gp\" using 1:2:3 with boxes lc rgb variable, \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
 	  }
 
 	  if ($do_template eq "yes") {
+		# With Diversity, With Land Clutter
 	    print F "plot \"lulc2.gp\" using 1:2:3 with boxes lc rgb variable, \"profile-terr.gp\" title \"$k_str Earth Terrain Profile\" with lines lt 1 lw 2 linecolor rgb \"black\", \"reference.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\", \"fresnel.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"green\", \"fresnel_pt_6.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\", \"reference2-div.gp\" with lines lt 1 lw 1 linecolor rgb \"blue\" dashtype 5, \"fresnel-div-nth.gp\" smooth csplines lt 1 lw 1 linecolor rgb \"red\" dashtype 5$keyentry\n";
 	  }
 	}
@@ -6735,9 +6953,7 @@ print "<tr><td align=\"right\"><b>Site Equipment Notes</b></td><td><font color=\
 print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
 print "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
 print "<tr><td align=\"right\"><a href=\"https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description\"><b>Land Cover</b></a></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> kilometers</td><td><font color=\"blue\">$easting_rx</font> kilometers</td></tr>\n";
-print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
+print "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone / Easting / Northing Coordinates</b></td><td><font color=\"blue\">$utm_zone_tx</font> / <font color=\"blue\">$easting_tx</font> / <font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$utm_zone_rx</font> / <font color=\"blue\">$easting_rx</font> / <font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
 print "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
@@ -6762,8 +6978,8 @@ print "<tr><td align=\"right\"><b>Highest Transmitted Frequency</b></td><td alig
 print "<tr><td align=\"right\"><b>RF Power Output - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_dbm</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_dbk</font> dBk)</td></tr>\n";
 print "<tr><td align=\"right\"><b>RF Power Output - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$pwr_out_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$pwr_out_kw</font> kW)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> m)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
-print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power (EIRP)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power - dBx</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
+print "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power - Watts</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -6825,6 +7041,27 @@ print "<tr><td align=\"right\"><b>Maximum Fresnel Zone Radius</b></td><td align=
 print "<tr><td align=\"right\"><b>Additional Ground Clutter</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$gc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$gc_m</font> meters)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Ideal Distance With These Antenna Heights</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$distance_max_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$distance_max_km</font> km)</td></tr>\n";
 print "<tr><td align=\"right\"><b>Total Path Distance</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$dist_mi</font> miles&nbsp;&nbsp;(<font color=\"blue\">$dist_km</font> km)</td></tr>\n";
+
+if ($do_template eq "yes") {
+  print "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b><i>Additional Land Clutter Height Template</i></b></td><td colspan=\"2\" bgcolor=\"#7EBDE5\"></td></tr>\n";
+  print "<tr><td align=\"right\"><b>Open Water</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_water_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_water_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Perennial Ice/Snow</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_ice_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_ice_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Developed, Low Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devlow_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devlow_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Developed, Medium Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devmed_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devmed_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Developed, High Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devhgh_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devhgh_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Developed, Open Space</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devspc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devspc_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Barren Land (Rock/Sand/Clay)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_barrn_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_barrn_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Deciduous Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_dedfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_dedfor_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Evergreen Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_evrfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_evrfor_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Mixed Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_mxdfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_mxdfor_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Grassland/Herbaceous</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_grass_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_grass_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Shrub/Scrub</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_shrub_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_shrub_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Pasture/Hay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_hay_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_hay_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Cultivated Crops</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_crop_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_crop_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Woody Wetlands</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_wood_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_wood_m</font> meters)</td></tr>\n";
+  print "<tr><td align=\"right\"><b>Emergent Herbaceous Wetland</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_hrbwet_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_hrbwet_ft</font> meters)</td></tr>\n";
+}
+
 print "</table><br><br>\n";
 
 print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"8\" width=\"70%\">\n";
@@ -7111,13 +7348,36 @@ print F "<html><head>\n";
 print F "<title>Microwave Radio Path Analysis Results</title>\n";
 print F "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
 print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
-print F "<font face=\"Helvetica\">\n";
+print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
 print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td align=\"center\" bgcolor=\"#7EBDE5\"><font size=\"6\"><b>Microwave Radio Path Analysis Results</b></font></td></tr></table></center>\n";
 print F "<center>\n";
 print F "<p><img src=\"TerrainProfile1.png\" height=\"480\" width=\"640\"></p>\n";
 
 if ($do_lulc eq "yes" && $country_tx eq "United States") {
   print F "<p><img src=\"LULCProfile1.png\" height=\"480\" width=\"640\">\n";
+
+  if ($do_template eq "yes") {
+    print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
+	#print F "<tr><td align=\"right\" bgcolor=\"#7EBDE5\"><b>Additional Land Clutter Height Template</b></td><td bgcolor=\"#7EBDE5\"></td></tr>\n";
+	print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><b>Additional Land Clutter Height Template</b></td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Open Water</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_water_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_water_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Perennial Ice/Snow</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_ice_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_ice_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Developed, Low Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devlow_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devlow_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Developed, Medium Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devmed_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devmed_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Developed, High Intensity</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devhgh_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devhgh_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Developed, Open Space</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_devspc_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_devspc_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Barren Land (Rock/Sand/Clay)</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_barrn_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_barrn_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Deciduous Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_dedfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_dedfor_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Evergreen Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_evrfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_evrfor_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Mixed Forest</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_mxdfor_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_mxdfor_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Grassland/Herbaceous</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_grass_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_grass_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Shrub/Scrub</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_shrub_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_shrub_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Pasture/Hay</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_hay_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_hay_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Cultivated Crops</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_crop_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_crop_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Woody Wetlands</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_wood_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_wood_m</font> meters)</td></tr>\n";
+    print F "<tr><td align=\"right\"><b>Emergent Herbaceous Wetland</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$ht_hrbwet_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$ht_hrbwet_ft</font> meters)</td></tr>\n";
+    print "</table>\n";
+  }
 }
 
 print F "<p><img src=\"PathProfile1.png\" height=\"480\" width=\"640\">\n";
@@ -7142,9 +7402,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Latitude</b></td><td><font color=\"blue\">$LAT1_D</font>&deg; <font color=\"blue\">$LAT1_M</font>' <font color=\"blue\">$LAT1_S</font>&quot; $LAT1_val&nbsp;&nbsp;(<font color=\"blue\">$LAT1</font>&deg;)</td><td><font color=\"blue\">$LAT2_D</font>&deg; <font color=\"blue\">$LAT2_M</font>' <font color=\"blue\">$LAT2_S</font>&quot; $LAT2_val&nbsp;&nbsp;(<font color=\"blue\">$LAT2</font>&deg;)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>(WGS84)&nbsp;&nbsp;Longitude</b></td><td><font color=\"blue\">$LON1_D</font>&deg; <font color=\"blue\">$LON1_M</font>' <font color=\"blue\">$LON1_S</font>&quot; $LON1_val&nbsp;&nbsp;(<font color=\"blue\">$LON1_geo</font>&deg;)</td><td><font color=\"blue\">$LON2_D</font>&deg; <font color=\"blue\">$LON2_M</font>' <font color=\"blue\">$LON2_S</font>&quot; $LON2_val&nbsp;&nbsp;(<font color=\"blue\">$LON2_geo</font>&deg;)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Land Cover</b></td><td><font color=\"blue\">$tx_land</font></td><td><font color=\"blue\">$rx_land</font></td></tr>\n";
-  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone</b></td><td><font color=\"blue\">$utm_zone_tx</font></td><td><font color=\"blue\">$utm_zone_rx</font></td></tr>\n";
-  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Easting Coordinates</b></td><td><font color=\"blue\">$easting_tx</font> kilometers</td><td><font color=\"blue\">$easting_rx</font> kilometers</td></tr>\n";
-  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Northing Coordinates</b></td><td><font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
+  print F "<tr><td align=\"right\"><b><a href=\"https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system\">UTM</a> Zone / Easting / Northing Coordinates</b></td><td><font color=\"blue\">$utm_zone_tx</font> / <font color=\"blue\">$easting_tx</font> / <font color=\"blue\">$northing_tx</font> kilometers</td><td><font color=\"blue\">$utm_zone_rx</font> / <font color=\"blue\">$easting_rx</font> / <font color=\"blue\">$northing_rx</font> kilometers</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Local Ground Elevation (AMSL)</b></td><td><font color=\"blue\">$tx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_elv_m</font> meters)</td><td><font color=\"blue\">$rx_elv_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_elv_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Antenna Height (Center-of-Radiation)</b></td><td><font color=\"blue\">$tx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_m</font> meters)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Overall Antenna Height (AMSL)</b></td><td><font color=\"blue\">$tx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$tx_ant_ht_ov_m</font> meters)</td><td><font color=\"blue\">$rx_ant_ht_ov_ft</font> feet&nbsp;&nbsp;(<font color=\"blue\">$rx_ant_ht_ov_m</font> meters)</td></tr>\n";
@@ -7171,7 +7429,7 @@ open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<tr><td align=\"right\"><b>Wavelength</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$wav_in</font> inches&nbsp;&nbsp;(<font color=\"blue\">$wav_cm</font> cm)&nbsp;&nbsp;(<font color=\"blue\">$wav_ft</font> feet)&nbsp;&nbsp;(<font color=\"blue\">$wav_m</font> m)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp</font> dBm&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbw</font> dBW)&nbsp;&nbsp;(<font color=\"blue\">$eirp_dbk</font> dBk)</td></tr>\n";
   print F "<tr><td align=\"right\"><b>Effective Isotropic Radiated Power</b></td><td align=\"center\" colspan=\"2\"><font color=\"blue\">$eirp_mw</font> mW&nbsp;&nbsp;(<font color=\"blue\">$eirp_w</font> W)&nbsp;&nbsp;(<font color=\"blue\">$eirp_kw</font> kW)</td></tr>\n";
-  print F "</table><br><br><br><br><br><br><br><br><br><br><br>\n";
+  print F "</table><br><br><br><br><br><br><br><br><br><br><br><br><br>\n";
 
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
   print F "<tr><td align=\"center\" bgcolor=\"#3498DB\" colspan=\"3\"><font size=\"4\"><b>Terrain &amp; Atmospheric Conditions</b></font></td></tr>\n";
