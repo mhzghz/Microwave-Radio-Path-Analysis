@@ -33,7 +33,6 @@ my $splatdirhd = "/media/gbppr/500GB/sdf-hd";
 my $pdfdir     = "../pdf"; # Location of coax/waveguide PDF datasheets
 my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
-my $do_mag     = "yes"; # Calculate magnetic declinations - Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
 my $do_utm     = "yes"; # Calculates UTM coordinates - Requires the installation of Geo::Coordinates::UTM
 my $do_lulc    = "yes"; # Generates U.S land coverage maps - Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
 my $do_vinc    = "yes"; # Uses the proper Vincenty great-circle distance calculations - Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
@@ -147,39 +146,39 @@ my $rx_div_len = $FORM{'rx_div_len'};
 my $rx_div_len_val = $FORM{'rx_div_len_val'};
 my $rx_div_misc_cab_loss = $FORM{'rx_div_misc_cab_loss'};
 
-my $BER = $FORM{'BER'};
+my $BER      = $FORM{'BER'};
 my $BER_crit = $FORM{'BER_crit'};
 
-my $dfm = $FORM{'dfm'};
+my $dfm  = $FORM{'dfm'};
 my $eifm = $FORM{'eifm'};
 my $aifm = $FORM{'aifm'};
 
-my $nth = $FORM{'nth'};
-my $k = $FORM{'k'};
-my $vigants = $FORM{'vigants'};
-my $temp = $FORM{'temp'};
+my $nth      = $FORM{'nth'};
+my $k        = $FORM{'k'};
+my $vigants  = $FORM{'vigants'};
+my $temp     = $FORM{'temp'};
 my $temp_val = $FORM{'temp_val'};
-my $rain = $FORM{'rain'};
-my $geo = $FORM{'geo'};
-my $rh = $FORM{'rh'};
-my $baro = $FORM{'baro'};
-my $rate = $FORM{'rate'};
-my $envy = $FORM{'envy'};
-my $wvd = $FORM{'wvd'};
+my $rain     = $FORM{'rain'};
+my $geo      = $FORM{'geo'};
+my $rh       = $FORM{'rh'};
+my $baro     = $FORM{'baro'};
+my $rate     = $FORM{'rate'};
+my $envy     = $FORM{'envy'};
+my $wvd      = $FORM{'wvd'};
 
 my $check1 = $FORM{'check1'};
 my $check2 = $FORM{'check2'};
 my $check3 = $FORM{'check3'};
 my $check4 = $FORM{'check4'};
 
-my $rough = $FORM{'rough'};
+my $rough     = $FORM{'rough'};
 my $rough_hum = $FORM{'rough_hum'};
 my $rough_val = $FORM{'rough_val'};
 
-my $gc = $FORM{'gc'};
+my $gc     = $FORM{'gc'};
 my $gc_val = $FORM{'gc_val'};
 
-my $k_ht = $FORM{'k_ht'};
+my $k_ht     = $FORM{'k_ht'};
 my $k_ht_val = $FORM{'k_ht_val'};
 
 my $earcon  = $FORM{'earcon'};
@@ -1753,24 +1752,205 @@ else {
 $AZSP = sprintf "%.2f", $AZSP; # TX to RX - TN
 $AZLP = sprintf "%.2f", $AZLP; # RX to TX - TN
 
-# Calculate Magnetic Declination
+## Calculate Magnetic Declination
 #
-# Requires the installation of pygeomag: https://github.com/boxpet/pygeomag
+# https://perlmonks.org/?node_id=1191907
 #
-if ($do_mag eq "yes") {
+# Magnetic declination calculation based on WMM2025 Earth Magnet Model.
+# See https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
+
+# magnetic_declination($lon, $lat, $hgt, $yr)
+# $lon: degrees longitude (east is positive)
+# $lat: degrees latitude (north is positive)
+# $hgt: elevation from sea level in meters, default=0
+# $yr: year, default=2025
+# Returns magnetic declination for the given location in degrees.
+# In array context, also returns magnetic inclination (dip).
+
+BEGIN {
+my @WMM2025 = (
+  [],
+  [ [-29351.8,       0.0,       12.0,        0.0],
+    [ -1410.8,    4545.4,        9.7,      -21.5] ],
+  [ [ -2556.6,       0.0,      -11.6,        0.0],
+    [  2951.1,   -3133.6,       -5.2,      -27.7],
+    [  1649.3,    -815.1,       -8.0,      -12.1] ],
+  [ [  1361.0,       0.0,       -1.3,        0.0],
+    [ -2404.1,     -56.6,       -4.2,        4.0],
+    [  1243.8,     237.5,        0.4,       -0.3],
+    [   453.6,    -549.5,      -15.6,       -4.1] ],
+  [ [   895.0,       0.0,       -1.6,        0.0],
+    [   799.5,     278.6,       -2.4,       -1.1],
+    [    55.7,    -133.9,       -6.0,        4.1],
+    [  -281.1,     212.0,        5.6,        1.6],
+    [    12.1,    -375.6,       -7.0,       -4.4] ],
+  [ [  -233.2,       0.0,        0.6,        0.0],
+    [   368.9,      45.4,        1.4,       -0.5],
+    [   187.2,     220.2,        0.0,        2.2],
+    [  -138.7,    -122.9,        0.6,        0.4],
+    [  -142.0,      43.0,        2.2,        1.7],
+    [    20.9,     106.1,        0.9,        1.9] ],
+  [ [    64.4,       0.0,       -0.2,        0.0],
+    [    63.8,     -18.4,       -0.4,        0.3],
+    [    76.9,      16.8,        0.9,       -1.6],
+    [  -115.7,      48.8,        1.2,       -0.4],
+    [   -40.9,     -59.8,       -0.9,        0.9],
+    [    14.9,      10.9,        0.3,        0.7],
+    [   -60.7,      72.7,        0.9,        0.9] ],
+  [ [    79.5,       0.0,        0.0,        0.0],
+    [   -77.0,     -48.9,       -0.1,        0.6],
+    [    -8.8,     -14.4,       -0.1,        0.5],
+    [    59.3,      -1.0,        0.5,       -0.8],
+    [    15.8,      23.4,       -0.1,        0.0],
+    [     2.5,      -7.4,       -0.8,       -1.0],
+    [   -11.1,     -25.1,       -0.8,        0.6],
+    [    14.2,      -2.3,        0.8,       -0.2] ],
+  [ [    23.2,       0.0,       -0.1,        0.0],
+    [    10.8,       7.1,        0.2,       -0.2],
+    [   -17.5,     -12.6,        0.0,        0.5],
+    [     2.0,      11.4,        0.5,       -0.4],
+    [   -21.7,      -9.7,       -0.1,        0.4],
+    [    16.9,      12.7,        0.3,       -0.5],
+    [    15.0,       0.7,        0.2,       -0.6],
+    [   -16.8,      -5.2,        0.0,        0.3],
+    [     0.9,       3.9,        0.2,        0.2] ],
+  [ [     4.6,       0.0,        0.0,        0.0],
+    [     7.8,     -24.8,       -0.1,       -0.3],
+    [     3.0,      12.2,        0.1,        0.3],
+    [    -0.2,       8.3,        0.3,       -0.3],
+    [    -2.5,      -3.3,       -0.3,        0.3],
+    [   -13.1,      -5.2,        0.0,        0.2],
+    [     2.4,       7.2,        0.3,       -0.1],
+    [     8.6,      -0.6,       -0.1,       -0.2],
+    [    -8.7,       0.8,        0.1,        0.4],
+    [   -12.9,      10.0,       -0.1,        0.1] ],
+  [ [    -1.3,       0.0,        0.1,        0.0],
+    [    -6.4,       3.3,        0.0,        0.0],
+    [     0.2,       0.0,        0.1,        0.0],
+    [     2.0,       2.4,        0.1,       -0.2],
+    [    -1.0,       5.3,        0.0,        0.1],
+    [    -0.6,      -9.1,       -0.3,       -0.1],
+    [    -0.9,       0.4,        0.0,        0.1],
+    [     1.5,      -4.2,       -0.1,        0.0],
+    [     0.9,      -3.8,       -0.1,       -0.1],
+    [    -2.7,       0.9,        0.0,        0.2],
+    [    -3.9,      -9.1,        0.0,        0.0] ],
+  [ [     2.9,       0.0,        0.0,        0.0],
+    [    -1.5,       0.0,        0.0,        0.0],
+    [    -2.5,       2.9,        0.0,        0.1],
+    [     2.4,      -0.6,        0.0,        0.0],
+    [    -0.6,       0.2,        0.0,        0.1],
+    [    -0.1,       0.5,       -0.1,        0.0],
+    [    -0.6,      -0.3,        0.0,        0.0],
+    [    -0.1,      -1.2,        0.0,        0.1],
+    [     1.1,      -1.7,       -0.1,        0.0],
+    [    -1.0,      -2.9,       -0.1,        0.0],
+    [    -0.2,      -1.8,       -0.1,        0.0],
+    [     2.6,      -2.3,       -0.1,        0.0] ],
+  [ [    -2.0,       0.0,        0.0,        0.0],
+    [    -0.2,      -1.3,        0.0,        0.0],
+    [     0.3,       0.7,        0.0,        0.0],
+    [     1.2,       1.0,        0.0,       -0.1],
+    [    -1.3,      -1.4,        0.0,        0.1],
+    [     0.6,       0.0,        0.0,        0.0],
+    [     0.6,       0.6,        0.1,        0.0],
+    [     0.5,      -0.1,        0.0,        0.0],
+    [    -0.1,       0.8,        0.0,        0.0],
+    [    -0.4,       0.1,        0.0,        0.0],
+    [    -0.2,      -1.0,       -0.1,        0.0],
+    [    -1.3,       0.1,        0.0,        0.0],
+    [    -0.7,       0.2,       -0.1,       -0.1] ],
+);
+
+my $DEG2RAD = atan2(1,1)/45;
+
+sub magnetic_declination {
+   my ($lon, $lat, $hgt, $yr) = @_;
+   $lon *= $DEG2RAD;
+   $lat *= $DEG2RAD;
+   $hgt //= 0;
+   $yr  //= 2025;
+   warn "Model is valid only from 2025 to 2030" if $yr < 2025 || $yr > 2030;
+
+   my ($geo_r, $geo_lat) = do { # geocentric coordinates
+      my $A  = 6378137; # reference ellipsoid semimajor axis
+      my $f  = 1 / 298.257223563; # flattening
+      my $e2 = $f * (2 - $f); # eccentricity
+      my $Rc = $A / sqrt(1 - $e2 * sin($lat) ** 2); # radius of curvature
+      my $p  = ($Rc + $hgt) * cos($lat); # radius in x-y plane
+      my $z  = ($Rc * (1 - $e2) + $hgt) * sin($lat);
+      (sqrt($p * $p + $z * $z), atan2($z, $p))
+   };
+   my $s = sin($geo_lat);
+   my $c = cos($geo_lat);
+
+   # Associated Legendre polynomials (P) and derivatives (dP)
+   my @P = ([1],[$s, $c]);
+   my @dP = ([0],[$c, -$s]);
+   for my $n (2 .. $#WMM2025) {
+      my $k = 2 * $n-1;
+      for my $m (0 .. $n-2) {
+         my $k1 = $k / ($n - $m);
+         my $k2 = ($n + $m - 1) / ($n - $m);
+         $P[$n][$m] = $k1 * $s * $P[$n-1][$m] - $k2 * $P[$n-2][$m];
+         $dP[$n][$m] = $k1 * ($s * $dP[$n-1][$m] + $c * $P[$n-1][$m]) - $k2 * $dP[$n-2][$m];
+      }
+      my $y = $k * $P[$n-1][$n-1];
+      my $dy = $k * $dP[$n-1][$n-1];
+      $P[$n][$n-1] = $s * $y;
+      $dP[$n][$n-1] = $s * $dy + $c * $y;
+      $P[$n][$n] = $c * $y;
+      $dP[$n][$n] = $c * $dy - $s * $y;
+   }
+
+   # Schmidt quasi-normalization
+   for my $n (1 .. $#WMM2025) {
+      my $f = sqrt(2);
+      for my $m (1 .. $n) {
+         $f /= sqrt(($n - $m + 1) * ($n + $m));
+         $P[$n][$m] *= $f;
+         $dP[$n][$m] *= $f;
+      }
+   }
+
+   my $X = 0; # magnetic field north component in nT
+   my $Y = 0; # east component
+   my $Z = 0; # vertical component
+   my $t = $yr - 2025;
+   my $r = 6371200 / $geo_r; # radius relative to geomagnetic reference
+   my $R = $r * $r;
+   my @c = map cos($_ * $lon), 0 .. $#WMM2025;
+   my @s = map sin($_ * $lon), 0 .. $#WMM2025;
+   for my $n (1 .. $#WMM2025) {
+      my $x = my $y = my $z = 0;
+      for my $m (0 .. $n) {
+         my $row = $WMM2025[$n][$m];
+         my $g = $row->[0] + $t * $row->[2];
+         my $h = $row->[1] + $t * $row->[3];
+         $x += ($g * $c[$m] + $h * $s[$m]) * $dP[$n][$m];
+         $y += ($g * $s[$m] - $h * $c[$m]) * $P[$n][$m] * $m;
+         $z += ($g * $c[$m] + $h * $s[$m]) * $P[$n][$m];
+      }
+      $R *= $r;
+      $X -= $x * $R;
+      $Y += $y * $R;
+      $Z -= $z * $R * ($n + 1);
+   }
+   $Y /= $c;
+
+   $c = cos($geo_lat - $lat); # transform back to geodetic coords
+   $s = sin($geo_lat - $lat);
+   ($X, $Z) = ($X * $c - $Z * $s, $X * $s + $Z * $c);
+
+   my $decl = atan2($Y, $X) / $DEG2RAD;
+   return($decl);
+}}
+
   $day_of_year = localtime->yday + 1;
   $dec_date    = sprintf "%.2f", $year + ($day_of_year / 365);
 
   # TX Site
-  open(F, ">", "magdec-tx.py") or die "Can't open magdec-tx.py: $!\n";
-    print F "from pygeomag import GeoMag\n";
-    print F "geo_mag = GeoMag(coefficients_file='wmm/WMM_2025.COF')\n";
-    print F "result = geo_mag.calculate(glat=$LAT1, glon=$LON1_geo, alt=0, time=$dec_date)\n";
-    print F "print(result.d)\n";
-  close F;
-
-  chomp($value1 = `/usr/bin/python3 ./magdec-tx.py`);
-  $magdec_tx = sprintf "%.2f", $value1;
+  $magdec_tx = sprintf "%.2f", magnetic_declination($LON1_geo, $LAT1, $tx_elv_m, $dec_date);
 
   if ($magdec_tx < 0) {
     $magdir_tx = "West";
@@ -1792,15 +1972,7 @@ if ($do_mag eq "yes") {
   $magdec_tx = abs($magdec_tx);
 
   # RX Site
-  open(F, ">", "magdec-rx.py");
-    print F "from pygeomag import GeoMag\n";
-    print F "geo_mag = GeoMag(coefficients_file='wmm/WMM_2025.COF')\n";
-    print F "result = geo_mag.calculate(glat=$LAT2, glon=$LON2_geo, alt=0, time=$dec_date)\n";
-    print F "print(result.d)\n";
-  close F;
-
-  chomp($value2 = `/usr/bin/python3 ./magdec-rx.py`);
-  $magdec_rx = sprintf "%.2f", $value2;
+  $magdec_rx = sprintf "%.2f", magnetic_declination($LON2_geo, $LAT2, $rx_elv_m, $dec_date);
 
   if ($magdec_rx < 0) {
     $magdir_rx = "West";
@@ -1809,7 +1981,6 @@ if ($do_mag eq "yes") {
     if ($AZLP_MN >= 360) {
       $AZLP_MN = sprintf "%.2f", $AZLP_MN - 360;
     }
-
   }
   else {
     $magdir_rx = "East";
@@ -1821,13 +1992,6 @@ if ($do_mag eq "yes") {
   }
 
   $magdec_rx = abs($magdec_rx);
-}
-elsif ($do_mag eq "no") {
-  $magdec_tx = "Not Calculated";
-  $magdir_tx = "";
-  $magdec_rx = "Not Calculated";
-  $magdir_rx = "";
-}
 
 ## Misc Stuff I Forgot
 #

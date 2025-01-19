@@ -13,7 +13,8 @@ $| = 1;
 
 ## User Setup
 #
-my $pic     = "../pics/path.png";
+my $pic1    = "../pics/path.png";
+my $pic2    = "../pics/nlcd.png";
 my $form    = "./path.cgi";
 my $clutter = "../pics/NLCD-clutter.html";
 
@@ -45,23 +46,19 @@ print <<EOF;
 </center>
 
 <center>
-<p><img src="$pic" border="0" height="480" width="640"><br></p>
+<p><img src="$pic1" border="0" height="480" width="640">&nbsp;&nbsp;<img src="$pic2" border="0" height="480" width="640"></p>
 </center>
 
 <form action="$form" method="post">
 
-<blockquote>
-<center>
-<table border="1" width="100%">
-<tr>
-<td>
+<br>
 
-<center>
+<blockquote>
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Transmitter Site Information</b></font></td></tr>
 </table>
-</center>
 
+<table border="1" width="80%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Project Name</b></td>
@@ -319,26 +316,15 @@ print <<EOF;
 <option>Buildings, Billboards, Large Industrial Structures, etc.</option>
 <option>Trees and Animals, etc.</option>
 </select></td></tr>
-<tr><td></td></tr>
-</table>
-</td>
-</tr>
-</table>
-</center>
+<tr><td></td></tr></table>
+</td></tr></table>
 
 <br><br>
 
-<center>
-<table border="1" width="100%">
-<tr>
-<td>
-
-<center>
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Receiver Site Information</b></font></td></tr>
 </table>
-</center>
-
+<table border="1" width="80%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Site Name&nbsp;&nbsp;</b></td> 
@@ -551,7 +537,7 @@ print <<EOF;
 <td>Sensitivity</td></tr>
 <tr><td></td></tr>
 
-<tr><td bgcolor="#CCBBBB" align="right">Following <font color="maroon">TWO</font> questions are for Vertical Space Diversity systems <i>ONLY</i></td>
+<tr><td bgcolor="#CCBBBB" align="right">Following <font color="maroon">TWO</font> questions are for Space Diversity systems <i>ONLY</i></td>
 <td bgcolor="#CCBBBB">&nbsp;&nbsp;&#8628;</td>
 <td bgcolor="#CCBBBB">(Note 1 &amp; 2)</td></tr>
 
@@ -587,25 +573,15 @@ print <<EOF;
 <td bgcolor="#CCCCBB"><input type="number" name="aifm" min="0.0" max="99.9" value="0.0" step="0.1"> dB</td>
 <td bgcolor="#CCCCBB">(Note 5)</td></tr>
 <tr><td></td></tr>
-</table>
-</td>
-</tr>
-</table>
-</center>
+</table></td></tr></table>
 
 <br><br>
 
-<center>
-<table border="1" width="100%">
-<tr>
-<td>
-
-<center>
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Environmental Information</b></font></td></tr>
 </table>
-</center>
 
+<table border="1" width="80%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Would You Like to Calculate the Effective Earth Radius, K-Factor?</b></td>
@@ -793,21 +769,14 @@ print <<EOF;
 </td>
 </tr>
 </table>
-</center>
 
 <br><br>
 
-<center>
-<table border="1" width="100%">
-<tr>
-<td>
-
-<center>
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Longley-Rice/ITWOMv3 Path Calculation Parameters</b></font></td></tr>
 </table>
-</center>
 
+<table border="1" width="60%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b><a href="http://ham-radio.com/k6sti/hfgc.htm">Ground Dielectric Constant</a></b></td>
@@ -859,25 +828,15 @@ print <<EOF;
 <td><input type="number" name="time" min="3" max="99" value="90"> %</td>
 <td>(Note 20)</td></tr>
 <tr><td></td></tr>
-</table>
-</td>
-</tr>
-</table>
-</center>
+</table></td></tr></table>
 
 <br><br>
 
-<center>
-<table border="1" width="100%">
-<tr>
-<td>
-
-<center>
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5" align="center"><font size="5"><b>Image Quality &amp; Terrain Resolution</b></font></td></tr>
 </table>
-</center>
 
+<table border="1" width="60%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Select Terrain Resolution Quality</b></td>
@@ -1026,11 +985,7 @@ print <<EOF;
 <option>meters</option>
 </select></td>
 <td bgcolor="#8F7E97"></td></tr>
-</table>
-</td>
-</tr>
-</table>
-</center>
+</table></td></tr></table>
 </blockquote>
 
 <br>
