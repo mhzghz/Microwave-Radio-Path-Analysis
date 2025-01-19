@@ -4,9 +4,7 @@ See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat
 
 Requires a slightly modified version of SPLAT! v2.0-alpha.
 
-Requires the installation of pygeomag (Python) if you wish to calculate magnetic delcination: https://github.com/boxpet/pygeomag
-
-(Install: pip install pygeomag)
+Requires a writable 'tmp' directory within your 'cgi-bin' directory and the ability for your HTTP server to send/display files from that 'cgi-bin/tmp' directory.
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 
