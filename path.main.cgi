@@ -16,7 +16,6 @@ $| = 1;
 my $pic1    = "../pics/path.png";
 my $pic2    = "../pics/nlcd.png";
 my $form    = "./path.cgi";
-my $clutter = "../pics/NLCD-clutter.html";
 
 ## Print MIME
 #
@@ -46,7 +45,7 @@ print <<EOF;
 </center>
 
 <center>
-<p><img src="$pic1" border="0" height="480" width="640">&nbsp;&nbsp;<img src="$pic2" border="0" height="480" width="640"></p>
+<p><img src="$pic1" border="0" height="440" width="600">&nbsp;&nbsp;<img src="$pic2" border="0" height="440" width="600"></p>
 </center>
 
 <form action="$form" method="post">
@@ -58,7 +57,7 @@ print <<EOF;
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Transmitter Site Information</b></font></td></tr>
 </table>
 
-<table border="1" width="80%"><tr><td>
+<table border="1" width="90%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Project Name</b></td>
@@ -255,7 +254,7 @@ print <<EOF;
 <option>meters</option></select>
 <td>Above Ground Level</td></tr>
 
-<tr><td align="right"><b>Antenna Peak Gain</b></td>
+<tr><td align="right"><b>Antenna Gain</b></td>
 <td><input type="number" name="tx_ant_gain" min="0.0" max="60.0" value="24.0" step="0.1">
 <select name="tx_ant_val">
 <option selected>dBi</option>
@@ -324,7 +323,7 @@ print <<EOF;
 <table border="4" cellpadding="8">
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Receiver Site Information</b></font></td></tr>
 </table>
-<table border="1" width="80%"><tr><td>
+<table border="1" width="90%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Site Name&nbsp;&nbsp;</b></td> 
@@ -490,7 +489,7 @@ print <<EOF;
 <option>meters</option></select>
 <td>Above Ground Level</td></tr>
 
-<tr><td align="right"><b>Antenna Peak Gain</b></td>
+<tr><td align="right"><b>Antenna Gain</b></td>
 <td><input type="number" name="rx_ant_gain" min="0.0" max="60.0" value="22.0" step="0.1">
 <select name="rx_ant_val">
 <option selected>dBi</option>
@@ -548,7 +547,7 @@ print <<EOF;
 <option>meters</option></select>
 <td bgcolor="#CCBBBB"></td></tr>
 
-<tr><td bgcolor="#CCBBBB" align="right"><b>Diversity Antenna Peak Gain</b></td>
+<tr><td bgcolor="#CCBBBB" align="right"><b>Diversity Antenna Gain</b></td>
 <td bgcolor="#CCBBBB"><input type="number" name="rx_div_ant_gain" min="1.0" max="60.0" value="22.0" step="0.1">
 <select name="rx_div_ant_val">
 <option selected>dBi</option>
@@ -561,16 +560,16 @@ print <<EOF;
 <td bgcolor="#CCCCBB">&nbsp;&nbsp;&#8628;</td>
 <td bgcolor="#CCCCBB"></td></tr>
 
-<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver Dispersive Fade Margin (DFM)</b></td>
-<td bgcolor="#CCCCBB"><input type="number" name="dfm" min="0.0" max="99.9" value="0.0" step="0.1"> dB</td>
+<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver Dispersive Fade Margin</b></td>
+<td bgcolor="#CCCCBB"><input type="number" name="dfm" min="0.0" max="99.9" value="0.0" step="0.1"> dB&nbsp;&nbsp;(DFM)</td>
 <td bgcolor="#CCCCBB">(Note 3)</td></tr>
 
-<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver External Interference Fade Margin (EIFM)</b></td>
-<td bgcolor="#CCCCBB"><input type="number" name="eifm" min="0.0" max="99.9" value="0.0" step="0.1"> dB</td>
+<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver External Interference Fade Margin</b></td>
+<td bgcolor="#CCCCBB"><input type="number" name="eifm" min="0.0" max="99.9" value="0.0" step="0.1"> dB&nbsp;&nbsp;(EIFM)</td>
 <td bgcolor="#CCCCBB">(Note 4)</td></tr>
 
-<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver Adjacent Channel Interference Fade Margin (AIFM)</b></td>
-<td bgcolor="#CCCCBB"><input type="number" name="aifm" min="0.0" max="99.9" value="0.0" step="0.1"> dB</td>
+<tr><td bgcolor="#CCCCBB" align="right"><b>Receiver Adjacent Channel Interference Fade Margin</b></td>
+<td bgcolor="#CCCCBB"><input type="number" name="aifm" min="0.0" max="99.9" value="0.0" step="0.1"> dB&nbsp;&nbsp;(AIFM)</td>
 <td bgcolor="#CCCCBB">(Note 5)</td></tr>
 <tr><td></td></tr>
 </table></td></tr></table>
@@ -581,7 +580,7 @@ print <<EOF;
 <tr><td colspan="10" bgcolor="#7EBDE5"><font size="5"><b>Environmental Information</b></font></td></tr>
 </table>
 
-<table border="1" width="80%"><tr><td>
+<table border="1" width="90%"><tr><td>
 <table border="0" cellpadding="4" cellspacing="0" width="100%">
 <tr><td></td></tr>
 <tr><td align="right"><b>Would You Like to Calculate the Effective Earth Radius, K-Factor?</b></td>
@@ -1007,7 +1006,7 @@ print <<EOF;
 <blockquote>
 <p><b><font color="red">EXPERIMENTAL - WORK IN PROGRESS - MAY GIVE WEIRD RESULTS</font></b></p>
 
-<p><a href="http://www.gbppr.net/splat/path.html">Microwave Radio Path Analysis Notes</a>&nbsp;&nbsp;Read this first.</p>
+<p><a href="http://www.gbppr.net/splat/path.html">Microwave Radio Path Analysis Notes</a>&nbsp;&nbsp;<tt>&lt;---</tt> Read this first.</p>
 
 <p>1.)&nbsp;&nbsp;Don't forget to take into account any radome loss.&nbsp;&nbsp;For sealed Yagi antennas, radome loss is usually included in the antenna's specified gain.&nbsp;&nbsp;"Wet" radome loss can be 2 dB or more.</p>
 
@@ -1050,7 +1049,7 @@ print <<EOF;
 
 <p>12.)&nbsp;&nbsp;The first <a href="https://en.wikipedia.org/wiki/Fresnel_zone">Fresnel zone</a> corresponds to the main lobe, which contains the vast majority of the RF energy.&nbsp;&nbsp;60% of this zone must be <i>free of physical obstructions</i> for the microwave path to be successful.&nbsp;&nbsp;For highest link reliability, at least 30% of the first <a href="https://en.wikipedia.org/wiki/Fresnel_zone">Fresnel zone</a> at K = 2/3 or 100% of the first <a href="https://en.wikipedia.org/wiki/Fresnel_zone">Fresnel zone</a> at K = 4/3 should also be clear.</p>
 
-<p>13.)&nbsp;&nbsp;Attempts to determine you country, state, and city based on the transmitter site LAT/LON by using OpenStreetMaps.</p>
+<p>13.)&nbsp;&nbsp;Attempts to determine you country, state, and city based on the transmitter site LAT/LON by using <a href="https://www.openstreetmap.org">OpenStreetMap</a>.</p>
 
 <p>14.)&nbsp;&nbsp;Ground clutter has the effect of raising the overall terrain by the specified amount, except over areas at sea-level and at the transmitting and receiving antenna locations.&nbsp;&nbsp;The input is a generic range from 0 to 100.&nbsp;&nbsp;Select "feet" for 0 to 100 feet (1 foot increments) or select "meters" to increase the range from 0 to 330 feet (3.3 foot increments).</p>
 
@@ -1066,9 +1065,9 @@ print <<EOF;
 
 <p>20.)&nbsp;&nbsp;Here is a good overview of Longley-Rice <a href="https://www.softwright.com/faq/support/longley_rice_variability.html">Time Variability</a>.</p>
 
-<p>21.)&nbsp;&nbsp;Uses <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Shuttle Radar Topography Mission</a> elevation data for terrain generation.&nbsp;&nbsp;<b>Low / Fast</b> uses 3 arc-second resolution, and <b>High / Slow</b> uses 1 arc-second resolution.&nbsp;&nbsp;Only a few LAT/LONS (mostly in the U.S.) work with HD resolution terrain data right now, and the plotting is quite slow.</p>
+<p>21.)&nbsp;&nbsp;Uses <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Shuttle Radar Topography Mission</a> elevation data for terrain generation.&nbsp;&nbsp;<b>Low / Fast</b> uses 3 arc-second resolution, and <b>High / Slow</b> uses 1 arc-second resolution.&nbsp;&nbsp;Only a few LAT/LONS (mostly in the U.S.) work with HD resolution terrain data right now, and the plotting is quite slow.&nbsp;&nbsp;<b>High / Slow</b> is currently broken as the drive just crashed :(</p>
 
-<p>22.)&nbsp;&nbsp;Adds <a href="$clutter">additional height</a> to the plotted Earth terrain profile based on the results in the 2021 U.S. National Land Cover Database.&nbsp;&nbsp;The added heights are just educated guesses and <i>not</i> the actual height of the obstacles.</p>
+<p>22.)&nbsp;&nbsp;Adds additional height to the plotted Earth terrain profile based on the results in the 2021 U.S. National Land Cover Database.&nbsp;&nbsp;The added heights are just educated guesses and <i>not</i> the actual height of the obstacles.</p>
 </blockquote>
 
 <p>Plotting done using <a href="http://www.gbppr.net/splat">SPLAT! v2.0</a> by <a href="http://www.qsl.net/kd2bd">John A. Magliacane</a> (KD2BD) and <a href="https://github.com/hoche/splat">hoche</a>.</p>

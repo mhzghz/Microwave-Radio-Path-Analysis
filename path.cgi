@@ -17,7 +17,7 @@ require "flush.pl";
 use Math::Trig;
 use Math::Complex;
 use Time::Piece; 
-use Geo::Coder::OSM;       # For lat/lon to state decoding / Install: sudo cpan Geo::Coder::OSM
+use Geo::Coder::OSM;       # For LAT/LON to state decoding / Install: sudo cpan Geo::Coder::OSM
 use Geo::Coordinates::UTM; # For UTM results / Install: sudo cpan Geo::Coordinates::UTM
 use GIS::Distance;         # For the Vincenty great-circle distance calculations / Install: sudo cpan GIS::Distance
 
@@ -26,7 +26,7 @@ use GIS::Distance;         # For the Vincenty great-circle distance calculations
 my $logo       = "../pics/gbppr.jpg";
 my $banner     = "A service of Green Bay Professional Packet Radio - <a href=\"http://www.gbppr.net\">www.gbppr.net</a>";
 my $url        = "http://gbppr.ddns.net/cgi-bin/path.main.cgi";
-my $ver        = "v2.70"; # Dec2024
+my $ver        = "v2.80"; # Jan2025
 my $splat      = "/usr/local/bin/splat";
 my $splatdir   = "/usr/splat/sdf";
 my $splatdirhd = "/media/gbppr/500GB/sdf-hd";
@@ -35,7 +35,8 @@ my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
 my $do_utm     = "yes"; # Calculates UTM coordinates - Requires the installation of Geo::Coordinates::UTM
 my $do_lulc    = "yes"; # Generates U.S land coverage maps - Requires land usage data and the "ptelev" util from FCC's TVStudy program: https://www.fcc.gov/oet/tvstudy
-my $do_vinc    = "yes"; # Uses the proper Vincenty great-circle distance calculations - Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
+my $do_vinc    = "yes"; # Uses the proper Vincenty great-circle distance calculations 
+                        # Requires the installation of GIS::Distance / https://metacpan.org/pod/GIS::Distance::Vincenty
 my $DEBUG      = 0;  # 0=leave temp files 1=delete temp file
 
 ## Create a random directory for working files
@@ -81,12 +82,12 @@ foreach $pair (@pairs) {
   $FORM{$name} = $value;
 }
 
-my $frq = $FORM{'frq'};
-my $frq_val = $FORM{'frq_val'};
-my $frq_div = $FORM{'frq_div'};
+my $frq         = $FORM{'frq'};
+my $frq_val     = $FORM{'frq_val'};
+my $frq_div     = $FORM{'frq_div'};
 my $frq_div_val = $FORM{'frq_div_val'};
 
-my $pwr_out = $FORM{'pwr_out'};
+my $pwr_out     = $FORM{'pwr_out'};
 my $pwr_out_val = $FORM{'pwr_out_val'};
 
 my $project = $FORM{'project'};
@@ -104,24 +105,24 @@ my $tx_misc_cab_loss = $FORM{'tx_misc_cab_loss'};
 my $tx_misc_gain = $FORM{'tx_misc_gain'};
 my $tx_cab_other = $FORM{'tx_cab_other'};
 
-my $LAT1_D = $FORM{'LAT1_D'};
-my $LAT1_M = $FORM{'LAT1_M'};
-my $LAT1_S = $FORM{'LAT1_S'};
+my $LAT1_D   = $FORM{'LAT1_D'};
+my $LAT1_M   = $FORM{'LAT1_M'};
+my $LAT1_S   = $FORM{'LAT1_S'};
 my $LAT1_val = $FORM{'LAT1_val'};
 
-my $LON1_D = $FORM{'LON1_D'};
-my $LON1_M = $FORM{'LON1_M'};
-my $LON1_S = $FORM{'LON1_S'};
+my $LON1_D   = $FORM{'LON1_D'};
+my $LON1_M   = $FORM{'LON1_M'};
+my $LON1_S   = $FORM{'LON1_S'};
 my $LON1_val = $FORM{'LON1_val'};
 
-my $LAT2_D = $FORM{'LAT2_D'};
-my $LAT2_M = $FORM{'LAT2_M'};
-my $LAT2_S = $FORM{'LAT2_S'};
+my $LAT2_D   = $FORM{'LAT2_D'};
+my $LAT2_M   = $FORM{'LAT2_M'};
+my $LAT2_S   = $FORM{'LAT2_S'};
 my $LAT2_val = $FORM{'LAT2_val'};
 
-my $LON2_D = $FORM{'LON2_D'};
-my $LON2_M = $FORM{'LON2_M'};
-my $LON2_S = $FORM{'LON2_S'};
+my $LON2_D   = $FORM{'LON2_D'};
+my $LON2_M   = $FORM{'LON2_M'};
+my $LON2_S   = $FORM{'LON2_S'};
 my $LON2_val = $FORM{'LON2_val'};
 
 my $rx_name = $FORM{'rx_name'};
@@ -479,7 +480,6 @@ if ($nth) {
   $fres = sprintf "%s", $nth; # For SPLAT! file
 }
 
-
 ## Get Ground Clutter
 #
 $gc =~ tr/0-9//csd;
@@ -669,7 +669,7 @@ elsif ($rx_div_ant_ht > 1) {
   }
 }
 
-## Calculate vertical diversity spacing based on wavelength and distance
+## Calculate Vertical Diversity Spacing Based on Wavelength and Distance
 #
 if ($do_div eq "yes") {
 
@@ -706,7 +706,6 @@ if ($do_div eq "yes") {
 
 }
 else {
-
   # Calculate ideal spacing based on wavelength
   $div_space_m  = $wav_m * ((3 * ($dist_km * 1000)) / (8 * $tx_ant_ht_m));
   $div_space_ft = $div_space_m * 3.28084;
@@ -1002,13 +1001,13 @@ elsif ($climate eq "Maritime Temperate, Oversea") {
 if ($do_utm eq "yes") {
   # TX
   ($utm_zone_tx, $easting_tx, $northing_tx) = latlon_to_utm('WGS-84', $LAT1, $LON1_geo);
-  # RX
-  ($utm_zone_rx, $easting_rx, $northing_rx) = latlon_to_utm('WGS-84', $LAT2, $LON2_geo);
-
-  $northing_rx = sprintf "%.3f", $northing_rx / 1000;
-  $easting_rx  = sprintf "%.3f", $easting_rx / 1000;
   $northing_tx = sprintf "%.3f", $northing_tx / 1000;
   $easting_tx  = sprintf "%.3f", $easting_tx / 1000;
+
+  # RX
+  ($utm_zone_rx, $easting_rx, $northing_rx) = latlon_to_utm('WGS-84', $LAT2, $LON2_geo);
+  $northing_rx = sprintf "%.3f", $northing_rx / 1000;
+  $easting_rx  = sprintf "%.3f", $easting_rx / 1000;
 }
 else {
   $utm_zone_tx = "N/A";
@@ -1544,7 +1543,7 @@ foreach (@AVG) {
   push (@ELEV, $y);
 }
 
-## Sort the array
+## Sort the Array
 #
 use List::Util qw(min max);
 $max_dist = max(@DIST);
@@ -1719,7 +1718,7 @@ else {
 $tx_ant_bw = sprintf "%.2f", 164 * sqrt(1 / (10 ** ($tx_ant_gain_dbi / 10)));
 $rx_ant_bw = sprintf "%.2f", 164 * sqrt(1 / (10 ** ($rx_ant_gain_dbi / 10)));
 
-## Calculate azimuths
+## Calculate Azimuths
 #
 $lat1_az = deg2rad($LAT1);
 $lon1_az = deg2rad($LON1 * -1);
@@ -1754,11 +1753,10 @@ $AZLP = sprintf "%.2f", $AZLP; # RX to TX - TN
 
 ## Calculate Magnetic Declination
 #
-# https://perlmonks.org/?node_id=1191907
-#
 # Magnetic declination calculation based on WMM2025 Earth Magnet Model.
-# See https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
-
+# See: https://www.ngdc.noaa.gov/geomag/WMM/DoDWMM.shtml
+#      https://perlmonks.org/?node_id=1191907
+#
 # magnetic_declination($lon, $lat, $hgt, $yr)
 # $lon: degrees longitude (east is positive)
 # $lat: degrees latitude (north is positive)
@@ -1865,85 +1863,85 @@ my @WMM2025 = (
 my $DEG2RAD = atan2(1,1)/45;
 
 sub magnetic_declination {
-   my ($lon, $lat, $hgt, $yr) = @_;
-   $lon *= $DEG2RAD;
-   $lat *= $DEG2RAD;
-   $hgt //= 0;
-   $yr  //= 2025;
-   warn "Model is valid only from 2025 to 2030" if $yr < 2025 || $yr > 2030;
+  my ($lon, $lat, $hgt, $yr) = @_;
+  $lon *= $DEG2RAD;
+  $lat *= $DEG2RAD;
+  $hgt //= 0;
+  $yr  //= 2025;
+  warn "Model is valid only from 2025 to 2030" if $yr < 2025 || $yr > 2030;
 
-   my ($geo_r, $geo_lat) = do { # geocentric coordinates
-      my $A  = 6378137; # reference ellipsoid semimajor axis
-      my $f  = 1 / 298.257223563; # flattening
-      my $e2 = $f * (2 - $f); # eccentricity
-      my $Rc = $A / sqrt(1 - $e2 * sin($lat) ** 2); # radius of curvature
-      my $p  = ($Rc + $hgt) * cos($lat); # radius in x-y plane
-      my $z  = ($Rc * (1 - $e2) + $hgt) * sin($lat);
-      (sqrt($p * $p + $z * $z), atan2($z, $p))
-   };
-   my $s = sin($geo_lat);
-   my $c = cos($geo_lat);
+  my ($geo_r, $geo_lat) = do { # geocentric coordinates
+    my $A  = 6378137; # reference ellipsoid semimajor axis
+    my $f  = 1 / 298.257223563; # flattening
+    my $e2 = $f * (2 - $f); # eccentricity
+    my $Rc = $A / sqrt(1 - $e2 * sin($lat) ** 2); # radius of curvature
+    my $p  = ($Rc + $hgt) * cos($lat); # radius in x-y plane
+    my $z  = ($Rc * (1 - $e2) + $hgt) * sin($lat);
+    (sqrt($p * $p + $z * $z), atan2($z, $p))
+  };
+  my $s = sin($geo_lat);
+  my $c = cos($geo_lat);
 
-   # Associated Legendre polynomials (P) and derivatives (dP)
-   my @P = ([1],[$s, $c]);
-   my @dP = ([0],[$c, -$s]);
-   for my $n (2 .. $#WMM2025) {
-      my $k = 2 * $n-1;
-      for my $m (0 .. $n-2) {
-         my $k1 = $k / ($n - $m);
-         my $k2 = ($n + $m - 1) / ($n - $m);
-         $P[$n][$m] = $k1 * $s * $P[$n-1][$m] - $k2 * $P[$n-2][$m];
-         $dP[$n][$m] = $k1 * ($s * $dP[$n-1][$m] + $c * $P[$n-1][$m]) - $k2 * $dP[$n-2][$m];
-      }
-      my $y = $k * $P[$n-1][$n-1];
-      my $dy = $k * $dP[$n-1][$n-1];
-      $P[$n][$n-1] = $s * $y;
-      $dP[$n][$n-1] = $s * $dy + $c * $y;
-      $P[$n][$n] = $c * $y;
-      $dP[$n][$n] = $c * $dy - $s * $y;
-   }
+  # Associated Legendre polynomials (P) and derivatives (dP)
+  my @P = ([1],[$s, $c]);
+  my @dP = ([0],[$c, -$s]);
+  for my $n (2 .. $#WMM2025) {
+    my $k = 2 * $n-1;
+    for my $m (0 .. $n-2) {
+      my $k1 = $k / ($n - $m);
+      my $k2 = ($n + $m - 1) / ($n - $m);
+      $P[$n][$m] = $k1 * $s * $P[$n-1][$m] - $k2 * $P[$n-2][$m];
+      $dP[$n][$m] = $k1 * ($s * $dP[$n-1][$m] + $c * $P[$n-1][$m]) - $k2 * $dP[$n-2][$m];
+    }
+    my $y = $k * $P[$n-1][$n-1];
+    my $dy = $k * $dP[$n-1][$n-1];
+    $P[$n][$n-1] = $s * $y;
+    $dP[$n][$n-1] = $s * $dy + $c * $y;
+    $P[$n][$n] = $c * $y;
+    $dP[$n][$n] = $c * $dy - $s * $y;
+  }
 
-   # Schmidt quasi-normalization
-   for my $n (1 .. $#WMM2025) {
-      my $f = sqrt(2);
-      for my $m (1 .. $n) {
-         $f /= sqrt(($n - $m + 1) * ($n + $m));
-         $P[$n][$m] *= $f;
-         $dP[$n][$m] *= $f;
-      }
-   }
+  # Schmidt quasi-normalization
+  for my $n (1 .. $#WMM2025) {
+    my $f = sqrt(2);
+    for my $m (1 .. $n) {
+      $f /= sqrt(($n - $m + 1) * ($n + $m));
+      $P[$n][$m] *= $f;
+      $dP[$n][$m] *= $f;
+    }
+  }
 
-   my $X = 0; # magnetic field north component in nT
-   my $Y = 0; # east component
-   my $Z = 0; # vertical component
-   my $t = $yr - 2025;
-   my $r = 6371200 / $geo_r; # radius relative to geomagnetic reference
-   my $R = $r * $r;
-   my @c = map cos($_ * $lon), 0 .. $#WMM2025;
-   my @s = map sin($_ * $lon), 0 .. $#WMM2025;
-   for my $n (1 .. $#WMM2025) {
-      my $x = my $y = my $z = 0;
-      for my $m (0 .. $n) {
-         my $row = $WMM2025[$n][$m];
-         my $g = $row->[0] + $t * $row->[2];
-         my $h = $row->[1] + $t * $row->[3];
-         $x += ($g * $c[$m] + $h * $s[$m]) * $dP[$n][$m];
-         $y += ($g * $s[$m] - $h * $c[$m]) * $P[$n][$m] * $m;
-         $z += ($g * $c[$m] + $h * $s[$m]) * $P[$n][$m];
-      }
-      $R *= $r;
-      $X -= $x * $R;
-      $Y += $y * $R;
-      $Z -= $z * $R * ($n + 1);
-   }
-   $Y /= $c;
+  my $X = 0; # magnetic field north component in nT
+  my $Y = 0; # east component
+  my $Z = 0; # vertical component
+  my $t = $yr - 2025;
+  my $r = 6371200 / $geo_r; # radius relative to geomagnetic reference
+  my $R = $r * $r;
+  my @c = map cos($_ * $lon), 0 .. $#WMM2025;
+  my @s = map sin($_ * $lon), 0 .. $#WMM2025;
 
-   $c = cos($geo_lat - $lat); # transform back to geodetic coords
-   $s = sin($geo_lat - $lat);
-   ($X, $Z) = ($X * $c - $Z * $s, $X * $s + $Z * $c);
+  for my $n (1 .. $#WMM2025) {
+    my $x = my $y = my $z = 0;
+    for my $m (0 .. $n) {
+      my $row = $WMM2025[$n][$m];
+      my $g = $row->[0] + $t * $row->[2];
+      my $h = $row->[1] + $t * $row->[3];
+      $x += ($g * $c[$m] + $h * $s[$m]) * $dP[$n][$m];
+      $y += ($g * $s[$m] - $h * $c[$m]) * $P[$n][$m] * $m;
+      $z += ($g * $c[$m] + $h * $s[$m]) * $P[$n][$m];
+    }
+    $R *= $r;
+    $X -= $x * $R;
+    $Y += $y * $R;
+    $Z -= $z * $R * ($n + 1);
+  }
+  $Y /= $c;
+  $c = cos($geo_lat - $lat); # transform back to geodetic coords
+  $s = sin($geo_lat - $lat);
+  ($X, $Z) = ($X * $c - $Z * $s, $X * $s + $Z * $c);
 
-   my $decl = atan2($Y, $X) / $DEG2RAD;
-   return($decl);
+  my $decl = atan2($Y, $X) / $DEG2RAD;
+  return($decl);
 }}
 
   $day_of_year = localtime->yday + 1;
