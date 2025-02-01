@@ -5,6 +5,7 @@ See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat
 Requires a slightly modified version of SPLAT! v2.0-alpha.
 
 Download 'splat-new.tgz', then:
+     
      ##### You may have to install these packages, if you haven't already
      $ sudo apt-get install cmake libbz2-dev zlib1g-dev libjpeg-dev libpng-dev libgdal-dev gnuplot
      #####
