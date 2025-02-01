@@ -17,12 +17,14 @@ Download 'splat-new.tgz', then:
      $ sudo mv src/splat /usr/local/bin/
      
 Requires your web server to have CGI enabled. For Apache:
+     
      $ sudo a2enmod cgi
      Enabling module cgi.
      To activate the new configuration, you need to run:
       (sudo) systemctl restart apache2
 
 Requires a writable 'tmp' directory within your 'cgi-bin' directory and the ability for your HTTP server to send/display files from that 'cgi-bin/tmp' directory:
+     
      $ mkdir /www/cgi-bin/tmp
      $ chmod 777 /www/cgi-bin/tmp
 
@@ -41,7 +43,8 @@ Install 'path.main.cgi' and 'path.cgi' in '/www/cgi-bin' and 'chmod 755' them.
 
 Install 'path.png', 'nlcd.png', 'Annual_Average_Temperature_Map.png' in '/www/pics'.
 
-Install the coax/waveguide datasheets in '/www/pdf'.
+
+Untar and install the coax/waveguide datasheets from 'pdf.tgz' in '/www/pdf'.
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 
@@ -60,8 +63,6 @@ Requires U.S. National Land Cover Data (NLCD 2021): https://us-fcc.app.box.com/v
 Requires the 'ptelev' utility from the FCC's TVStudy program if you wish to calculate path land cover (U.S. only): https://www.fcc.gov/oet/tvstudy
 
 The ptelev source file (clutil.c) needs a slight tweak to work with 2021 NLCD data.
-
-'pdf.tgz' contains PDF datasheets for the various types of coax/wavegude transmission lines.
 
 ***Try it out!*** http://gbppr.ddns.net/path.main.cgi
 
