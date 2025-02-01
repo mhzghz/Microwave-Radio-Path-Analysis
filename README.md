@@ -4,6 +4,17 @@ See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat
 
 Requires a slightly modified version of SPLAT! v2.0-alpha.
 
+Download 'splat-new.tgz', then:
+     ##### You may have to install these packages, if you haven't already
+     $ sudo apt-get install cmake libbz2-dev zlib1g-dev libjpeg-dev libpng-dev libgdal-dev gnuplot
+     #####
+     $ tar xvzf splat-new.tgz
+     $ cd splat-new/splat/build
+     $ cmake ..
+     $ make
+     # It should compile with only a few warnings...
+     $ sudo mv src/splat /usr/local/bin/
+     
 Requires your web server to have CGI enabled. For Apache:
      $ sudo a2enmod cgi
      Enabling module cgi.
@@ -24,6 +35,10 @@ In '/etc/apache2/apache2.conf' you may need to add/edit a section that looks lik
      Options ExecCGI FollowSymLinks
      AllowOverride None
      </Directory>
+
+Install 'path.png', 'nlcd.png', 'Annual_Average_Temperature_Map.png' in '/www/pics'.
+
+Install the coax/waveguide datasheets in '/www/pdf'.
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 
