@@ -37,6 +37,8 @@ In '/etc/apache2/apache2.conf' you may need to add/edit a section that looks lik
      AllowOverride None
      </Directory>
 
+Install 'path.main.cgi' and 'path.cgi' in '/www/cgi-bin' and 'chmod 755' them.
+
 Install 'path.png', 'nlcd.png', 'Annual_Average_Temperature_Map.png' in '/www/pics'.
 
 Install the coax/waveguide datasheets in '/www/pdf'.
