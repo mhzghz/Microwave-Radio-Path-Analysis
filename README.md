@@ -4,7 +4,26 @@ See notes related to the Microwave Path Analysis CGI: http://www.gbppr.net/splat
 
 Requires a slightly modified version of SPLAT! v2.0-alpha.
 
-Requires a writable 'tmp' directory within your 'cgi-bin' directory and the ability for your HTTP server to send/display files from that 'cgi-bin/tmp' directory.
+Requires your web server to have CGI enabled. For Apache:
+     $ sudo a2enmod cgi
+     Enabling module cgi.
+     To activate the new configuration, you need to run:
+      (sudo) systemctl restart apache2
+
+Requires a writable 'tmp' directory within your 'cgi-bin' directory and the ability for your HTTP server to send/display files from that 'cgi-bin/tmp' directory:
+     $ mkdir /www/cgi-bin/tmp
+     $ chmod 777 /www/cgi-bin/tmp
+
+In '/etc/apache2/apache2.conf' you may need to add/edit a section that looks like this:
+
+     <Directory "/var/www/html/cgi-bin/">
+     <FilesMatch "^(?!.*\.(cgi)$).*$">
+     SetHandler default-handler
+     </FilesMatch>
+     AddHandler cgi-script .cgi
+     Options ExecCGI FollowSymLinks
+     AllowOverride None
+     </Directory>
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 
