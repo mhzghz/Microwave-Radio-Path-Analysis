@@ -48,15 +48,15 @@ Untar and install the coax/waveguide datasheets from 'pdf.tgz' in '/www/pdf'.
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
 
-(Install: sudo cpan Geo::Coordinates::UTM)
+     $ sudo cpan Geo::Coordinates::UTM
 
 Requires the installation of Geo::Coder::OSM (Perl) if you wish to calculate the city/state/country from latitude and longitude.
 
-(Install: sudo cpan Geo::Coder::OSM)
+     $ sudo cpan Geo::Coder::OSM
 
 Requires the installation of GIS::Distance (Perl) if you wish to use Vincenty great-circle distance calculations: https://en.wikipedia.org/wiki/Vincenty's_formulae
 
-(Install: sudo cpan GIS::Distance)
+     $ sudo cpan GIS::Distance
 
 Requires U.S. National Land Cover Data (NLCD 2021): https://us-fcc.app.box.com/v/tvstudy-nlcd2021
 
