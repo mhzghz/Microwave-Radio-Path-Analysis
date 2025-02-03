@@ -64,11 +64,11 @@ Requires the 'ptelev' utility from the FCC's TVStudy program if you wish to calc
 
 The ptelev source file (clutil.c) needs a slight tweak to work with 2021 NLCD data.
 
-I put together a large (30+ GB) single file which contains the converted SPLAT! SDF terrain data files, NLCD data, and the fixed 'ptelev' program.
+I put together a large (30+ GB) single file which contains the converted SPLAT! SDF terrain data files (SRTMv3 3-arc second, worldwide), 2021 NLCD data, and the fixed 'ptelev' program.
 
 It is available here as 'splat.tgz': https://archive.org/details/microwave-path-data
 
-Download it save it to '/usr', then 'tar xvzf splat.tgz' to create all the required data files under the new '/usr/splat' directory.
+Download it and move it to '/usr', then 'tar xvzf splat.tgz' to create the new '/usr/splat' directory which will contain all the necessary data files.
 
 
 ***Try it out!*** http://gbppr.ddns.net/path.main.cgi
