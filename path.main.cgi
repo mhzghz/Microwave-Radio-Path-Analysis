@@ -45,7 +45,7 @@ print <<EOF;
 </center>
 
 <center>
-<p><img src="$pic1" border="0" height="440" width="600">&nbsp;&nbsp;<img src="$pic2" border="0" height="440" width="600"></p>
+<p><img src="$pic1" border="0" height="400" width="560">&nbsp;&nbsp;<img src="$pic2" border="0" height="400" width="560"></p>
 </center>
 
 <form action="$form" method="post">

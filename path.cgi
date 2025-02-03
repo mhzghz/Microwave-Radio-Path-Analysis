@@ -23,7 +23,6 @@ use GIS::Distance;         # For the Vincenty great-circle distance calculations
 
 ## User Setup
 #
-my $logo       = "../pics/gbppr.jpg";
 my $banner     = "A service of Green Bay Professional Packet Radio - <a href=\"http://www.gbppr.net\">www.gbppr.net</a>";
 my $url        = "http://gbppr.ddns.net/cgi-bin/path.main.cgi";
 my $ver        = "v2.80"; # Jan2025
@@ -2252,6 +2251,8 @@ if (!$ter_size) {
 }
 
 $ter_count = $ter_size;
+$Eds = 0;
+$Esq = 0;
 
 while($ter_count > 0) {
   $elev = shift(@ELEV_ARRAY);
@@ -5883,7 +5884,7 @@ $d2 = ($dist_km * 1000) - $d1;
 $grazing_dis_mi = sprintf "%.2f", $d1 * 0.0006213712;
 $grazing_dis_km = sprintf "%.2f", $d1 / 1000;
 
-$angle_of_incid = sprintf "%.2f", rad2deg((($h1 + $h2) / ($dist_km * 1000)) * (1 - $M * (1 + ($B ** 2))));
+#$angle_of_incid = sprintf "%.2f", rad2deg((($h1 + $h2) / ($dist_km * 1000)) * (1 - $M * (1 + ($B ** 2))));
 
 # Direct path
 $Id = sqrt((($dist_km * 1000) ** 2) + (($h1 - $h2) ** 2));
@@ -6519,7 +6520,7 @@ if ($do_lulc eq "yes" && $country_tx eq "United States") {
       print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021)}\" font \"Helvetica,30\"\n";
 	}
 	elsif ($do_template eq "yes") {
-	  print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data + Clutter Heights (2021)}\" font \"Helvetica,30\"\n";
+	  print F "set title \"{/:Bold Path Profile Between $tx_name and $rx_name\\nU.S. National Land Cover Data (2021) + Clutter Heights}\" font \"Helvetica,30\"\n";
 	}
     print F "set xlabel \"Distance Between {/:Bold $tx_name } and {/:Bold $rx_name } ($dist_mi miles)\\n\" font \"Helvetica,22\"\n";
 	print F "set x2label \"{/:Bold Frequency:} $frq_mhz MHz }\t\t{/:Bold Azimuth: } $AZSP\\U+00B0 TN / $AZSP_MN\\U+00B0 MN  ($AZLP\\U+00B0 TN / $AZLP_MN\\U+00B0 MN)\" font \"Helvetica,20\" tc rgb \"blue\"\n";
@@ -7507,7 +7508,7 @@ print "</center></font></body></html>\n";
 open(F, ">", "index1.html") or die "Can't open index1.html: $!\n" ;
 print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 print F "<html><head>\n";
-print F "<title>Microwave Radio Path Analysis Results</title>\n";
+print F "<title>Path Analysis Results</title>\n";
 print F "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
 print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
 print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
@@ -7552,7 +7553,7 @@ print F "</center></font></body></html>\n";
 
 open(F, ">", "index2.html") or die "Can't open index2.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<html><head><title>Path Profile Report</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
@@ -7727,7 +7728,7 @@ close F;
 
 open(F, ">", "index3.html") or die "Can't open index3.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<html><head><title>Reliability Report</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">\n";
@@ -7773,7 +7774,7 @@ close F;
 
 open(F, ">", "haat.html") or die "Can't open haat.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<html><head><title>HAAT Calculations</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Terrain Analysis Reports</b></font></td></tr></table></center><br>\n";
@@ -7811,7 +7812,7 @@ close F;
 
 open(F, ">", "splat.html") or die "Can't open splat.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<html><head><title>SPLAT! Calculations</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
   print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Terrain Analysis Reports</b></font></td></tr></table></center><br>\n";
@@ -7867,9 +7868,10 @@ close F;
 
 open(F, ">", "index5.html") or die "Can't open index5.html: $!\n" ;
   print F "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
-  print F "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
+  print F "<html><head><title>Coverage Reports</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head>\n";
   print F "<body bgcolor=\"#D3D3D3\" text=\"#000000\" link=\"blue\">\n";
   print F "<font face=\"Helvetica\"><font size=\"-1\">\n";
+  print F "<center><table border=\"2\" cellpadding=\"8\"><tr><td colspan=\"10\" bgcolor=\"#7EBDE5\" align=\"center\"><font size=\"4\"><b>Coverage Reports</b></font></td></tr></table></center><br>\n";
   print F "<center>\n";
   print F "<p><img src=\"TopoMap.png\" height=\"480\" width=\"640\"><br><b>General Coverage Topographical Map<br>$country_tx ($city_tx, $state_tx)</b></p>\n";
   if ($do_div eq "no") {
@@ -7887,10 +7889,9 @@ open(F, ">", "index5.html") or die "Can't open index5.html: $!\n" ;
     print F "<p><img src=\"LossMap2.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_name</b></p>\n";
     print F "<p><img src=\"LossMap-div.png\" height=\"480\" width=\"640\"><br><b>Approximate Omnidirectional ITM Path Loss Coverage at $rx_div_name</b></p>\n";
   }
-  print F "<br><br><font size=\"-1\"><a href=\"http://www.gbppr.net\">GBPPR RadLab</a> $ver</font><br><font color=\"red\"><b>EXPERIMENTAL</b></font>\n";
   print F "<br><br><font size=\"-1\">\n";
-  print F "<table border=\1\" cellpadding=\"3\"><tr><td bgcolor=\"#BABBBE\">\n";
-  print F "These calculations are only estimates based on the provided data.<br>There is no guarantee that a microwave link is possible, even if it \"looks\" O.K.<br>This is mostly just for fun and I have no idea if it's accurate.</font>\n";
+  print F "<table border=\1\" cellpadding=\"3\"><tr><td bgcolor=\"#BABBBE\"><center>\n";
+  print F "These calculations are only estimates based on the provided data.<br>There is no guarantee that a microwave link is possible, even if it \"looks\" O.K.<br>This is mostly just for fun and I have no idea if it's accurate.<br><a href=\"http://www.gbppr.net\">GBPPR RadLab</a> $ver<br><font color=\"red\"><b>EXPERIMENTAL</b></font></center></font>\n";
   print F "</center></font></body></html>\n";
 close F;
 
