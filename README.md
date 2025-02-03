@@ -68,7 +68,7 @@ I put together a large (30+ GB) single file which contains the converted SPLAT! 
 
 It is available here as 'splat.tgz': https://archive.org/details/microwave-path-data
 
-Download it and move it to '/usr', then 'tar xvzf splat.tgz' to create the new '/usr/splat' directory which will contain all the necessary data files.
+Download 'splat.tgz' and move it to '/usr', then 'tar xvzf splat.tgz' to create the new '/usr/splat' directory which will contain all the necessary data files.
 
 
 ***Try it out!*** http://gbppr.ddns.net/path.main.cgi
