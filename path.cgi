@@ -1287,7 +1287,7 @@ if ($country_tx eq "United States") {
   if ($quality eq "Low / Fast") {
 
     $qual = "SRTMv3 3 Arc-Second Resolution (Standard)";
-    $file1 = sprintf "%s/%.f_%.f_%.f_%.f.sdf", $splatdir, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
+    $file1 = sprintf "%s/%.f:%.f:%.f:%.f.sdf", $splatdir, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
     $file2 = sprintf "%s/%.f_%.f_%.f_%.f.sdf", $splatdir, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
     if (!-f $file1) {
@@ -1356,7 +1356,7 @@ if ($country_tx eq "United States") {
 
     $qual = "SRTMv3 1 Arc-Second Resolution (HD)";
     $file1 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
-    $file2 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
+    $file2 = sprintf "%s/%.f_%.f_%.f_%.f-hd.sdf", $splatdirhd, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
     if (!-f $file1) {
 	  #print "<p><font color=red><b>HD Elevation Data Unavailable for: $file1 </b></font></p>\n";
