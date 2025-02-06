@@ -1065,7 +1065,7 @@ print <<EOF;
 
 <p>20.)&nbsp;&nbsp;Here is a good overview of Longley-Rice <a href="https://www.softwright.com/faq/support/longley_rice_variability.html">Time Variability</a>.</p>
 
-<p>21.)&nbsp;&nbsp;Uses <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Shuttle Radar Topography Mission</a> elevation data for terrain generation.&nbsp;&nbsp;<b>Low / Fast</b> uses 3 arc-second resolution, and <b>High / Slow</b> uses 1 arc-second resolution.&nbsp;&nbsp;Only a few LAT/LONS (mostly in the U.S.) work with HD resolution terrain data right now, and the plotting is quite slow.&nbsp;&nbsp;<b>High / Slow</b> is currently broken as the drive just crashed :(</p>
+<p>21.)&nbsp;&nbsp;Uses <a href="https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission">Shuttle Radar Topography Mission</a> elevation data for terrain generation.&nbsp;&nbsp;<b>Low / Fast</b> uses 3 arc-second resolution, and <b>High / Slow</b> uses 1 arc-second resolution.&nbsp;&nbsp;Only a few LAT/LONS (mostly in the U.S.) work with HD resolution terrain data right now, and the plotting is quite slow.</p>
 
 <p>22.)&nbsp;&nbsp;Adds additional height to the plotted Earth terrain profile based on the results in the 2021 U.S. National Land Cover Database.&nbsp;&nbsp;The added heights are just educated guesses and <i>not</i> the actual height of the obstacles.</p>
 </blockquote>

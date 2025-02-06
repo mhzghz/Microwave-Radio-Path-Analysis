@@ -2,7 +2,9 @@
 
 ## --> Microwave Radio Path Analysis, path.cgi
 ## --> Green Bay Professional Packet Radio, www.gbppr.net
-
+#
+# Visit 'www.gbppr.net/splat' for more information.
+#
 ## This file Copyright 2003 <contact@gbppr.net> under the GPL.
 ## NO WARRANTY.  Please send bug reports / patches.
 
@@ -24,11 +26,11 @@ use GIS::Distance;         # For the Vincenty great-circle distance calculations
 ## User Setup
 #
 my $banner     = "A service of Green Bay Professional Packet Radio - <a href=\"http://www.gbppr.net\">www.gbppr.net</a>";
-my $url        = "http://gbppr.ddns.net/cgi-bin/path.main.cgi";
+my $url        = "http://gbppr.ddns.net/path.main.cgi";
 my $ver        = "v2.80"; # Jan2025
 my $splat      = "/usr/local/bin/splat";
 my $splatdir   = "/usr/splat/sdf";
-my $splatdirhd = "/media/gbppr/500GB/sdf-hd";
+my $splatdirhd = "/usr/splat/sdf-hd";
 my $pdfdir     = "../pdf"; # Location of coax/waveguide PDF datasheets
 my $gnuplot    = "/usr/bin/gnuplot";
 my $htmldoc    = "/usr/bin/htmldoc";
@@ -1289,7 +1291,7 @@ if ($country_tx eq "United States") {
     $file2 = sprintf "%s/%.f_%.f_%.f_%.f.sdf", $splatdir, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
     if (!-f $file1) {
-      print "<p><font color=red><b>Elevation Data Unavailable for: $file1 </b></font></p>\n";
+	  #print "<p><font color=red><b>Elevation Data Unavailable for: $file1 </b></font></p>\n";
     }
     if (!-f $file2) {
       print "<p><font color=red><b>Elevation Data Unavailable for: $file2 </b></font></p>\n";
@@ -1357,7 +1359,7 @@ if ($country_tx eq "United States") {
     $file2 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
     if (!-f $file1) {
-      print "<p><font color=red><b>HD Elevation Data Unavailable for: $file1 </b></font></p>\n";
+	  #print "<p><font color=red><b>HD Elevation Data Unavailable for: $file1 </b></font></p>\n";
     }
     if (!-f $file2) {
       print "<p><font color=red><b>HD Elevation Data Unavailable for: $file2 </b></font></p>\n";
@@ -1365,7 +1367,7 @@ if ($country_tx eq "United States") {
 
     if ($do_div eq "no") {
 	  # Non-Diversity: TX -> RX
-	  system("$splat -hd -sdelim ':' -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+	  system("$splat -hd -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
       system("/bin/mv fresnel.gp fresnel1.gp");
@@ -1377,11 +1379,11 @@ if ($country_tx eq "United States") {
 
 	  # Non-Diversity: RX -> TX
 	  # This is the one used for the HD Non-Diversity TerrainProfile
-      system("$splat -hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
 	elsif($do_div eq "yes") {
 	  # Diversity: TX -> RX Primary Path
-      system("$splat -hd -sdelim ':' -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t tx.qth -r rx.qth -p pro1 -e ElevPro1 -gc $gc_ft -H PathProfile1 -l PathLoss1 -m $k -f $frq_mhz -fz $fres -o TopoMap -sc -png -itwom -gpsav -imperial -kml -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1.gp");
       system("/bin/mv reference.gp reference1.gp");
       system("/bin/mv fresnel.gp fresnel1.gp");
@@ -1392,7 +1394,7 @@ if ($country_tx eq "United States") {
       system("/bin/mv elevation-clutter.gp elevation-clutter1.gp >/dev/null 2>&1");
 
 	  # Diversity: TX -> RX Diversity Path 
-      system("$splat  -hd -sdelim ':' -t tx.qth -r rx-div.qth -p pro1-div -e ElevPro1-div -gc $gc_ft -H PathProfile1-div -l PathLoss1-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat  -hd -t tx.qth -r rx-div.qth -p pro1-div -e ElevPro1-div -gc $gc_ft -H PathProfile1-div -l PathLoss1-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile1-div.gp");
       system("/bin/mv reference.gp reference1-div.gp");
       system("/bin/mv fresnel.gp fresnel1-div.gp");
@@ -1403,7 +1405,7 @@ if ($country_tx eq "United States") {
       system("/bin/mv elevation-clutter.gp elevation-clutter1-div.gp >/dev/null 2>&1");
 
 	  # Diversity: RX Diversity Path -> TX
-      system("$splat -hd -sdelim ':' -t rx-div.qth -r tx.qth -p pro2-div -e ElevPro2-div -gc $gc_ft -H PathProfile2-div -l PathLoss2-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t rx-div.qth -r tx.qth -p pro2-div -e ElevPro2-div -gc $gc_ft -H PathProfile2-div -l PathLoss2-div -m $k -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
       system("/bin/mv profile.gp profile2-div.gp");
       system("/bin/mv reference.gp reference2-div.gp");
       system("/bin/mv fresnel.gp fresnel2-div.gp");
@@ -1415,7 +1417,7 @@ if ($country_tx eq "United States") {
 	  
 	  # Diversity: RX Primary Path -> TX 
       # This is the one used for the HD Diversity TerrainProfile
-	  system("$splat -hd -sdelim ':'-hd -sdelim ':' -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+	  system("$splat -hd -t rx.qth -r tx.qth -p pro2 -e ElevPro2 -gc $gc_ft -H PathProfile2 -l PathLoss2 -m 1 -f $frq_mhz -fz $fres -sc -png -itwom -gpsav -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
   }
 }
@@ -1656,13 +1658,13 @@ if ($country_tx eq "United States") {
   }	
   elsif ($quality eq "High / Slow") {
     if ($do_div eq "no") {
-      system("$splat -hd -sdelim ':' -t tx.qth -L $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap1 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
-      system("$splat -hd -sdelim ':' -t rx.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap2 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t tx.qth -L $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap1 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t rx.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap2 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
     }
     elsif ($do_div eq "yes") { 
-      system("$splat -hd -sdelim ':' -t tx.qth -L $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap1 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
-      system("$splat -hd -sdelim ':' -t rx.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap2 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
-      system("$splat -hd -sdelim ':' -t rx-div.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap-div -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t tx.qth -L $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap1 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t rx.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap2 -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t rx-div.qth -L $rx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LossMap-div -sc -png -imperial -itwom -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
     }
   }
 }
@@ -1693,11 +1695,11 @@ if ($country_tx eq "United States") {
   }
   elsif ($quality eq "High / Slow") {
 	if ($do_div eq "no") {
-      system("$splat -hd -sdelim ':' -t tx.qth rx.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t tx.qth rx.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
 	elsif ($do_div eq "yes") {
-	  system("$splat -hd -sdelim ':' -t tx.qth rx.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
-      system("$splat -hd -sdelim ':' -t tx.qth rx-div.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap-div -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+	  system("$splat -hd -t tx.qth rx.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
+      system("$splat -hd -t tx.qth rx-div.qth -c $tx_ant_ht_ft -m $k -R $pathdist -gc $gc_ft -o LOSMap-div -sc -png -imperial -d $splatdirhd -s $splatdir/$cities -b $splatdir/$counties >/dev/null 2>&1");
 	}
   }
 }
