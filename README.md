@@ -2,7 +2,7 @@ See notes related to SPLAT!: http://www.gbppr.net/splat/
 
 See notes related to the Microwave Radio Path Analysis CGI: http://www.gbppr.net/splat/path.html
 
-Requires a slightly modified version of SPLAT! v2.0-alpha.
+Requires a slightly modified version of SPLAT! v2.0-alpha: https://github.com/hoche/splat
 
 Download 'splat-new.tgz', then:
      
