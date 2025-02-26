@@ -43,7 +43,6 @@ Install 'path.main.cgi' and 'path.cgi' in '/www/cgi-bin' and 'chmod 755' them.
 
 Install 'path.png', 'nlcd.png', 'Annual_Average_Temperature_Map.png' in '/www/pics'.
 
-
 Untar and install the coax/waveguide datasheets from 'pdf.tgz' in '/www/pdf'.
 
 Requires the installation of Geo::Coordinates::UTM (Perl) if you wish to calcuate the UTM coordinates.
