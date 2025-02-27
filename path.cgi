@@ -1354,7 +1354,8 @@ if ($country_tx eq "United States") {
   }
   elsif ($quality eq "High / Slow") {
 
-    $qual = "SRTMv3 1 Arc-Second Resolution (HD)";
+    #$qual = "SRTMv3 1 Arc-Second Resolution (HD)";
+	$qual = "ASTER Global Digital Elevation (HD)";
     $file1 = sprintf "%s/%.f:%.f:%.f:%.f-hd.sdf", $splatdirhd, $LAT1_D, ($LAT1_D + 1), $LON1_D, ($LON1_D + 1);
     $file2 = sprintf "%s/%.f_%.f_%.f_%.f-hd.sdf", $splatdirhd, $LAT2_D, ($LAT2_D + 1), $LON2_D, ($LON2_D + 1);
 
