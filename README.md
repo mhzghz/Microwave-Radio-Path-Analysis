@@ -78,6 +78,11 @@ I also put together a large (214+ GB) single file which contains the converted S
 
 ![Example land cover profile](LULCProfile1.png)
 
+![Example HD terrain and path profile](TerrainProfile1-hd.png)
+
+![Example HD land cover profile](LULCProfile1-hd.png)
+
+
 
 
 
