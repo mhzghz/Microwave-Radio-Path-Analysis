@@ -69,6 +69,8 @@ It is available here as 'splat.tgz': https://archive.org/details/microwave-path-
 
 Download 'splat.tgz' and move it to '/usr', then 'tar xvzf splat.tgz' to create the new '/usr/splat' directory which will contain all the necessary data files.
 
+I also put together a large (214+ GB) single file which contains the converted SPLAT! SDF terrain data files using ASTER DEM v3 terrain data. This data is much higher resolution and includes the latitudes missing in the SRTM terrain data.  It does require running SPLAT! in HD mode and the plotting is quite slow.
+
 
 ***Try it out!*** http://gbppr.ddns.net/path.main.cgi
 
